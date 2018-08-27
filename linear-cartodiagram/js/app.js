@@ -1,12 +1,12 @@
 
 // получаем доступ к апи мапбокса
-// mapboxgl.accessToken = 'pk.eyJ1IjoieWFzZXZwbGF0b24iLCJhIjoiY2poaTJrc29jMDF0YzM2cDU1ZnM1c2xoMiJ9.FhmWdHG7ar14dQv1Aoqx4A';
+mapboxgl.accessToken = 'pk.eyJ1IjoieWFzZXZwbGF0b24iLCJhIjoiY2poaTJrc29jMDF0YzM2cDU1ZnM1c2xoMiJ9.FhmWdHG7ar14dQv1Aoqx4A';
 // подключение какого-то непонятного плагина
 // mapboxgl.setRTLTextPlugin('https://cdn.klokantech.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.1.2/mapbox-gl-rtl-text.js');
 var map = new mapboxgl.Map({
     container: 'map', // container id
-    // style: 'mapbox://styles/mapbox/dark-v9', // stylesheet location
-    style: 'https://maps.tilehosting.com/styles/darkmatter/style.json?key=9jsySrA6E6EKeAPy7tod',
+    style: 'mapbox://styles/mapbox/dark-v9', // stylesheet location
+    // style: 'https://maps.tilehosting.com/styles/darkmatter/style.json?key=9jsySrA6E6EKeAPy7tod',
     center: [37.64, 55.75], // starting position [lng, lat]
     zoom: 10 // starting zoom
 });
@@ -20,11 +20,9 @@ map.on('load', () => {
 
     // подгружаем нужные данные
     Promise.all([
-        // fetch(new Request('https://www.dropbox.com/s/yayzes512kjzpa0/edges4326.geojson?dl=0')).then(response => response.json()),
-        // fetch(new Request('https://www.dropbox.com/s/6zvtl5onu6qa9tc/nodes4326.geojson?dl=0')).then(response => response.json())
-        fetch(new Request('./data/edges4326.geojson?ass=' + Math.random())).then(response => response.json()),
-        fetch(new Request('./data/nodes4326.geojson?ass=' + Math.random())).then(response => response.json())
-    ]).then(([edges, nodes]) => {
+        fetch('./data/edges4326.geojson?ass=' + Math.random()).then(response => response.json()),
+        fetch('./data/nodes4326.geojson?ass=' + Math.random()).then(response => response.json())
+        ]).then(([edges, nodes]) => {
 
         console.log("это наши ребра", edges);
         // console.log("это наши узлы", nodes);
@@ -103,7 +101,7 @@ map.on('load', () => {
             "type": "circle",
             "paint": {
                 "circle-color": "#ffffff",
-                "circle-radius": 40,
+                "circle-radius": 20,
                 "circle-stroke-color": "#000000",
                 "circle-stroke-width": 2
                 // "circle-blur": 0.8
