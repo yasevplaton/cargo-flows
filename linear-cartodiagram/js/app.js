@@ -47,12 +47,12 @@ map.on('load', () => {
             });
         }
 
-        const lineWidth = 2;
+        const origLineWidth = 2;
 
         function calculateOffset() {
             for (var i = 0; i < edges.features.length; i++) {
                 if (edges.features[i].properties.order === 0) {
-                    edges.features[i].properties.offset = (lineWidth / 2) + (edges.features[i].properties.width / 2);
+                    edges.features[i].properties.offset = (origLineWidth / 2) + (edges.features[i].properties.width / 2);
                 } else {
                     edges.features[i].properties.offset = edges.features[i - 1].properties.offset +
                     (edges.features[i - 1].properties.width / 2) + (edges.features[i].properties.width / 2);
@@ -90,7 +90,7 @@ map.on('load', () => {
             "paint": {
                 'line-color': "#ffffff",
                 "line-opacity": 0.8,
-                "line-width": lineWidth
+                "line-width": origLineWidth
             },
             "layout": {
                 "line-cap": "round"
