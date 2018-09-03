@@ -4,7 +4,7 @@ mapboxgl.accessToken = 'pk.eyJ1IjoieWFzZXZwbGF0b24iLCJhIjoiY2poaTJrc29jMDF0YzM2c
 
 var map = new mapboxgl.Map({
     container: 'map', // container id
-    style: 'mapbox://styles/mapbox/dark-v9', // stylesheet location
+    style: 'mapbox://styles/mapbox/dark-v9', // tiles location
     // style: 'https://maps.tilehosting.com/styles/darkmatter/style.json?key=9jsySrA6E6EKeAPy7tod',
     center: [37.64, 55.75], // starting position [lng, lat]
     zoom: 10 // starting zoom
@@ -18,10 +18,12 @@ map.on('load', () => {
         fetch('./data/nodes4326.geojson?ass=' + Math.random()).then(response => response.json())
         ]).then(([edges, nodes]) => {
 
-        const width = [0, 2, 6, 10];
-        const colors = { "chocolate": '#661a00', "bananas": '#ffff00', "oranges": '#ff751a' };
+        // set constants for some properties
+        const widthArray = [0, 2, 6, 10];
+        const colorsArray = { "chocolate": '#661a00', "bananas": '#ffff00', "oranges": '#ff751a' };
+        const origLineWidth = 2;
         
-        function addColors() {
+        function addColors(colors) {
             edges.features.forEach(f => {
                 if (f.properties.type === "chocolate") {
                     f.properties.color = colors.chocolate;
@@ -33,7 +35,7 @@ map.on('load', () => {
             });
         }
 
-        function calculateWidth() {
+        function calculateWidth(width) {
             edges.features.forEach(f => {
                 if (f.properties.value === 0) {
                     f.properties.width = width[0];
@@ -47,9 +49,7 @@ map.on('load', () => {
             });
         }
 
-        const origLineWidth = 2;
-
-        function calculateOffset() {
+        function calculateOffset(origLineWidth) {
             for (var i = 0; i < edges.features.length; i++) {
                 if (edges.features[i].properties.order === 0) {
                     edges.features[i].properties.offset = (origLineWidth / 2) + (edges.features[i].properties.width / 2);
@@ -61,16 +61,112 @@ map.on('load', () => {
     
         }
 
-        addColors();
-        calculateWidth();
-        calculateOffset();
+        // add colors to edges
+        addColors(colorsArray);
 
-        // определяем источники данных для карты
+        // calculate width of edges
+        calculateWidth(widthArray);
+
+        // calculate offset of edges
+        calculateOffset(origLineWidth);
+
+        var origLines = { "type": 'FeatureCollection' , features: [] };
+
+        function collectLinesIDs() {
+
+            var linesIDArray = [];
+
+            edges.features.forEach(e => {
+                var indexLine = linesIDArray.indexOf(e.properties.ID_line);
+
+                if (indexLine === -1) {
+                    linesIDArray.push(e.properties.ID_line);
+                }
+            });
+
+            return linesIDArray;
+        }
+
+        function getLineGeometry(lineID) {
+            var geom = {}; 
+            
+            edges.features.forEach(e => {
+                if (e.properties.ID_line == lineID) {
+                    geom = e.geometry;
+                }
+            });
+
+            return geom;
+        }
+
+        function collectSameLineEdges(lineID) {
+
+            var sameLineEdges = [];
+            
+            edges.features.forEach(e => {
+                if (e.properties.ID_line === lineID) {
+                    sameLineEdges.push(e);
+                }
+            })
+
+            return sameLineEdges;
+        }
+
+        function calculateSumWidth(lineID) {
+
+            var sameLineEdges = collectSameLineEdges(lineID);
+            var sumWidth = 0;
+
+            sameLineEdges.forEach(e => {
+                sumWidth += e.properties.width;
+            });
+
+            return sumWidth;
+        }
+
+        // collect ids of lines
+        var linesIDArray = collectLinesIDs();
+
+        // calculate summary width of each band in pixels and add to specific property in origLines object
+        linesIDArray.forEach(id => {
+            var sumWidth = calculateSumWidth(id) + origLineWidth;
+
+            var origLine = {
+                properties: {
+                    lineID: id,
+                    sumWidth: sumWidth
+                },
+                geometry: getLineGeometry(id)
+            };
+
+            origLines.features.push(origLine);
+        })
+
+        function findAdjacentLines(node) {
+            var adjacentLines = [];
+
+            return adjacentLines;
+        }
+
+        function findMaxSumWidth(linesArray) {
+            var maxSumWidth;
+
+            return maxSumWidth;
+        }
+
+        function calculateNodeDiameter(node) {
+            var nodeDiameter;
+
+            return nodeDiameter;
+        }
+
+        // set sources for map
         map.addSource("edges", { type: "geojson", data: edges });
         map.addSource("nodes", { type: "geojson", data: nodes });
+        map.addSource("lines", { type: "geojson", data: origLines });
 
 
-        // добавляем слой
+        // add layers
         map.addLayer({
             "id": "edges",
             "source": "edges",
@@ -85,11 +181,11 @@ map.on('load', () => {
 
         map.addLayer({
             "id": "lines",
-            "source": "edges",
+            "source": "lines",
             "type": "line",
             "paint": {
                 'line-color': "#ffffff",
-                "line-opacity": 0.8,
+                "line-opacity": 1,
                 "line-width": origLineWidth
             },
             "layout": {
@@ -106,7 +202,6 @@ map.on('load', () => {
                 "circle-radius": 20,
                 "circle-stroke-color": "#000000",
                 "circle-stroke-width": 2
-                // "circle-blur": 0.8
             }
         });
 
