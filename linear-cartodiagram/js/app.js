@@ -1,6 +1,7 @@
 
-// получаем доступ к апи мапбокса
+// get access mapbox api
 mapboxgl.accessToken = 'pk.eyJ1IjoieWFzZXZwbGF0b24iLCJhIjoiY2poaTJrc29jMDF0YzM2cDU1ZnM1c2xoMiJ9.FhmWdHG7ar14dQv1Aoqx4A';
+
 var map = new mapboxgl.Map({
     container: 'map', // container id
     style: 'mapbox://styles/mapbox/dark-v9', // stylesheet location
@@ -9,22 +10,16 @@ var map = new mapboxgl.Map({
     zoom: 10 // starting zoom
 });
 
-
-// когда карта подгружается, запускаем следующую функцию
 map.on('load', () => {
 
-    // выводим в консоль сообщение о том, что карта загружена
-    console.log('map loaded');
-
-    // подгружаем нужные данные
+    // load data
     Promise.all([
         fetch('./data/edges4326.geojson?ass=' + Math.random()).then(response => response.json()),
         fetch('./data/nodes4326.geojson?ass=' + Math.random()).then(response => response.json())
         ]).then(([edges, nodes]) => {
 
-        var width = [0, 2, 6, 10];
-
-        var colors = { "chocolate": '#661a00', "bananas": '#ffff00', "oranges": '#ff751a' };
+        const width = [0, 2, 6, 10];
+        const colors = { "chocolate": '#661a00', "bananas": '#ffff00', "oranges": '#ff751a' };
         
         function addColors() {
             edges.features.forEach(f => {
@@ -51,15 +46,16 @@ map.on('load', () => {
                 }
             });
         }
-        
-        var origOffset = 4;
+
+        const lineWidth = 2;
 
         function calculateOffset() {
             for (var i = 0; i < edges.features.length; i++) {
                 if (edges.features[i].properties.order === 0) {
-                    edges.features[i].properties.offset = origOffset;
+                    edges.features[i].properties.offset = (lineWidth / 2) + (edges.features[i].properties.width / 2);
                 } else {
-                    edges.features[i].properties.offset = edges.features[i - 1].properties.offset + edges.features[i - 1].properties.width;
+                    edges.features[i].properties.offset = edges.features[i - 1].properties.offset +
+                    (edges.features[i - 1].properties.width / 2) + (edges.features[i].properties.width / 2);
                 }
             };
     
@@ -79,10 +75,9 @@ map.on('load', () => {
             "id": "edges",
             "source": "edges",
             "type": "line",
-            "filter": ['>', "value", 0],
             "paint": {
                 'line-color': ['get', 'color'],
-                "line-opacity": 0.8,
+                "line-opacity": 1,
                 'line-offset': ['get', 'offset'],
                 "line-width": ['get', 'width'],
             }
@@ -95,7 +90,7 @@ map.on('load', () => {
             "paint": {
                 'line-color': "#ffffff",
                 "line-opacity": 0.8,
-                "line-width": 2
+                "line-width": lineWidth
             },
             "layout": {
                 "line-cap": "round"
