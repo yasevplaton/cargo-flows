@@ -22,43 +22,52 @@ map.on('load', () => {
         fetch('./data/nodes4326.geojson?ass=' + Math.random()).then(response => response.json())
         ]).then(([edges, nodes]) => {
 
-        console.log("это наши ребра", edges);
-        // console.log("это наши узлы", nodes);
-
         var width = [0, 2, 6, 10];
 
         var colors = { "chocolate": '#661a00', "bananas": '#ffff00', "oranges": '#ff751a' };
+        
+        function addColors() {
+            edges.features.forEach(f => {
+                if (f.properties.type === "chocolate") {
+                    f.properties.color = colors.chocolate;
+                } else if (f.properties.type === "bananas") {
+                    f.properties.color = colors.bananas;
+                } else if (f.properties.type === "oranges") {
+                    f.properties.color = colors.oranges;
+                };
+            });
+        }
 
-        edges.features.forEach(f => {
-            if (f.properties.type === "chocolate") {
-                f.properties.color = colors.chocolate;
-            } else if (f.properties.type === "bananas") {
-                f.properties.color = colors.bananas;
-            } else if (f.properties.type === "oranges") {
-                f.properties.color = colors.oranges;
-            };
-
-            if (f.properties.value > 0 && f.properties.value < 5440) {
-                f.properties.width = width[1];
-            } else if (f.properties.value >= 5440 && f.properties.value < 10880) {
-                f.properties.width = width[2];
-            } else if (f.properties.value >= 10880) {
-                f.properties.width = width[3];
-            } else if (f.properties.value === 0) {
-                f.properties.width = width[0];
-            }
-
-        });
-
+        function calculateWidth() {
+            edges.features.forEach(f => {
+                if (f.properties.value === 0) {
+                    f.properties.width = width[0];
+                } else if (f.properties.value > 0 && f.properties.value < 5440) {
+                    f.properties.width = width[1];
+                } else if (f.properties.value >= 5440 && f.properties.value < 10880) {
+                    f.properties.width = width[2];
+                } else if (f.properties.value >= 10880) {
+                    f.properties.width = width[3];
+                }
+            });
+        }
+        
         var origOffset = 4;
 
-        for (var i = 0; i < edges.features.length; i++) {
-            if (edges.features[i].properties.order === 0) {
-                edges.features[i].properties.offset = origOffset;
-            } else {
-                edges.features[i].properties.offset = edges.features[i - 1].properties.offset + edges.features[i - 1].properties.width;
-            }
-        };
+        function calculateOffset() {
+            for (var i = 0; i < edges.features.length; i++) {
+                if (edges.features[i].properties.order === 0) {
+                    edges.features[i].properties.offset = origOffset;
+                } else {
+                    edges.features[i].properties.offset = edges.features[i - 1].properties.offset + edges.features[i - 1].properties.width;
+                }
+            };
+    
+        }
+
+        addColors();
+        calculateWidth();
+        calculateOffset();
 
         // определяем источники данных для карты
         map.addSource("edges", { type: "geojson", data: edges });
