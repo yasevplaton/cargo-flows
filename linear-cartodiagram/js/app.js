@@ -23,6 +23,7 @@ map.on('load', () => {
         const colorsArray = { "chocolate": '#661a00', "bananas": '#ffff00', "oranges": '#ff751a' };
         const origLineWidth = 2;
         
+        // function to add colors to edges
         function addColors(colors) {
             edges.features.forEach(f => {
                 if (f.properties.type === "chocolate") {
@@ -35,6 +36,7 @@ map.on('load', () => {
             });
         }
 
+        // function to calculate width of edge
         function calculateWidth(width) {
             edges.features.forEach(f => {
                 if (f.properties.value === 0) {
@@ -49,6 +51,7 @@ map.on('load', () => {
             });
         }
 
+        // function to calculate offset of edge
         function calculateOffset(origLineWidth) {
             for (var i = 0; i < edges.features.length; i++) {
                 if (edges.features[i].properties.order === 0) {
@@ -70,8 +73,10 @@ map.on('load', () => {
         // calculate offset of edges
         calculateOffset(origLineWidth);
 
+        // create a blank object for storage original lines
         var origLines = { "type": 'FeatureCollection' , features: [] };
 
+        // function to collect IDs of original lines
         function collectLinesIDs() {
 
             var linesIDArray = [];
@@ -87,6 +92,7 @@ map.on('load', () => {
             return linesIDArray;
         }
 
+        // function to get geometry of line by ID
         function getLineGeometry(lineID) {
             var geom = {}; 
             
@@ -99,6 +105,7 @@ map.on('load', () => {
             return geom;
         }
 
+        // function to collect edges that belong to the same original line
         function collectSameLineEdges(lineID) {
 
             var sameLineEdges = [];
@@ -112,6 +119,7 @@ map.on('load', () => {
             return sameLineEdges;
         }
 
+        // function to calculate total width of edges that belong to specific original line
         function calculateSumWidth(lineID) {
 
             var sameLineEdges = collectSameLineEdges(lineID);
@@ -127,7 +135,7 @@ map.on('load', () => {
         // collect ids of lines
         var linesIDArray = collectLinesIDs();
 
-        // calculate summary width of each band in pixels and add to specific property in origLines object
+        // calculate summary width of each band in pixels and add to specific property in origLine object
         linesIDArray.forEach(id => {
             var sumWidth = calculateSumWidth(id) + origLineWidth;
 
@@ -142,23 +150,53 @@ map.on('load', () => {
             origLines.features.push(origLine);
         })
 
-        function findAdjacentLines(node) {
+        // function to find lines that adjacent to specific node
+        function findAdjacentLines(nodeID) {
             var adjacentLines = [];
+
+            edges.features.forEach(e => {
+                if (e.properties.src === nodeID || e.properties.dest === nodeID) {
+                    if (adjacentLines.indexOf(e.properties.ID_line) === -1) {
+                        adjacentLines.push(e.properties.ID_line);
+                    }
+                }
+            });
 
             return adjacentLines;
         }
 
-        function findMaxSumWidth(linesArray) {
-            var maxSumWidth;
+        // function to calculate the maximum width of the adjacent line
+        function calculateMaxWidth(origLines, adjacentLines) {
 
-            return maxSumWidth;
+            var widthArray = [];
+
+            adjacentLines.forEach(adjLine => {
+                origLines.features.forEach(line => {
+                    if (adjLine === line.properties.lineID) {
+                        widthArray.push(line.properties.sumWidth);
+                    }
+                });
+            });
+
+            var maxWidth = Math.max(...widthArray);
+
+            return maxWidth;
         }
 
-        function calculateNodeDiameter(node) {
-            var nodeDiameter;
+        // function to calculate node diameter
+        function calculateNodeDiameter(nodeID) {
+
+            var adjacentLines = findAdjacentLines(nodeID);
+            var maxWidth = calculateMaxWidth(origLines, adjacentLines);
+            var nodeDiameter = maxWidth;
 
             return nodeDiameter;
         }
+
+        // calculate adaptive radius of node
+        nodes.features.forEach(node => {
+            node.properties.radius = calculateNodeDiameter(node.properties.OBJECTID) / 2 + 2;
+        });
 
         // set sources for map
         map.addSource("edges", { type: "geojson", data: edges });
@@ -175,7 +213,7 @@ map.on('load', () => {
                 'line-color': ['get', 'color'],
                 "line-opacity": 1,
                 'line-offset': ['get', 'offset'],
-                "line-width": ['get', 'width'],
+                "line-width": ['get', 'width']
             }
         });
 
@@ -199,7 +237,7 @@ map.on('load', () => {
             "type": "circle",
             "paint": {
                 "circle-color": "#ffffff",
-                "circle-radius": 20,
+                "circle-radius": ['get', 'radius'],
                 "circle-stroke-color": "#000000",
                 "circle-stroke-width": 2
             }
@@ -212,7 +250,7 @@ map.on('load', () => {
             "layout": {
                 "text-font": ["PT Sans Narrow Bold"],
                 "text-field": "{NAME}",
-                "text-size": 15,
+                "text-size": ['get', 'radius'],
                 "text-offset": [1, 0]
             },
             "paint": {
