@@ -16,7 +16,7 @@
         Promise.all([
             fetch('./data/edges4326.geojson?ass=' + Math.random()).then(response => response.json()),
             fetch('./data/nodes4326.geojson?ass=' + Math.random()).then(response => response.json())
-        ]).then(([edges, nodes]) => {
+            ]).then(([edges, nodes]) => {
 
             // set constants for some properties
             const widthArray = [0, 2, 6, 10];
@@ -119,25 +119,34 @@
                 return sameLineEdges;
             }
 
-            // function to calculate total width of edges that belong to specific original line
+            function calculateSumWidth(sameLineEdges) {
+
+            }
+
+            // function to calculate width of the widest side of specific original line
             function calculateSumWidth(lineID) {
 
                 var sameLineEdges = collectSameLineEdges(lineID);
-                var sumWidth = 0;
-
+                let sumWidthFirstSide = 0;
+                let sumWidthSecondSide = 0;
+                
                 sameLineEdges.forEach(e => {
-                    sumWidth += e.properties.width;
+                    if (e.properties.dir === 1) {
+                        sumWidthFirstSide += e.properties.width;
+                    } else if (e.properties.dir === -1) {
+                        sumWidthSecondSide += e.properties.width;
+                    }
                 });
 
-                return sumWidth;
+                return sumWidthFirstSide >= sumWidthSecondSide ? sumWidthFirstSide : sumWidthSecondSide;
             }
 
             // collect ids of lines
             var linesIDArray = collectLinesIDs();
 
-            // calculate summary width of each band in pixels and add to specific property in origLine object
+            // calculate width of the widest side of each band in pixels and add to specific property in origLine object
             linesIDArray.forEach(id => {
-                var sumWidth = calculateSumWidth(id) + origLineWidth;
+                var sumWidth = calculateSumWidth(id) + (origLineWidth / 2);
 
                 var origLine = {
                     properties: {
@@ -183,19 +192,19 @@
                 return maxWidth;
             }
 
-            // function to calculate node diameter
-            function calculateNodeDiameter(nodeID) {
+            // function to calculate node radius
+            function calculateNodeRadius(nodeID) {
 
                 var adjacentLines = findAdjacentLines(nodeID);
                 var maxWidth = calculateMaxWidth(origLines, adjacentLines);
-                var nodeDiameter = maxWidth;
+                var nodeRadius = maxWidth;
 
-                return nodeDiameter;
+                return nodeRadius;
             }
 
             // calculate adaptive radius of node
             nodes.features.forEach(node => {
-                node.properties.radius = calculateNodeDiameter(node.properties.OBJECTID) / 2 + 2;
+                node.properties.radius = calculateNodeRadius(node.properties.OBJECTID) + 2;
             });
 
             // set sources for map
