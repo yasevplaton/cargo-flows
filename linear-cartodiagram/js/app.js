@@ -92,6 +92,7 @@
                 return linesIDArray;
             }
 
+
             // function to get geometry of line by ID
             function getLineGeometry(lineID) {
                 var geom = {};
@@ -119,17 +120,13 @@
                 return sameLineEdges;
             }
 
-            function calculateSumWidth(sameLineEdges) {
-
-            }
-
             // function to calculate width of the widest side of specific original line
             function calculateSumWidth(lineID) {
 
                 var sameLineEdges = collectSameLineEdges(lineID);
                 let sumWidthFirstSide = 0;
                 let sumWidthSecondSide = 0;
-                
+
                 sameLineEdges.forEach(e => {
                     if (e.properties.dir === 1) {
                         sumWidthFirstSide += e.properties.width;
@@ -140,6 +137,7 @@
 
                 return sumWidthFirstSide >= sumWidthSecondSide ? sumWidthFirstSide : sumWidthSecondSide;
             }
+
 
             // collect ids of lines
             var linesIDArray = collectLinesIDs();
