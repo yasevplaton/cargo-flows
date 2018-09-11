@@ -76,6 +76,8 @@
             // create a blank object for storage original lines
             var origLines = { "type": 'FeatureCollection', features: [] };
 
+            
+
             // function to collect IDs of original lines
             function collectLinesIDs() {
 
