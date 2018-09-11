@@ -10,6 +10,18 @@
         zoom: 10 // starting zoom
     });
 
+    // store buttons from DOM to constant
+    const arrayButtons = document.getElementsByTagName('button');
+
+    // prevent submit action
+    for (let b of arrayButtons) {
+        b.addEventListener('click', handleClick);
+    }
+
+    function handleClick(event) {
+        event.preventDefault();
+    }
+
     map.on('load', () => {
 
         // load data
@@ -76,7 +88,7 @@
             // create a blank object for storage original lines
             var origLines = { "type": 'FeatureCollection', features: [] };
 
-            
+
 
             // function to collect IDs of original lines
             function collectLinesIDs() {
@@ -157,7 +169,7 @@
                 };
 
                 origLines.features.push(origLine);
-            })
+            });
 
             // function to find lines that adjacent to specific node
             function findAdjacentLines(nodeID) {
