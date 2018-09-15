@@ -3,6 +3,7 @@ body {
     padding: 0;
     font-family: "Segoe UI", "Frutiger", "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
     font-size: 13px;
+    overflow: hidden;
 }
 
 #map {
@@ -12,25 +13,37 @@ body {
     height: 100%;
 }
 
-#form-container {
+#interface-wrapper {
     z-index: 1;
+    padding: 5px;
+    display: flex;
+    flex-wrap: wrap;
     position: absolute;
+}
+
+#form-container {
     display: flex;
     flex-direction: column;
+    flex-wrap: wrap;
     width: 310px;
     background:#ffffff;
-    margin: 10px;
     padding: 10px;
     border-radius: 5px;
-    align-items: center;
+    align-items: flex-start;
 }
 
 #form-submit {
     display: flex;
+    flex-wrap: wrap;
     flex-direction: column;
+    align-items: flex-start;
 }
 
 .form-title {
     margin: 0;
     margin-bottom: 5px;
+}
+
+.btn-submit {
+    margin-top: 5px;
 }
