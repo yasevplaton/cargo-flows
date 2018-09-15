@@ -13,12 +13,22 @@ body {
     height: 100%;
 }
 
+#greeting-panel {
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: #ffffff;
+}
+
 #interface-wrapper {
     z-index: 1;
     padding: 5px;
     display: flex;
     flex-wrap: wrap;
     position: absolute;
+    visibility: hidden;
 }
 
 #form-container {
