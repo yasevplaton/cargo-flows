@@ -18,13 +18,12 @@
         b.addEventListener('click', handleClickButton);
     }
 
-
-    
     map.on('load', () => {
 
-        // remove greeting panel
+        // remove greeting panel and make interface elements visible
         d3.select("#greeting-panel").remove();
         d3.select("#interface-wrapper").style('visibility', 'visible');
+        
         // load data
         Promise.all([
             fetch('./data/edges4326.geojson?ass=' + Math.random()).then(response => response.json()),
