@@ -17,7 +17,7 @@
     <div id="interface-wrapper">
         <div id="form-container">
             <h4 class="form-title">Выберите файл .csv с данными о грузопотоках</h4>
-            <form action="" id="form-submit">
+            <form action="http://127.0.0.1:5000/upload_data" method="POST" enctype="multipart/form-data" id="form-submit">
                 <input type="file" name="CSVGoods">
                 <button type="submit" class="btn-submit">Отправить</button>
             </form>
