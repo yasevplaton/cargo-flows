@@ -1,6 +1,6 @@
 
 // function to prevent submit action when user clicks on button
-function handleClickButton(event) {
+function preventDefaultSubmit(event) {
     event.preventDefault();
 }
 

@@ -11,23 +11,51 @@
     });
 
     // store buttons from DOM to constant
-    const arrayButtons = document.getElementsByTagName('button');
+    // const arrayButtons = document.getElementsByTagName('button');
 
     // prevent submit action
-    for (let b of arrayButtons) {
-        b.addEventListener('click', handleClickButton);
-    }
+    // for (let b of arrayButtons) {
+    //     b.addEventListener('click', preventSubmit);
+    // }
+
+    // Select your input type file and store it in a variable
+    const inputFileElement = document.getElementById('inputGoodsTable');
+    // const inputFile = inputFileElement.files[0];
+    const buttonSubmit = document.getElementById('btn-submit');
+    // This will upload the file after having read it
+    const upload = (file) => {
+        fetch('http://127.0.0.1:5000/upload_data', { // Your POST endpoint
+            method: 'POST',
+            body: file // This is your file object
+        }).then(
+            response => response.json() // if the response is a JSON object
+        ).then(
+            success => console.log(success) // Handle the success response object
+        ).catch(
+            error => console.log(error) // Handle the error response object
+        );
+    };
+
+    // Event handler executed when a file is selected
+    buttonSubmit.addEventListener('click', (e) => {
+        e.preventDefault();
+        upload(inputFileElement.files[0]);
+    });
+
+    inputFileElement.addEventListener('change', () => {
+        console.log(inputFileElement.files[0]);
+    });
 
     map.on('load', () => {
 
         // remove greeting panel and make interface elements visible
         d3.select("#greeting-panel").remove();
         d3.select("#interface-wrapper").style('visibility', 'visible');
-        
+
         // load data
         Promise.all([
-            fetch('./data/edges4326.geojson?ass=' + Math.random()).then(response => response.json()),
-            fetch('./data/nodes4326.geojson?ass=' + Math.random()).then(response => response.json())
+            fetch('data/edges4326.geojson?ass=' + Math.random()).then(response => response.json()),
+            fetch('data/nodes4326.geojson?ass=' + Math.random()).then(response => response.json())
         ]).then(([edges, nodes]) => {
 
             // set constants for some properties
