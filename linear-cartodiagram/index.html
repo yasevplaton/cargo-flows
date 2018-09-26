@@ -1,38 +1,94 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <meta charset='utf-8' />
-    <title>Linear Cartodiagram</title>
-    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.js'></script>
-    <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script src='js/tools.js'></script>
-    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css' rel='stylesheet' />
-    <link rel="stylesheet" href="css/index.css">
+    <head>
+        <meta charset='utf-8' />
+        <title>Linear Cartodiagram</title>
+        <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 
-</head>
+        <!-- Fonts -->
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 
-<body>
-    <div id="interface-wrapper">
-        <div id="form-container">
-            <h4 class="form-title">Выберите файл .csv с данными о грузопотоках</h4>
-            <form action="http://127.0.0.1:5000/upload_data" method="POST" enctype="multipart/form-data" id="form-submit">
-                <input type="file" name="CSVGoods">
-                <button type="submit" class="btn-submit">Отправить</button>
-            </form>
+
+        <!-- CSS Libraries -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+            crossorigin="anonymous">
+
+        <!-- Icon Libraries -->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
+            crossorigin="anonymous">
+
+        <!-- Main CSS file -->
+        <link rel="stylesheet" href="css/index.css">
+
+    </head>
+
+    <body>
+        <div id="interface-wrapper">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h5 class="master-title">Привет! Добро пожаловать в мастер построения карт грузопотоков!</h5>
+                        <br>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h6 class="step-title">Шаг 1. Загрузите данные</h6>
+                        <div id="step-1-content">
+                            <p>Загрузите файл .csv с данными о грузопотоках</p>
+                            <form action="http://127.0.0.1:5000/upload_data" method="POST" enctype="multipart/form-data">
+                                <div class="form-group">
+                                    <input type="file" class="form-control-file" name="CSVGoods">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Отправить</button>
+                            </form>
+                        </div>
+                        <hr>
+                    </div>
+                </div>
+                <div class="row disabled">
+                    <div class="col-lg-12">
+                        <h6 class="step-title">Шаг 2. Выберите цвета для грузов</h6>
+                        <hr>
+                    </div>
+                </div>
+                <div class="row disabled">
+                    <div class="col-lg-12">
+                        <h6 class="step-title">Шаг 3. Настройте линейный масштаб</h6>
+                        <hr>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <button type="button" class="btn btn-success disabled">Построить карту</button>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <div id='map'>
-        <div id="greeting-panel">
-            <h2>Подождите, карта загружается...</h2>
+        <div id='map'>
+            <div id="greeting-panel">
+                <h6>Подождите, карта загружается...</h6>
+            </div>
         </div>
-    </div>
+
+        <!-- JS Libraries -->
+        <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.js'></script>
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+        <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css' rel='stylesheet' />
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
 
 
-    <script src='js/app.js?asas'></script>
+        <!-- My Scripts -->
+        <script src='js/tools.js'></script>
+        <script src='js/app.js?asas'></script>
 
-</body>
+    </body>
 
 </html>
