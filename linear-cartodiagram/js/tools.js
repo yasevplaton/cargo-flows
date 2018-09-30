@@ -4,6 +4,11 @@ function preventDefaultSubmit(event) {
     event.preventDefault();
 }
 
+// function to toggle edit content visibility
+function toggleContentVisibility(e) {
+    // console.log(e.target);
+}
+
 // function to add colors to edges
 function addColors(edges, colors) {
     edges.features.forEach(f => {

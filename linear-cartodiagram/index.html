@@ -23,7 +23,7 @@
     </head>
 
     <body>
-        <div id="interface-wrapper">
+        <div id="download-data-interface-wrapper">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-12">
@@ -33,38 +33,54 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-12">
-                        <h6 class="step-title">Шаг 1. Загрузите данные</h6>
-                        <div id="step-1-content">
+                        <h6 class="step-title">Загрузка данных</h6>
+                        <div>
                             <p>Загрузите файл .csv с данными о грузопотоках</p>
-                            <form action="http://127.0.0.1:5000/upload_data" method="POST" enctype="multipart/form-data" name="form">
+                            <form>
                                 <div class="form-group">
                                     <input type="file" class="form-control-file" name="CSVGoods" id="inputGoodsTable">
                                 </div>
                                 <button type="submit" class="btn btn-primary" id="btn-submit">Отправить</button>
                             </form>
                         </div>
-                        <hr>
                     </div>
                 </div>
-                <div class="row disabled">
-                    <div class="col-lg-12">
-                        <h6 class="step-title">Шаг 2. Выберите цвета для грузов</h6>
-                        <div id="step-2-content"></div>
-                        <hr>
+                <div id="edit-interface-wrapper" class="hidden">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <hr>
+                            <h6 class="step-title" onclick="toggleContentVisibility()">Настройки цветов для грузов
+                                    <i class="fas fa-caret-down"></i>
+                            </h6>
+                            <div id="edit-color" class="hidden">
+                                
+                            </div>
+                            <hr>
+                        </div>
                     </div>
-                </div>
-                <div class="row disabled">
-                    <div class="col-lg-12">
-                        <h6 class="step-title">Шаг 3. Настройте линейный масштаб</h6>
-                        <div class="" id="step-3-content"></div>
-                        <hr>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <h6 class="step-title" onclick="toggleContentVisibility()">Настройки линейного масштаба
+                                    <i class="fas fa-caret-down"></i>
+                            </h6>
+                            <div class="hidden" id="edit-width">
+                                <p>Здесь буду настройки толщины линий</p>
+                            </div>
+                            <!-- <hr> -->
+                        </div>
                     </div>
+                    <!-- <div class="row">
+                        <div class="col-lg-12">
+                            <button type="button" class="btn btn-success">Перерисовать</button>
+                        </div>
+                    </div> -->
                 </div>
-                <div class="row">
-                    <div class="col-lg-12">
-                        <button type="button" class="btn btn-success disabled">Построить карту</button>
-                    </div>
-                </div>
+            </div>
+        </div>
+
+        <div id="edit-interface-wrapper">
+            <div class="container">
+                
             </div>
         </div>
 
@@ -72,24 +88,25 @@
             <div id="greeting-panel">
                 <h6>Подождите, карта загружается...</h6>
             </div>
+            <div id="loading-panel" class="hidden">Подождите, идет обработка данных...</div>
         </div>
 
-        <!-- JS Libraries -->
-        <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.js'></script>
-        <script src="https://d3js.org/d3.v5.min.js"></script>
-        <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css' rel='stylesheet' />
-        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-            crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-            crossorigin="anonymous"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-            crossorigin="anonymous"></script>
-
-
-        <!-- My Scripts -->
-        <script src='js/tools.js'></script>
-        <script src='js/app.js?asas'></script>
-
     </body>
+
+    <!-- JS Libraries -->
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.js'></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css' rel='stylesheet' />
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+
+    <!-- My Scripts -->
+    <script src='js/tools.js'></script>
+    <script src='js/app.js?asas'></script>
 
 </html>
