@@ -24,7 +24,7 @@
 
         // store server url
         // const url = 'http://127.0.0.1:5000/upload_data';
-        const url = 'http://yasevplaton.pythonanywhere.com/upload_data';
+        const url = 'https://yasevplaton.pythonanywhere.com/upload_data';
 
         var goodsTable;
         // add click listener to submit button
