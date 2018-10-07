@@ -23,7 +23,10 @@
         const editInterface = document.getElementById('edit-interface-wrapper');
 
         // store server url
+        // localhost url for testing
         // const url = 'http://127.0.0.1:5000/upload_data';
+
+        // pythonanywhere url for production
         const url = 'https://yasevplaton.pythonanywhere.com/upload_data';
 
         var goodsTable;
@@ -36,7 +39,7 @@
                     return;
                 }
             }
-
+            
             loadingPanel.classList.remove('hidden');
             fetch(url, {
                 method: 'POST',
