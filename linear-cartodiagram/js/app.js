@@ -29,27 +29,42 @@
         // pythonanywhere url for production
         const url = 'https://yasevplaton.pythonanywhere.com/upload_data';
 
+        // initialize variable to store input file
         var goodsTable;
+
         // add click listener to submit button
         buttonSubmit.addEventListener('click', (e) => {
+            // prevent default submit action
             e.preventDefault();
 
+            // if we've already have input file
              if (goodsTable) {
+                //  compare its name with name of current input file
                 if (inputFileElement.files[0].name = goodsTable.name) {
+                    // if names are same don't do anything
                     return;
                 }
             }
             
+            // hide loading panel
             loadingPanel.classList.remove('hidden');
+
+            // request edges
             fetch(url, {
                 method: 'POST',
                 body: inputFileElement.files[0]
             }).then(
                 response => response.json()
             ).then(
+
+                // if everything is good
                 edges => {
                     goodsTable = inputFileElement.files[0];
+
+                    // request nodes
                     fetch('data/nodes4326.geojson?ass=' + Math.random()).then(response => response.json()).then(nodes => {
+
+                        // show edit interface
                         loadingPanel.classList.add('hidden');
                         editInterface.classList.remove('hidden');
 
