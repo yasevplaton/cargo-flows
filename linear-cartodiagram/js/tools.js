@@ -1,9 +1,3 @@
-
-// function to prevent submit action when user clicks on button
-function preventDefaultSubmit(event) {
-    event.preventDefault();
-}
-
 // function to toggle edit content visibility
 function toggleContentVisibility(e) {
     // console.log(e.target);

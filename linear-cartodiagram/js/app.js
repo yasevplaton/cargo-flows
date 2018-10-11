@@ -1,13 +1,14 @@
-(() => {
-    // get access mapbox api
+onLoad = () => {
+
+    // get access to mapbox api
     mapboxgl.accessToken = 'pk.eyJ1IjoieWFzZXZwbGF0b24iLCJhIjoiY2poaTJrc29jMDF0YzM2cDU1ZnM1c2xoMiJ9.FhmWdHG7ar14dQv1Aoqx4A';
 
     var map = new mapboxgl.Map({
-        container: 'map', // container id
-        style: 'mapbox://styles/mapbox/dark-v9', // tiles location
-        // style: 'https://maps.tilehosting.com/styles/darkmatter/style.json?key=9jsySrA6E6EKeAPy7tod',
-        center: [37.64, 55.75], // starting position [lng, lat]
-        zoom: 10 // starting zoom
+        container: 'map',
+        style: 'mapbox://styles/mapbox/dark-v9', // mapbox tiles location
+        // style: 'https://maps.tilehosting.com/styles/darkmatter/style.json?key=9jsySrA6E6EKeAPy7tod', // tiles from tilehosting.com
+        center: [37.64, 55.75],
+        zoom: 10
     });
 
     map.on('load', () => {
@@ -46,7 +47,7 @@
                 }
             }
             
-            // hide loading panel
+            // show loading panel
             loadingPanel.classList.remove('hidden');
 
             // request edges
@@ -64,12 +65,14 @@
                     // request nodes
                     fetch('data/nodes4326.geojson?ass=' + Math.random()).then(response => response.json()).then(nodes => {
 
-                        // show edit interface
+                        // hide loading panel
                         loadingPanel.classList.add('hidden');
+
+                        // show edit interface
                         editInterface.classList.remove('hidden');
 
                         // set constants for some properties
-                        const widthArray = [0, 2, 6, 10];
+                        const widthArray = [0, 2, 6, 15];
                         const colorsArray = { "chocolate": '#661a00', "bananas": '#ffff00', "oranges": '#ff751a' };
                         const origLineWidth = 2;
 
@@ -178,4 +181,4 @@
         });
 
     });
-})();
+};
