@@ -3,16 +3,60 @@ function toggleContentVisibility(e) {
     // console.log(e.target);
 }
 
+// function to get random color
+function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
+// function to get goods types
+function getGoodsTypes(edges) {
+    let goodsTypes = [];
+
+    edges.features.forEach(edge => {
+        let goodsType = edge.properties.type;
+        if (goodsTypes.indexOf(goodsType) === -1) {
+            goodsTypes.push(goodsType);
+        }
+    });
+
+    return goodsTypes;
+}
+
+// function to get random colors array for different types of goods
+function getRandomGoodsColorArray(goodsTypes) {
+
+    let randomGoodsColorArray = [];
+    let idCounter = 0;
+
+    goodsTypes.forEach(goodsType => {
+        randomGoodsColorArray.push({
+            id: idCounter,
+            type: goodsType,
+            color: getRandomColor()
+        });
+        idCounter += 1;
+    });
+
+    return randomGoodsColorArray;
+
+}
+
 // function to add colors to edges
-function addColors(edges, colors) {
+function addColors(edges, colorArray) {
     edges.features.forEach(f => {
-        if (f.properties.type === "chocolate") {
-            f.properties.color = colors.chocolate;
-        } else if (f.properties.type === "bananas") {
-            f.properties.color = colors.bananas;
-        } else if (f.properties.type === "oranges") {
-            f.properties.color = colors.oranges;
-        };
+
+        let goodsType = f.properties.type;
+
+        colorArray.forEach(item => {
+            if (item.type === goodsType) {
+                f.properties.color = item.color;
+            }
+        });
     });
 }
 
