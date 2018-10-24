@@ -191,3 +191,35 @@ function calculateNodeRadius(edges, origLines, nodeID) {
 
     return nodeRadius;
 }
+
+
+/* 
+
+FUNCTIONS FOR EDIT INTERFACE
+
+*/
+
+function createColorTable(el, goodsColorArray) {
+    let table = document.createElement('table');
+    table.classList.add('table');
+    el.appendChild(table);
+    let tbody = document.createElement('tbody');
+    table.appendChild(tbody);
+
+    goodsColorArray.forEach(good => {
+        let row = document.createElement('tr');
+        let colId = document.createElement('td');
+            colId.innerHTML = good.id;
+        let colType = document.createElement('td');
+            colType.innerHTML = good.type;
+        let colColor = document.createElement('td');
+            colColor.innerHTML = good.color;
+
+        let cols = [colId, colType, colColor];
+        cols.forEach(col => {
+            row.appendChild(col);
+        });
+
+        tbody.appendChild(row);
+    });
+}
