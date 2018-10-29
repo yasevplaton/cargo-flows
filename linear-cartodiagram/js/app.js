@@ -90,9 +90,6 @@ onLoad = () => {
                 // get random colors for goods types
                 let goodsColorArray = getRandomGoodsColorArray(goodsTypes);
 
-                // create color table
-                let colorTable = createColorTable(editColorInterface, goodsColorArray);
-
                 // create a blank object for storage original lines
                 const origLines = { "type": 'FeatureCollection', features: [] };
 
@@ -128,24 +125,11 @@ onLoad = () => {
                     node.properties.radius = calculateNodeRadius(edges, origLines, node.properties.OBJECTID) + 2;
                 });
 
+                renderEdges(map, edges);
+
                 // set sources for map
-                map.addSource("edges", { type: "geojson", data: edges });
                 map.addSource("nodes", { type: "geojson", data: nodes });
                 map.addSource("lines", { type: "geojson", data: origLines });
-
-
-                // add layers
-                map.addLayer({
-                    "id": "edges",
-                    "source": "edges",
-                    "type": "line",
-                    "paint": {
-                        'line-color': ['get', 'color'],
-                        "line-opacity": 1,
-                        'line-offset': ['get', 'offset'],
-                        "line-width": ['get', 'width']
-                    }
-                });
 
                 map.addLayer({
                     "id": "lines",
@@ -190,6 +174,12 @@ onLoad = () => {
                         "text-halo-blur": 1
                     }
                 });
+
+                // create color table
+                createColorTable(editColorInterface, goodsColorArray, edges, map);
+
+
+
             }).catch(error => console.log("Error with the loading of data:", error));
 
         });

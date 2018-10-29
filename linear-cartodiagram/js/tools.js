@@ -193,21 +193,46 @@ function calculateNodeRadius(edges, origLines, nodeID) {
 }
 
 
+function renderEdges(map, edges) {
+
+    if (map.getSource('edges')) {
+        map.getSource('edges').setData(edges);
+
+    } else {
+
+        map.addSource("edges", { type: "geojson", data: edges });
+
+        // add edges layer
+        map.addLayer({
+            "id": "edges",
+            "source": "edges",
+            "type": "line",
+            "paint": {
+                'line-color': ['get', 'color'],
+                "line-opacity": 1,
+                'line-offset': ['get', 'offset'],
+                "line-width": ['get', 'width']
+            }
+        });
+    }
+}
+
 /* 
 
 FUNCTIONS FOR EDIT INTERFACE
 
 */
 
-function createColorBox(color) {
+function createColorBox(good) {
     let colorBox = document.createElement('span');
     colorBox.classList.add('color-box');
-    colorBox.style.backgroundColor = color;
+    colorBox.style.backgroundColor = good.color;
+    colorBox.id = good.id;
 
     return colorBox;
 }
 
-function createColorTable(el, goodsColorArray) {
+function createColorTable(el, goodsColorArray, edges, map) {
 
     let table = document.createElement('table');
     table.classList.add('table');
@@ -218,22 +243,45 @@ function createColorTable(el, goodsColorArray) {
     goodsColorArray.forEach(good => {
         let row = document.createElement('tr');
         let colId = document.createElement('td');
-            colId.innerHTML = good.id;
+        colId.innerHTML = good.id;
         let colType = document.createElement('td');
-            colType.innerHTML = good.type;
-        
+        colType.innerHTML = good.type;
+
         let colColor = document.createElement('td');
-        let colorBox = createColorBox(good.color);
+        let colorBox = createColorBox(good);
         colColor.appendChild(colorBox);
 
+        bindColorPicker(colorBox, goodsColorArray, edges, map);
 
         let cols = [colId, colType, colColor];
+
         cols.forEach(col => {
             row.appendChild(col);
         });
 
         tbody.appendChild(row);
     });
+}
 
-    return table;
+function bindColorPicker(colorBox, goodsColorArray, edges, map) {
+    var hueb = new Huebee(colorBox, {
+        setText: false,
+        notation: 'hex'
+    });
+
+    hueb.on('change', function (color) {
+        let goodID = +this.anchor.id;
+        changeGoodColor(goodsColorArray, goodID, color);
+        addColors(edges, goodsColorArray);
+        renderEdges(map, edges);
+    });
+
+}
+
+function changeGoodColor(goodsColorArray, id, color) {
+    goodsColorArray.forEach(good => {
+        if (good.id === id) {
+            good.color = color;
+        };
+    });
 }
