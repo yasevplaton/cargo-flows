@@ -199,7 +199,16 @@ FUNCTIONS FOR EDIT INTERFACE
 
 */
 
+function createColorBox(color) {
+    let colorBox = document.createElement('span');
+    colorBox.classList.add('color-box');
+    colorBox.style.backgroundColor = color;
+
+    return colorBox;
+}
+
 function createColorTable(el, goodsColorArray) {
+
     let table = document.createElement('table');
     table.classList.add('table');
     el.appendChild(table);
@@ -212,8 +221,11 @@ function createColorTable(el, goodsColorArray) {
             colId.innerHTML = good.id;
         let colType = document.createElement('td');
             colType.innerHTML = good.type;
+        
         let colColor = document.createElement('td');
-            colColor.innerHTML = good.color;
+        let colorBox = createColorBox(good.color);
+        colColor.appendChild(colorBox);
+
 
         let cols = [colId, colType, colColor];
         cols.forEach(col => {
@@ -222,4 +234,6 @@ function createColorTable(el, goodsColorArray) {
 
         tbody.appendChild(row);
     });
+
+    return table;
 }

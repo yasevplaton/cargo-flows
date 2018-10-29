@@ -67,3 +67,9 @@ body {
 .hidden {
     display: none;
 }
+
+.color-box {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+}
