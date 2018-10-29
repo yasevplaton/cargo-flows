@@ -23,6 +23,7 @@ onLoad = () => {
         const loadingPanel = document.getElementById('loading-panel');
         const editInterface = document.getElementById('edit-interface-wrapper');
         const editColorInterface = document.getElementById('edit-color');
+        const colorTableBody = document.getElementById('color-table-body');
         const editWidthInterface = document.getElementById('edit-width');
 
         // store server url
@@ -176,7 +177,7 @@ onLoad = () => {
                 });
 
                 // create color table
-                createColorTable(editColorInterface, goodsColorArray, edges, map);
+                createColorTable(colorTableBody, goodsColorArray, edges, map);
 
 
 

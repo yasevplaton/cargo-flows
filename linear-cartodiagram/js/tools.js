@@ -236,13 +236,7 @@ function createColorBox(good) {
 }
 
 // function to create color table
-function createColorTable(el, goodsColorArray, edges, map) {
-
-    let table = document.createElement('table');
-    table.classList.add('table');
-    el.appendChild(table);
-    let tbody = document.createElement('tbody');
-    table.appendChild(tbody);
+function createColorTable(tableBody, goodsColorArray, edges, map) {
 
     goodsColorArray.forEach(good => {
         let row = document.createElement('tr');
@@ -263,7 +257,7 @@ function createColorTable(el, goodsColorArray, edges, map) {
             row.appendChild(col);
         });
 
-        tbody.appendChild(row);
+        tableBody.appendChild(row);
     });
 }
 

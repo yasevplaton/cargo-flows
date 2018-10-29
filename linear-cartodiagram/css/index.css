@@ -90,4 +90,13 @@ body {
 .huebee__cursor {
     width: 20px;
     height: 20px;
-  }
+}
+
+.borderless td {
+    border: none;
+}
+
+.table thead th {
+    border: none;
+    border-bottom: 1px dotted #e0e0e0;
+}
