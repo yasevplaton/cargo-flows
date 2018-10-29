@@ -1,7 +1,9 @@
-// function to toggle edit content visibility
-function toggleContentVisibility(e) {
-    // console.log(e.target);
-}
+/* 
+
+FUNCTIONS FOR TREATMENT OF MAP FEATURES
+
+*/
+
 
 // function to get random color
 function getRandomColor() {
@@ -192,7 +194,7 @@ function calculateNodeRadius(edges, origLines, nodeID) {
     return nodeRadius;
 }
 
-
+// function to render edges
 function renderEdges(map, edges) {
 
     if (map.getSource('edges')) {
@@ -223,6 +225,7 @@ FUNCTIONS FOR EDIT INTERFACE
 
 */
 
+// function to create color box
 function createColorBox(good) {
     let colorBox = document.createElement('span');
     colorBox.classList.add('color-box');
@@ -232,6 +235,7 @@ function createColorBox(good) {
     return colorBox;
 }
 
+// function to create color table
 function createColorTable(el, goodsColorArray, edges, map) {
 
     let table = document.createElement('table');
@@ -263,6 +267,7 @@ function createColorTable(el, goodsColorArray, edges, map) {
     });
 }
 
+// function to bind color picker and change color handler
 function bindColorPicker(colorBox, goodsColorArray, edges, map) {
     var hueb = new Huebee(colorBox, {
         setText: false,
@@ -278,6 +283,7 @@ function bindColorPicker(colorBox, goodsColorArray, edges, map) {
 
 }
 
+// function to change color in array of goods
 function changeGoodColor(goodsColorArray, id, color) {
     goodsColorArray.forEach(good => {
         if (good.id === id) {
