@@ -55,7 +55,7 @@ body {
     font-weight: 900;
 }
 
-.step-title:hover {
+#edit-interface-wrapper .step-title:hover {
     cursor: pointer;
 }
 
