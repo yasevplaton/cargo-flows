@@ -14,8 +14,8 @@ onLoad = () => {
     map.on('load', () => {
 
         // remove greeting panel and make interface elements visible
-        d3.select("#greeting-panel").remove();
-        d3.select("#download-data-interface-wrapper").style('visibility', 'visible');
+        document.getElementById("greeting-panel").remove();
+        document.getElementById("download-data-interface-wrapper").style.visibility = 'visible';
 
         // get access to input element and submit button
         const inputFileElement = document.getElementById('inputGoodsTable');
