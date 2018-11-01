@@ -22,9 +22,9 @@ onLoad = () => {
         const buttonSubmit = document.getElementById('btn-submit');
         const loadingPanel = document.getElementById('loading-panel');
         const editInterface = document.getElementById('edit-interface-wrapper');
-        const editColorInterface = document.getElementById('edit-color');
+        // const editColorInterface = document.getElementById('edit-color');
         const colorTableBody = document.getElementById('color-table-body');
-        const editWidthInterface = document.getElementById('edit-width');
+        // const editWidthInterface = document.getElementById('edit-width');
 
         // store server url
         // localhost url for testing
@@ -81,16 +81,19 @@ onLoad = () => {
                 // show edit interface
                 editInterface.classList.remove('hidden');
 
-                // set constants for some properties
-                // const widthArray = [0, 2, 4, 8];
+                // set original line width
                 const origLineWidth = 2;
 
+                // set default min and max width for edges
                 let widthMin = 2, widthMax = 10;
 
+                // get edges width array
                 let widthArray = getWidthArray(widthMin, widthMax);
 
+                // get flow values
                 let flowValues = getFlowValues(edges);
 
+                // get marks of classes for flow values
                 let jenks = classifyFlowValuesArray(flowValues, 4);
 
                 // calculate width of edges
@@ -134,6 +137,7 @@ onLoad = () => {
                     node.properties.radius = calculateNodeRadius(edges, origLines, node.properties.OBJECTID) + 2;
                 });
 
+                // render edges
                 renderEdges(map, edges);
 
                 // set sources for map

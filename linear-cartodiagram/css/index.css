@@ -100,3 +100,17 @@ body {
     border: none;
     border-bottom: 1px dotted #e0e0e0;
 }
+
+.min-width-input {
+    width: 40%;
+    float: left;
+}
+
+.max-width-input {
+    width: 40%;
+    float: right;
+}
+
+.form-row {
+    margin-top: 5px;
+}
