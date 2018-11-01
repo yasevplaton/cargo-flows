@@ -58,14 +58,14 @@ onLoad = () => {
             Promise.all([
 
                 // edges for production
-                // fetch(url, {
-                //     method: 'POST',
-                //     body: inputFileElement.files[0]
-                // }).then(response => response.json()),
+                fetch(url, {
+                    method: 'POST',
+                    body: inputFileElement.files[0]
+                }).then(response => response.json()),
 
                 // edges for testing
-                fetch('data/edges4326.geojson?ass=' + Math.random())
-                    .then(response => response.json()),
+                // fetch('data/edges4326.geojson?ass=' + Math.random())
+                //     .then(response => response.json()),
 
                 // nodes
                 fetch('data/nodes4326.geojson?ass=' + Math.random())
@@ -89,14 +89,9 @@ onLoad = () => {
 
                 let widthArray = getWidthArray(widthMin, widthMax);
 
-                console.log(widthArray);
-
                 let flowValues = getFlowValues(edges);
 
                 let jenks = classifyFlowValuesArray(flowValues, 4);
-
-                console.log(jenks);
-
 
                 // calculate width of edges
                 calculateWidth(edges, widthArray, jenks);
