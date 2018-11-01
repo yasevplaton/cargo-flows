@@ -58,14 +58,14 @@ onLoad = () => {
             Promise.all([
 
                 // edges for production
-                fetch(url, {
-                    method: 'POST',
-                    body: inputFileElement.files[0]
-                }).then(response => response.json()),
+                // fetch(url, {
+                //     method: 'POST',
+                //     body: inputFileElement.files[0]
+                // }).then(response => response.json()),
 
                 // edges for testing
-                // fetch('data/edges4326.geojson?ass=' + Math.random())
-                //     .then(response => response.json()),
+                fetch('data/edges4326.geojson?ass=' + Math.random())
+                    .then(response => response.json()),
 
                 // nodes
                 fetch('data/nodes4326.geojson?ass=' + Math.random())
@@ -82,8 +82,27 @@ onLoad = () => {
                 editInterface.classList.remove('hidden');
 
                 // set constants for some properties
-                const widthArray = [0, 2, 4, 8];
+                // const widthArray = [0, 2, 4, 8];
                 const origLineWidth = 2;
+
+                let widthMin = 2, widthMax = 10;
+
+                let widthArray = getWidthArray(widthMin, widthMax);
+
+                console.log(widthArray);
+
+                let flowValues = getFlowValues(edges);
+
+                let jenks = classifyFlowValuesArray(flowValues, 4);
+
+                console.log(jenks);
+
+
+                // calculate width of edges
+                calculateWidth(edges, widthArray, jenks);
+
+                // calculate offset of edges
+                calculateOffset(edges, origLineWidth);
 
                 // get goods types
                 let goodsTypes = getGoodsTypes(edges);
@@ -96,12 +115,6 @@ onLoad = () => {
 
                 // add colors to edges
                 addColors(edges, goodsColorArray);
-
-                // calculate width of edges
-                calculateWidth(edges, widthArray);
-
-                // calculate offset of edges
-                calculateOffset(edges, origLineWidth);
 
                 // collect ids of lines
                 var linesIDArray = collectLinesIDs(edges);

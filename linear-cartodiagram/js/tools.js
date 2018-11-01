@@ -4,6 +4,67 @@ FUNCTIONS FOR TREATMENT OF MAP FEATURES
 
 */
 
+function getFlowValues(edges) {
+    let flowValues = [];
+
+    edges.features.forEach(edge => {
+        let value = edge.properties.value;
+        if (flowValues.indexOf(value) === -1) {
+            flowValues.push(value);
+        }
+    });
+
+    return flowValues;
+}
+
+function classifyFlowValuesArray(flowValuesArray, classNum) {
+    let statSerie = new geostats(flowValuesArray);
+
+    let jenks = statSerie.getClassJenks(classNum);
+
+    return jenks;
+}
+
+function getWidthArray(widthMin, widthMax) {
+
+    let interpolator = d3.interpolateRound(widthMin, widthMax);
+
+    let widthArray = [widthMin, interpolator(0.333), interpolator(0.666), widthMax];
+
+    return widthArray;
+}
+
+// function to calculate width of edge
+function calculateWidth(edges, widthArray, jenks) {
+    edges.features.forEach(f => {
+        if (f.properties.value === 0) {
+            f.properties.width = 0;
+        } else if (f.properties.value > 0 && f.properties.value < jenks[1]) {
+            f.properties.width = widthArray[0];
+        } else if (f.properties.value >= jenks[1] && f.properties.value < jenks[2]) {
+            f.properties.width = widthArray[1];
+        } else if (f.properties.value >= jenks[2] && f.properties.value < jenks[3]) {
+            f.properties.width = widthArray[2];
+        } else if (f.properties.value >= jenks[3]) {
+            f.properties.width = widthArray[3];
+        }
+    });
+}
+
+// function to calculate offset of edge
+function calculateOffset(edges, origLineWidth) {
+    for (var i = 0; i < edges.features.length; i++) {
+        if (edges.features[i].properties.order === 0) {
+            edges.features[i].properties.offset = (origLineWidth / 2) + (edges.features[i].properties.width / 2);
+        } else {
+            edges.features[i].properties.offset = edges.features[i - 1].properties.offset +
+                (edges.features[i - 1].properties.width / 2) + (edges.features[i].properties.width / 2);
+        }
+    };
+
+}
+
+
 
 // function to get random color
 function getRandomColor() {
@@ -60,34 +121,6 @@ function addColors(edges, colorArray) {
             }
         });
     });
-}
-
-// function to calculate width of edge
-function calculateWidth(edges, width) {
-    edges.features.forEach(f => {
-        if (f.properties.value === 0) {
-            f.properties.width = width[0];
-        } else if (f.properties.value > 0 && f.properties.value < 5440) {
-            f.properties.width = width[1];
-        } else if (f.properties.value >= 5440 && f.properties.value < 10880) {
-            f.properties.width = width[2];
-        } else if (f.properties.value >= 10880) {
-            f.properties.width = width[3];
-        }
-    });
-}
-
-// function to calculate offset of edge
-function calculateOffset(edges, origLineWidth) {
-    for (var i = 0; i < edges.features.length; i++) {
-        if (edges.features[i].properties.order === 0) {
-            edges.features[i].properties.offset = (origLineWidth / 2) + (edges.features[i].properties.width / 2);
-        } else {
-            edges.features[i].properties.offset = edges.features[i - 1].properties.offset +
-                (edges.features[i - 1].properties.width / 2) + (edges.features[i].properties.width / 2);
-        }
-    };
-
 }
 
 // function to collect IDs of original lines
