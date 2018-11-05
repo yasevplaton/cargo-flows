@@ -114,8 +114,14 @@ onLoad = () => {
                 // fill original lines object with data
                 fillOrigLines(linesIDArray, origLines, edges);
 
+                // set default values for width of edges
+                let minWidthDefault = 2, maxWidthDefault = 10;
+
+                minWidthInput.value = minWidthDefault;
+                maxWidthInput.value = maxWidthDefault;
+
                 // get width array
-                widthArray = getWidthArray(+minWidthInput.value, +maxWidthInput.value);
+                widthArray = getWidthArray(minWidthDefault, maxWidthDefault);
 
                 // calculate width for edges
                 calculateWidth(edges, widthArray, jenks);
@@ -142,10 +148,11 @@ onLoad = () => {
                 createColorTable(colorTableBody, goodsColorArray, edges, map);
 
                 // create width slider
-                createSlider(widthSlider);
+                createSlider(widthSlider, minWidthDefault, maxWidthDefault, 30);
 
+                // initialize render counter
                 let startRenderCounter = 0;
-
+                
                 // bind update listener to slider
                 widthSlider.noUiSlider.on('update', function (values, handle) {
 

@@ -425,13 +425,13 @@ function changeGoodColor(goodsColorArray, id, color) {
 }
 
 // function to set up width slider
-function createSlider(el) {
+function createSlider(el, minWidthDefault, maxWidthDefault, maxWidth) {
     noUiSlider.create(el, {
-        start: [2, 10],
+        start: [minWidthDefault, maxWidthDefault],
         connect: true,
         range: {
-            'min': [2, 1],
-            'max': [30]
+            'min': [minWidthDefault, 1],
+            'max': [maxWidth]
         }
     });
 }
