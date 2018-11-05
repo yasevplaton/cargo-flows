@@ -154,12 +154,12 @@ function getLineGeometry(edges, lineID) {
 }
 
 // function to collect edges that belong to the same original line
-function collectSameLineEdges(edges, lineID) {
+function collectSameLineEdges(edges, line) {
 
     var sameLineEdges = [];
 
     edges.features.forEach(e => {
-        if (e.properties.ID_line === lineID) {
+        if (e.properties.ID_line === line.properties.lineID) {
             sameLineEdges.push(e);
         }
     })
@@ -168,9 +168,9 @@ function collectSameLineEdges(edges, lineID) {
 }
 
 // function to calculate width of the widest side of specific original line
-function calculateSumWidth(edges, lineID) {
+function calculateSumWidth(edges, line) {
 
-    var sameLineEdges = collectSameLineEdges(edges, lineID);
+    let sameLineEdges = collectSameLineEdges(edges, line);
     let sumWidthFirstSide = 0;
     let sumWidthSecondSide = 0;
 
@@ -200,6 +200,13 @@ function findAdjacentLines(edges, nodeID) {
     return adjacentLines;
 }
 
+// function to fill adjacent lines attribute to nodes
+function fillAdjacentLinesAttr(nodes, edges) {
+    nodes.features.forEach(node => {
+        node.properties.adjacentLines = findAdjacentLines(edges, node.properties.OBJECTID);
+    });
+}
+
 // function to calculate the maximum width of the adjacent line
 function calculateMaxWidth(origLines, adjacentLines) {
 
@@ -218,10 +225,36 @@ function calculateMaxWidth(origLines, adjacentLines) {
     return maxWidth;
 }
 
-// function to calculate node radius
-function calculateNodeRadius(edges, origLines, nodeID) {
+// function to fill orig lines with attributes
+function fillOrigLines(linesIDArray, origLines, edges) {
+    linesIDArray.forEach(id => {
 
-    var adjacentLines = findAdjacentLines(edges, nodeID);
+        var origLine = {
+            properties: {
+                lineID: id
+            },
+            geometry: getLineGeometry(edges, id)
+        };
+
+        origLines.features.push(origLine);
+    });
+}
+
+// function to add total width of line to original lines
+function addSumWidthAttr(origLines, edges, origLineWidth) {
+
+    origLines.features.forEach(line => {
+        let sumWidth = calculateSumWidth(edges, line) + (origLineWidth / 2);
+
+        line.properties.sumWidth = sumWidth;
+    });
+}
+
+
+// function to calculate node radius
+function calculateNodeRadius(origLines, node) {
+
+    var adjacentLines = node.properties.adjacentLines;
     var maxWidth = calculateMaxWidth(origLines, adjacentLines);
     var nodeRadius = maxWidth;
 
@@ -248,6 +281,77 @@ function renderEdges(map, edges) {
                 "line-opacity": 1,
                 'line-offset': ['get', 'offset'],
                 "line-width": ['get', 'width']
+            }
+        });
+    }
+}
+
+// function to render nodes
+function renderNodes(map, nodes) {
+
+    if (map.getSource('nodes')) {
+        map.getSource('nodes').setData(nodes);
+
+    } else {
+
+        map.addSource("nodes", { type: "geojson", data: nodes });
+
+        // add nodes layer
+        map.addLayer({
+            "id": "nodes",
+            "source": "nodes",
+            "type": "circle",
+            "paint": {
+                "circle-color": "#ffffff",
+                "circle-radius": ['get', 'radius'],
+                "circle-stroke-color": "#000000",
+                "circle-stroke-width": 2
+            }
+        });
+
+        // add nodes labels
+        map.addLayer({
+            "id": "nodes-label",
+            "source": "nodes",
+            "type": "symbol",
+            "layout": {
+                "text-font": ["PT Sans Narrow Bold"],
+                "text-field": "{NAME}",
+                "text-size": ['get', 'radius'],
+                "text-offset": [1, 0]
+            },
+            "paint": {
+                "text-color": "#000000",
+                "text-halo-color": "#ffffff",
+                "text-halo-width": 1,
+                "text-halo-blur": 1
+            }
+        });
+    }
+}
+
+// function to render original lines
+function renderOrigLines(map, origLines, origLineWidth) {
+
+    if (map.getSource('lines')) {
+        map.getSource('lines').setData(origLines);
+
+    } else {
+
+        map.addSource("lines", { type: "geojson", data: origLines });
+
+        // add orig lines layer
+        map.addLayer({
+            "id": "lines",
+            "source": "lines",
+            "type": "line",
+            "paint": {
+                'line-color': "#ffffff",
+                "line-opacity": 1,
+                "line-width": origLineWidth
+            },
+            "layout": {
+                "line-cap": "round"
             }
         });
     }
@@ -317,5 +421,17 @@ function changeGoodColor(goodsColorArray, id, color) {
         if (good.id === id) {
             good.color = color;
         };
+    });
+}
+
+// function to set up width slider
+function createSlider(el) {
+    noUiSlider.create(el, {
+        start: [2, 10],
+        connect: true,
+        range: {
+            'min': [2, 1],
+            'max': [30]
+        }
     });
 }

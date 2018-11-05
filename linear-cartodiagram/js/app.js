@@ -8,7 +8,7 @@ onLoad = () => {
         style: 'mapbox://styles/mapbox/dark-v9', // mapbox tiles location
         // style: 'https://maps.tilehosting.com/styles/darkmatter/style.json?key=9jsySrA6E6EKeAPy7tod', // tiles from tilehosting.com
         center: [37.64, 55.75],
-        zoom: 10
+        zoom: 8
     });
 
     map.on('load', () => {
@@ -25,6 +25,9 @@ onLoad = () => {
         // const editColorInterface = document.getElementById('edit-color');
         const colorTableBody = document.getElementById('color-table-body');
         // const editWidthInterface = document.getElementById('edit-width');
+        const widthSlider = document.getElementById('widthSlider');
+        const minWidthInput = document.getElementById('min-width-input');
+        const maxWidthInput = document.getElementById('max-width-input');
 
         // store server url
         // localhost url for testing
@@ -84,23 +87,11 @@ onLoad = () => {
                 // set original line width
                 const origLineWidth = 2;
 
-                // set default min and max width for edges
-                let widthMin = 2, widthMax = 10;
-
-                // get edges width array
-                let widthArray = getWidthArray(widthMin, widthMax);
-
                 // get flow values
                 let flowValues = getFlowValues(edges);
 
                 // get marks of classes for flow values
                 let jenks = classifyFlowValuesArray(flowValues, 4);
-
-                // calculate width of edges
-                calculateWidth(edges, widthArray, jenks);
-
-                // calculate offset of edges
-                calculateOffset(edges, origLineWidth);
 
                 // get goods types
                 let goodsTypes = getGoodsTypes(edges);
@@ -109,7 +100,7 @@ onLoad = () => {
                 let goodsColorArray = getRandomGoodsColorArray(goodsTypes);
 
                 // create a blank object for storage original lines
-                const origLines = { "type": 'FeatureCollection', features: [] };
+                let origLines = { "type": 'FeatureCollection', features: [] };
 
                 // add colors to edges
                 addColors(edges, goodsColorArray);
@@ -117,81 +108,98 @@ onLoad = () => {
                 // collect ids of lines
                 var linesIDArray = collectLinesIDs(edges);
 
-                // calculate width of the widest side of each band in pixels and add to specific property in origLine object
-                linesIDArray.forEach(id => {
-                    var sumWidth = calculateSumWidth(edges, id) + (origLineWidth / 2);
+                // fill adjacent lines attribute to nodes
+                fillAdjacentLinesAttr(nodes, edges);
 
-                    var origLine = {
-                        properties: {
-                            lineID: id,
-                            sumWidth: sumWidth
-                        },
-                        geometry: getLineGeometry(edges, id)
-                    };
+                // fill original lines object with data
+                fillOrigLines(linesIDArray, origLines, edges);
 
-                    origLines.features.push(origLine);
-                });
+                // get width array
+                widthArray = getWidthArray(+minWidthInput.value, +maxWidthInput.value);
 
-                // calculate adaptive radius of node
+                // calculate width for edges
+                calculateWidth(edges, widthArray, jenks);
+
+                // calculate offset for edges
+                calculateOffset(edges, origLineWidth);
+
+                // add attribute with total width of band to original lines
+                addSumWidthAttr(origLines, edges, origLineWidth);
+
+                // calculate node radius
                 nodes.features.forEach(node => {
-                    node.properties.radius = calculateNodeRadius(edges, origLines, node.properties.OBJECTID) + 2;
+                    node.properties.radius = calculateNodeRadius(origLines, node) + 2;
                 });
 
                 // render edges
                 renderEdges(map, edges);
-
-                // set sources for map
-                map.addSource("nodes", { type: "geojson", data: nodes });
-                map.addSource("lines", { type: "geojson", data: origLines });
-
-                map.addLayer({
-                    "id": "lines",
-                    "source": "lines",
-                    "type": "line",
-                    "paint": {
-                        'line-color': "#ffffff",
-                        "line-opacity": 1,
-                        "line-width": origLineWidth
-                    },
-                    "layout": {
-                        "line-cap": "round"
-                    }
-                });
-
-                map.addLayer({
-                    "id": "nodes",
-                    "source": "nodes",
-                    "type": "circle",
-                    "paint": {
-                        "circle-color": "#ffffff",
-                        "circle-radius": ['get', 'radius'],
-                        "circle-stroke-color": "#000000",
-                        "circle-stroke-width": 2
-                    }
-                });
-
-                map.addLayer({
-                    "id": "nodes-label",
-                    "source": "nodes",
-                    "type": "symbol",
-                    "layout": {
-                        "text-font": ["PT Sans Narrow Bold"],
-                        "text-field": "{NAME}",
-                        "text-size": ['get', 'radius'],
-                        "text-offset": [1, 0]
-                    },
-                    "paint": {
-                        "text-color": "#000000",
-                        "text-halo-color": "#ffffff",
-                        "text-halo-width": 1,
-                        "text-halo-blur": 1
-                    }
-                });
+                // render original lines
+                renderOrigLines(map, origLines, origLineWidth);
+                // render nodes
+                renderNodes(map, nodes);
 
                 // create color table
                 createColorTable(colorTableBody, goodsColorArray, edges, map);
 
+                // create width slider
+                createSlider(widthSlider);
 
+                let startRenderCounter = 0;
+
+                // bind update listener to slider
+                widthSlider.noUiSlider.on('update', function (values, handle) {
+
+                    if (startRenderCounter === 0 || startRenderCounter === 1) {
+                        startRenderCounter += 1;
+                        return;
+                    }
+
+                    var value = values[handle];
+
+                    if (handle) {
+                        maxWidthInput.value = Math.round(value);
+                        widthArray = getWidthArray(+minWidthInput.value, +maxWidthInput.value);
+                        calculateWidth(edges, widthArray, jenks);
+                        calculateOffset(edges, origLineWidth);
+                        addSumWidthAttr(origLines, edges, origLineWidth);
+                        nodes.features.forEach(node => {
+                            node.properties.radius = calculateNodeRadius(origLines, node) + 2;
+                        });
+                        renderEdges(map, edges);
+                        renderNodes(map, nodes);
+
+                    } else {
+                        minWidthInput.value = Math.round(value);
+                        widthArray = getWidthArray(+minWidthInput.value, +maxWidthInput.value);
+                        calculateWidth(edges, widthArray, jenks);
+                        calculateOffset(edges, origLineWidth);
+                        addSumWidthAttr(origLines, edges, origLineWidth);
+                        nodes.features.forEach(node => {
+                            node.properties.radius = calculateNodeRadius(origLines, node) + 2;
+                        });
+                        renderEdges(map, edges);
+                        renderNodes(map, nodes);
+                    }
+                });
+
+                // bind change listeners to width inputs
+                minWidthInput.addEventListener('change', function () {
+                    if (this.value > +maxWidthInput.value) {
+                        minWidthInput.value = maxWidthInput.value;
+                        widthSlider.noUiSlider.set([+maxWidthInput.value, null]);
+                    } else {
+                        widthSlider.noUiSlider.set([this.value, null]);
+                    }
+                });
+
+                maxWidthInput.addEventListener('change', function () {
+                    if (this.value < +minWidthInput.value) {
+                        maxWidthInput.value = minWidthInput.value;
+                        widthSlider.noUiSlider.set([null, +minWidthInput.value]);
+                    } else {
+                        widthSlider.noUiSlider.set([null, this.value]);
+                    }
+                });
 
             }).catch(error => console.log("Error with the loading of data:", error));
 

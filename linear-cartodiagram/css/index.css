@@ -101,16 +101,47 @@ body {
     border-bottom: 1px dotted #e0e0e0;
 }
 
-.min-width-input {
+.width-input-row {
+    margin-top: 20px;
+}
+
+.min-width-col {
+    display: flex;
     width: 40%;
+    align-items: baseline;
     float: left;
 }
 
-.max-width-input {
+.max-width-col {
+    display: flex;
     width: 40%;
+    justify-content: flex-end;
+    align-items: baseline;
     float: right;
 }
 
+.min-width-input, .max-width-input  {
+    width: 30%;
+    margin-left: 5px;
+}
+
+.width-input-prefix, .width-input-postfix {
+    color: rgb(121, 121, 121);
+}
+
+.width-input-postfix {
+    margin-left: 2px;
+}
+
+.width-input-postfix {
+    
+}
+
 .form-row {
-    margin-top: 5px;
+    margin-top: 15px;
+}
+
+.noUi-target {
+    margin-left: 15px;
+    margin-right: 15px;
 }
