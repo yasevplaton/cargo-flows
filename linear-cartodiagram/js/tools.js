@@ -273,7 +273,7 @@ function renderEdges(map, edges, goodsTypes) {
 
         // add array of layers to map (one for each type of cargo)
         goodsTypes.reverse().forEach(good => {
-            let layerTemplate = {
+            map.addLayer({
                 "id": good,
                 "source": "edges",
                 "type": "line",
@@ -284,9 +284,7 @@ function renderEdges(map, edges, goodsTypes) {
                     'line-offset': ['get', 'offset'],
                     "line-width": ['get', 'width']
                 }
-            };
-
-            map.addLayer(layerTemplate);
+            });
         });
     }
 }
