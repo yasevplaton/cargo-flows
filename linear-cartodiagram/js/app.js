@@ -61,14 +61,14 @@ onLoad = () => {
             Promise.all([
 
                 // edges for production
-                fetch(url, {
-                    method: 'POST',
-                    body: inputFileElement.files[0]
-                }).then(response => response.json()),
+                // fetch(url, {
+                //     method: 'POST',
+                //     body: inputFileElement.files[0]
+                // }).then(response => response.json()),
 
                 // edges for testing
-                // fetch('data/edges4326.geojson?ass=' + Math.random())
-                //     .then(response => response.json()),
+                fetch('data/edges4326.geojson?ass=' + Math.random())
+                    .then(response => response.json()),
 
                 // nodes
                 fetch('data/nodes4326.geojson?ass=' + Math.random())
@@ -138,7 +138,7 @@ onLoad = () => {
                 });
 
                 // render edges
-                renderEdges(map, edges);
+                renderEdges(map, edges, goodsTypes);
                 // render original lines
                 renderOrigLines(map, origLines, origLineWidth);
                 // render nodes
@@ -165,27 +165,11 @@ onLoad = () => {
 
                     if (handle) {
                         maxWidthInput.value = Math.round(value);
-                        widthArray = getWidthArray(+minWidthInput.value, +maxWidthInput.value);
-                        calculateWidth(edges, widthArray, jenks);
-                        calculateOffset(edges, origLineWidth);
-                        addSumWidthAttr(origLines, edges, origLineWidth);
-                        nodes.features.forEach(node => {
-                            node.properties.radius = calculateNodeRadius(origLines, node) + 2;
-                        });
-                        renderEdges(map, edges);
-                        renderNodes(map, nodes);
+                        updateSliderHandler();
 
                     } else {
                         minWidthInput.value = Math.round(value);
-                        widthArray = getWidthArray(+minWidthInput.value, +maxWidthInput.value);
-                        calculateWidth(edges, widthArray, jenks);
-                        calculateOffset(edges, origLineWidth);
-                        addSumWidthAttr(origLines, edges, origLineWidth);
-                        nodes.features.forEach(node => {
-                            node.properties.radius = calculateNodeRadius(origLines, node) + 2;
-                        });
-                        renderEdges(map, edges);
-                        renderNodes(map, nodes);
+                        updateSliderHandler();
                     }
                 });
 
@@ -207,6 +191,18 @@ onLoad = () => {
                         widthSlider.noUiSlider.set([null, this.value]);
                     }
                 });
+
+                function updateSliderHandler() {
+                    widthArray = getWidthArray(+minWidthInput.value, +maxWidthInput.value);
+                    calculateWidth(edges, widthArray, jenks);
+                    calculateOffset(edges, origLineWidth);
+                    addSumWidthAttr(origLines, edges, origLineWidth);
+                    nodes.features.forEach(node => {
+                        node.properties.radius = calculateNodeRadius(origLines, node) + 2;
+                    });
+                    renderEdges(map, edges, goodsTypes);
+                    renderNodes(map, nodes);
+                }
 
             }).catch(error => console.log("Error with the loading of data:", error));
 

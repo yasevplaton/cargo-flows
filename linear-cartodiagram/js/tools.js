@@ -262,7 +262,7 @@ function calculateNodeRadius(origLines, node) {
 }
 
 // function to render edges
-function renderEdges(map, edges) {
+function renderEdges(map, edges, goodsTypes) {
 
     if (map.getSource('edges')) {
         map.getSource('edges').setData(edges);
@@ -271,17 +271,22 @@ function renderEdges(map, edges) {
 
         map.addSource("edges", { type: "geojson", data: edges });
 
-        // add edges layer
-        map.addLayer({
-            "id": "edges",
-            "source": "edges",
-            "type": "line",
-            "paint": {
-                'line-color': ['get', 'color'],
-                "line-opacity": 1,
-                'line-offset': ['get', 'offset'],
-                "line-width": ['get', 'width']
-            }
+        // add array of layers to map (one for each type of cargo)
+        goodsTypes.reverse().forEach(good => {
+            let layerTemplate = {
+                "id": good,
+                "source": "edges",
+                "type": "line",
+                "filter": ["==", "type", good],
+                "paint": {
+                    'line-color': ['get', 'color'],
+                    "line-opacity": 1,
+                    'line-offset': ['get', 'offset'],
+                    "line-width": ['get', 'width']
+                }
+            };
+
+            map.addLayer(layerTemplate);
         });
     }
 }
@@ -296,11 +301,26 @@ function renderNodes(map, nodes) {
 
         map.addSource("nodes", { type: "geojson", data: nodes });
 
-        // add nodes layer
+        // add junctions layer
         map.addLayer({
-            "id": "nodes",
+            "id": "junctions",
             "source": "nodes",
             "type": "circle",
+            "filter": ["==", "NAME", "junction"],
+            "paint": {
+                "circle-color": "#c4c4c4",
+                "circle-radius": ['get', 'radius'],
+                "circle-stroke-color": "#000000",
+                "circle-stroke-width": 2
+            }
+        });
+        
+        // add cities layer
+        map.addLayer({
+            "id": "cities",
+            "source": "nodes",
+            "type": "circle",
+            "filter": ["!=", "NAME", "junction"],
             "paint": {
                 "circle-color": "#ffffff",
                 "circle-radius": ['get', 'radius'],
@@ -309,11 +329,12 @@ function renderNodes(map, nodes) {
             }
         });
 
-        // add nodes labels
+        // add cities labels
         map.addLayer({
             "id": "nodes-label",
             "source": "nodes",
             "type": "symbol",
+            "filter": ["!=", "NAME", "junction"],
             "layout": {
                 "text-font": ["PT Sans Narrow Bold"],
                 "text-field": "{NAME}",
