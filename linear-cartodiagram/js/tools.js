@@ -314,7 +314,7 @@ function renderNodes(map, nodes) {
                 "circle-stroke-width": 2
             }
         });
-        
+
         // add cities layer
         map.addLayer({
             "id": "cities",
