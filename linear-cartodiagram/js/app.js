@@ -60,14 +60,14 @@ onLoad = () => {
             Promise.all([
 
                 // edges for production
-                // fetch(url, {
-                //     method: 'POST',
-                //     body: inputFileElement.files[0]
-                // }).then(response => response.json()),
+                fetch(url, {
+                    method: 'POST',
+                    body: inputFileElement.files[0]
+                }).then(response => response.json()),
 
                 // edges for testing
-                fetch('data/edges4326.geojson?ass=' + Math.random())
-                    .then(response => response.json()),
+                // fetch('data/edges4326.geojson?ass=' + Math.random())
+                //     .then(response => response.json()),
 
                 // nodes
                 fetch('data/nodes4326.geojson?ass=' + Math.random())
