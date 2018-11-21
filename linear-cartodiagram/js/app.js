@@ -15,9 +15,9 @@ onLoad = () => {
 
         // remove greeting panel and make interface elements visible
         document.getElementById("greeting-panel").remove();
-        document.getElementById("download-data-interface-wrapper").style.visibility = 'visible';
+        document.getElementById("main-interface-wrapper").style.visibility = 'visible';
 
-        // get access to input element and submit button
+        // get access to the necessary elements
         const inputFileElement = document.getElementById('inputGoodsTable');
         const buttonSubmit = document.getElementById('btn-submit');
         const loadingPanel = document.getElementById('loading-panel');
@@ -26,6 +26,7 @@ onLoad = () => {
         const widthSlider = document.getElementById('widthSlider');
         const minWidthInput = document.getElementById('min-width-input');
         const maxWidthInput = document.getElementById('max-width-input');
+        const junctionCheckbox = document.getElementById('junctions-checkbox');
 
         // store server url
         // localhost url for testing
@@ -59,14 +60,14 @@ onLoad = () => {
             Promise.all([
 
                 // edges for production
-                fetch(url, {
-                    method: 'POST',
-                    body: inputFileElement.files[0]
-                }).then(response => response.json()),
+                // fetch(url, {
+                //     method: 'POST',
+                //     body: inputFileElement.files[0]
+                // }).then(response => response.json()),
 
                 // edges for testing
-                // fetch('data/edges4326.geojson?ass=' + Math.random())
-                //     .then(response => response.json()),
+                fetch('data/edges4326.geojson?ass=' + Math.random())
+                    .then(response => response.json()),
 
                 // nodes
                 fetch('data/nodes4326.geojson?ass=' + Math.random())
@@ -132,7 +133,7 @@ onLoad = () => {
 
                 // calculate node radius
                 nodes.features.forEach(node => {
-                    node.properties.radius = calculateNodeRadius(origLines, node) + 2;
+                    node.properties.radius = calculateNodeRadius(origLines, node);
                 });
 
                 // render edges
@@ -147,6 +148,9 @@ onLoad = () => {
 
                 // create width slider
                 createSlider(widthSlider, minWidthDefault, maxWidthDefault, 30);
+
+                // show other interface block
+                document.getElementById("other-interface-wrapper").style.visibility = 'visible';
 
                 // initialize render counter
                 let startRenderCounter = 0;
@@ -190,13 +194,18 @@ onLoad = () => {
                     }
                 });
 
+                // add click listener to junctions checkbox to toggle visibility of the layer
+                junctionCheckbox.addEventListener('click', () => {
+                    toggleJunctionsVisibility(junctionCheckbox, map, 'junctions');
+                });
+
                 function updateSliderHandler() {
                     widthArray = getWidthArray(+minWidthInput.value, +maxWidthInput.value);
                     calculateWidth(edges, widthArray, jenks);
                     calculateOffset(edges, origLineWidth);
                     addSumWidthAttr(origLines, edges, origLineWidth);
                     nodes.features.forEach(node => {
-                        node.properties.radius = calculateNodeRadius(origLines, node) + 2;
+                        node.properties.radius = calculateNodeRadius(origLines, node);
                     });
                     renderEdges(map, edges, goodsTypes);
                     renderNodes(map, nodes);

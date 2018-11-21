@@ -305,6 +305,9 @@ function renderNodes(map, nodes) {
             "source": "nodes",
             "type": "circle",
             "filter": ["==", "NAME", "junction"],
+            'layout': {
+                'visibility': 'visible'
+            },
             "paint": {
                 "circle-color": "#c4c4c4",
                 "circle-radius": ['get', 'radius'],
@@ -453,4 +456,19 @@ function createSlider(el, minWidthDefault, maxWidthDefault, maxWidth) {
             'max': [maxWidth]
         }
     });
+}
+
+/* 
+
+FUNCTIONS FOR OTHER INTERFACE
+
+*/
+
+function toggleJunctionsVisibility(junctionCheckbox, map, layerId) {
+
+    if (junctionCheckbox.checked) {
+        map.setLayoutProperty(layerId, 'visibility', 'visible');
+    } else {
+        map.setLayoutProperty(layerId, 'visibility', 'none');
+    }
 }

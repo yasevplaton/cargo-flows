@@ -4,6 +4,7 @@ body {
     font-family: "Open Sans", sans-serif;
     font-size: 15px;
     overflow: hidden;
+    /* position: relative; */
 }
 
 #map {
@@ -22,7 +23,7 @@ body {
     color: #ffffff;
 }
 
-#download-data-interface-wrapper {
+#main-interface-wrapper {
     z-index: 1;
     position: absolute;
     visibility: hidden;
@@ -34,6 +35,20 @@ body {
     padding-bottom: 10px;
     max-height: 1000px;
     max-width: 400px;
+}
+
+#other-interface-wrapper {
+    z-index: 1;
+    position: absolute;
+    visibility: hidden;
+    background:#ffffff;
+    border-radius: 5px;
+    margin-top: 5px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    max-height: 1000px;
+    max-width: 400px;
+    right: 5px;
 }
 
 #loading-panel {
@@ -131,10 +146,6 @@ body {
 
 .width-input-postfix {
     margin-left: 2px;
-}
-
-.width-input-postfix {
-    
 }
 
 .form-row {
