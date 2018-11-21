@@ -133,7 +133,7 @@ onLoad = () => {
 
                 // calculate node radius
                 nodes.features.forEach(node => {
-                    node.properties.radius = calculateNodeRadius(origLines, node);
+                    node.properties.radius = calculateNodeRadius(origLines, node) - 1;
                 });
 
                 // render edges
@@ -148,9 +148,6 @@ onLoad = () => {
 
                 // create width slider
                 createSlider(widthSlider, minWidthDefault, maxWidthDefault, 30);
-
-                // show other interface block
-                document.getElementById("other-interface-wrapper").style.visibility = 'visible';
 
                 // initialize render counter
                 let startRenderCounter = 0;
@@ -205,7 +202,7 @@ onLoad = () => {
                     calculateOffset(edges, origLineWidth);
                     addSumWidthAttr(origLines, edges, origLineWidth);
                     nodes.features.forEach(node => {
-                        node.properties.radius = calculateNodeRadius(origLines, node);
+                        node.properties.radius = calculateNodeRadius(origLines, node) - 1;
                     });
                     renderEdges(map, edges, goodsTypes);
                     renderNodes(map, nodes);
