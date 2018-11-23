@@ -275,6 +275,7 @@ function calculateNodeRadius(origLines, node) {
     return nodeRadius;
 }
 
+// function to render background lines
 function renderBackgroundLines(map, origLines, origLineWidth) {
 
     if (map.getSource('background-lines')) {
@@ -326,9 +327,6 @@ function renderEdges(map, edges, goodsTypes) {
                     "line-opacity": 1,
                     'line-offset': ['get', 'offset'],
                     "line-width": ['get', 'width']
-                },
-                "layout": {
-                    "line-cap": "round"
                 }
             });
         });
@@ -386,7 +384,7 @@ function renderNodes(map, nodes) {
                 "text-font": ["PT Sans Narrow Bold"],
                 "text-field": "{NAME}",
                 "text-size": ['get', 'radius'],
-                "text-offset": [1, 0]
+                "text-offset": [1.2, -1.5]
             },
             "paint": {
                 "text-color": "#000000",

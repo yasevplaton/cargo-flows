@@ -4,7 +4,10 @@ body {
     font-family: "Open Sans", sans-serif;
     font-size: 15px;
     overflow: hidden;
-    /* position: relative; */
+}
+
+::-webkit-scrollbar { 
+    display: none; 
 }
 
 #map {
