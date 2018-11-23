@@ -196,7 +196,7 @@ onLoad = () => {
                     }
                 });
 
-                // add click listener to junctions and background lines checkboxes to toggle visibility of layers
+                // add click listener to junctions, background lines and edges checkboxes to toggle visibility of layers
                 junctionCheckbox.addEventListener('click', () => {
                     toggleLayerVisibility(junctionCheckbox, map, 'junctions');
                 });
@@ -210,8 +210,6 @@ onLoad = () => {
                         toggleLayerVisibility(edgesCheckbox, map, type);
                     });
                 });
-
-
 
                 function updateSliderHandler() {
                     widthArray = getWidthArray(+minWidthInput.value, +maxWidthInput.value);
