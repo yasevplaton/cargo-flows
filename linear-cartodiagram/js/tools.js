@@ -168,21 +168,33 @@ function collectSameLineEdges(edges, line) {
 }
 
 // function to calculate width of the widest side of specific original line
-function calculateSumWidth(edges, line) {
+function calculateWidestSideWidth(edges, line) {
 
     let sameLineEdges = collectSameLineEdges(edges, line);
-    let sumWidthFirstSide = 0;
-    let sumWidthSecondSide = 0;
+    let widthFirstSide = 0;
+    let widthSecondSide = 0;
 
     sameLineEdges.forEach(e => {
         if (e.properties.dir === 1) {
-            sumWidthFirstSide += e.properties.width;
+            widthFirstSide += e.properties.width;
         } else if (e.properties.dir === -1) {
-            sumWidthSecondSide += e.properties.width;
+            widthSecondSide += e.properties.width;
         }
     });
 
-    return sumWidthFirstSide >= sumWidthSecondSide ? sumWidthFirstSide : sumWidthSecondSide;
+    return widthFirstSide >= widthSecondSide ? widthFirstSide : widthSecondSide;
+}
+
+function calculateTapeTotalWidth(edges, line) {
+    let sameLineEdges = collectSameLineEdges(edges, line);
+
+    let tapeTotalWidth = 0;
+
+    sameLineEdges.forEach(e => {
+        tapeTotalWidth += e.properties.width;
+    });
+
+    return tapeTotalWidth;
 }
 
 // function to find lines that adjacent to specific node
@@ -215,7 +227,7 @@ function calculateMaxWidth(origLines, adjacentLines) {
     adjacentLines.forEach(adjLine => {
         origLines.features.forEach(line => {
             if (adjLine === line.properties.lineID) {
-                widthArray.push(line.properties.sumWidth);
+                widthArray.push(line.properties.widestSideWidth);
             }
         });
     });
@@ -241,12 +253,14 @@ function fillOrigLines(linesIDArray, origLines, edges) {
 }
 
 // function to add total width of line to original lines
-function addSumWidthAttr(origLines, edges, origLineWidth) {
+function addWidthAttr(origLines, edges, origLineWidth) {
 
     origLines.features.forEach(line => {
-        let sumWidth = calculateSumWidth(edges, line) + (origLineWidth / 2);
+        let widestSideWidth = calculateWidestSideWidth(edges, line) + (origLineWidth / 2);
+        let tapeTotalWidth = calculateTapeTotalWidth(edges, line) + origLineWidth + 2;
 
-        line.properties.sumWidth = sumWidth;
+        line.properties.widestSideWidth = widestSideWidth;
+        line.properties.tapeTotalWidth = tapeTotalWidth;
     });
 }
 
@@ -259,6 +273,35 @@ function calculateNodeRadius(origLines, node) {
     var nodeRadius = maxWidth;
 
     return nodeRadius;
+}
+
+function renderBackgroundLines(map, origLines, origLineWidth) {
+
+    if (map.getSource('background-lines')) {
+        map.getSource('background-lines').setData(origLines);
+
+    } else {
+
+        map.addSource("background-lines", { type: "geojson", data: origLines });
+
+        // add background lines layer
+        map.addLayer({
+            "id": "background-lines",
+            "source": "background-lines",
+            "filter": ["!=", "widestSideWidth", origLineWidth / 2],
+            "type": "line",
+            "paint": {
+                'line-color': "#000",
+                "line-opacity": 0.5,
+                "line-width": ['get', 'tapeTotalWidth'],
+                "line-blur": 10,
+                'line-offset': 12
+            },
+            "layout": {
+                "line-cap": "round"
+            }
+        });
+    }
 }
 
 // function to render edges
@@ -283,6 +326,9 @@ function renderEdges(map, edges, goodsTypes) {
                     "line-opacity": 1,
                     'line-offset': ['get', 'offset'],
                     "line-width": ['get', 'width']
+                },
+                "layout": {
+                    "line-cap": "round"
                 }
             });
         });
@@ -464,9 +510,9 @@ FUNCTIONS FOR OTHER INTERFACE
 
 */
 
-function toggleJunctionsVisibility(junctionCheckbox, map, layerId) {
+function toggleLayerVisibility(layerCheckbox, map, layerId) {
 
-    if (junctionCheckbox.checked) {
+    if (layerCheckbox.checked) {
         map.setLayoutProperty(layerId, 'visibility', 'visible');
     } else {
         map.setLayoutProperty(layerId, 'visibility', 'none');

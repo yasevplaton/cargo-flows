@@ -27,6 +27,8 @@ onLoad = () => {
         const minWidthInput = document.getElementById('min-width-input');
         const maxWidthInput = document.getElementById('max-width-input');
         const junctionCheckbox = document.getElementById('junctions-checkbox');
+        const backgroundLinesCheckbox = document.getElementById('background-lines-checkbox');
+        const edgesCheckbox = document.getElementById('edges-checkbox');
 
         // store server url
         // localhost url for testing
@@ -129,13 +131,16 @@ onLoad = () => {
                 calculateOffset(edges, origLineWidth);
 
                 // add attribute with total width of band to original lines
-                addSumWidthAttr(origLines, edges, origLineWidth);
+                addWidthAttr(origLines, edges, origLineWidth);
+
+                console.log(origLines);
 
                 // calculate node radius
                 nodes.features.forEach(node => {
                     node.properties.radius = calculateNodeRadius(origLines, node) - 1;
                 });
 
+                renderBackgroundLines(map, origLines, origLineWidth);
                 // render edges
                 renderEdges(map, edges, goodsTypes);
                 // render original lines
@@ -191,19 +196,32 @@ onLoad = () => {
                     }
                 });
 
-                // add click listener to junctions checkbox to toggle visibility of the layer
+                // add click listener to junctions and background lines checkboxes to toggle visibility of layers
                 junctionCheckbox.addEventListener('click', () => {
-                    toggleJunctionsVisibility(junctionCheckbox, map, 'junctions');
+                    toggleLayerVisibility(junctionCheckbox, map, 'junctions');
                 });
+
+                backgroundLinesCheckbox.addEventListener('click', () => {
+                    toggleLayerVisibility(backgroundLinesCheckbox, map, 'background-lines');
+                });
+
+                edgesCheckbox.addEventListener('click', () => {
+                    goodsTypes.forEach(type => {
+                        toggleLayerVisibility(edgesCheckbox, map, type);
+                    });
+                });
+
+
 
                 function updateSliderHandler() {
                     widthArray = getWidthArray(+minWidthInput.value, +maxWidthInput.value);
                     calculateWidth(edges, widthArray, jenks);
                     calculateOffset(edges, origLineWidth);
-                    addSumWidthAttr(origLines, edges, origLineWidth);
+                    addWidthAttr(origLines, edges, origLineWidth);
                     nodes.features.forEach(node => {
                         node.properties.radius = calculateNodeRadius(origLines, node) - 1;
                     });
+                    renderBackgroundLines(map, origLines, origLineWidth);
                     renderEdges(map, edges, goodsTypes);
                     renderNodes(map, nodes);
                 }
