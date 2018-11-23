@@ -36,8 +36,9 @@ body {
     margin-left: 5px;
     padding-top: 10px;
     padding-bottom: 10px;
-    max-height: 1000px;
+    max-height: 95%;
     max-width: 400px;
+    overflow-y: scroll;
 }
 
 #other-interface-wrapper {
@@ -101,8 +102,13 @@ body {
     cursor: pointer;
 }
 
+.huebee {
+    z-index: 10;
+}
+
 .huebee__container {
     background: white;
+    left: -180px;
 }
 
 .huebee__cursor {
