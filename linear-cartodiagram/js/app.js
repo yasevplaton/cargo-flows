@@ -38,7 +38,7 @@ onLoad = () => {
         const url = 'https://yasevplaton.pythonanywhere.com/upload_data';
 
         // initialize variable to store input file
-        var goodsTable;
+        var cargoTable;
 
         // add click listener to submit button
         buttonSubmit.addEventListener('click', (e) => {
@@ -46,9 +46,9 @@ onLoad = () => {
             e.preventDefault();
 
             // if we've already have input file
-            if (goodsTable) {
+            if (cargoTable) {
                 //  compare its name with name of current input file
-                if (inputFileElement.files[0].name = goodsTable.name) {
+                if (inputFileElement.files[0].name = cargoTable.name) {
                     // if names are same don't do anything
                     console.log('The same file was selected, select another file');
                     return;
@@ -77,7 +77,7 @@ onLoad = () => {
 
             ]).then(([edges, nodes]) => {
 
-                goodsTable = inputFileElement.files[0];
+                cargoTable = inputFileElement.files[0];
 
                 // hide loading panel
                 loadingPanel.classList.add('hidden');
@@ -87,6 +87,7 @@ onLoad = () => {
 
                 // set original line width
                 const origLineWidth = 2;
+                const shadowOffset = 12;
 
                 // get flow values
                 let flowValues = getFlowValues(edges);
@@ -94,17 +95,17 @@ onLoad = () => {
                 // get marks of classes for flow values
                 let jenks = classifyFlowValuesArray(flowValues, 4);
 
-                // get goods types
-                let goodsTypes = getGoodsTypes(edges);
+                // get cargo types
+                let cargoTypes = getCargoTypes(edges);
 
-                // get random colors for goods types
-                let goodsColorArray = getRandomGoodsColorArray(goodsTypes);
+                // get random colors for cargo types
+                let cargoColorArray = getRandomCargoColorArray(cargoTypes);
 
                 // create a blank object for storage original lines
                 let origLines = { "type": 'FeatureCollection', features: [] };
 
                 // add colors to edges
-                addColors(edges, goodsColorArray);
+                addColors(edges, cargoColorArray);
 
                 // collect ids of lines
                 var linesIDArray = collectLinesIDs(edges);
@@ -133,23 +134,24 @@ onLoad = () => {
                 // add attribute with total width of band to original lines
                 addWidthAttr(origLines, edges, origLineWidth);
 
-                console.log(origLines);
+                calculateShadowOffset(origLines, shadowOffset);
 
                 // calculate node radius
                 nodes.features.forEach(node => {
                     node.properties.radius = calculateNodeRadius(origLines, node) - 1;
                 });
 
+                // render background lines
                 renderBackgroundLines(map, origLines, origLineWidth);
                 // render edges
-                renderEdges(map, edges, goodsTypes);
+                renderEdges(map, edges, cargoTypes);
                 // render original lines
                 renderOrigLines(map, origLines, origLineWidth);
                 // render nodes
                 renderNodes(map, nodes);
 
                 // create color table
-                createColorTable(colorTableBody, goodsColorArray, edges, map);
+                createColorTable(colorTableBody, cargoColorArray, edges, map);
 
                 // create width slider
                 createSlider(widthSlider, minWidthDefault, maxWidthDefault, 30);
@@ -206,7 +208,7 @@ onLoad = () => {
                 });
 
                 edgesCheckbox.addEventListener('click', () => {
-                    goodsTypes.forEach(type => {
+                    cargoTypes.forEach(type => {
                         toggleLayerVisibility(edgesCheckbox, map, type);
                     });
                 });
@@ -220,7 +222,7 @@ onLoad = () => {
                         node.properties.radius = calculateNodeRadius(origLines, node) - 1;
                     });
                     renderBackgroundLines(map, origLines, origLineWidth);
-                    renderEdges(map, edges, goodsTypes);
+                    renderEdges(map, edges, cargoTypes);
                     renderNodes(map, nodes);
                 }
 

@@ -77,36 +77,36 @@ function getRandomColor() {
     return color;
 }
 
-// function to get goods types
-function getGoodsTypes(edges) {
-    let goodsTypes = [];
+// function to get cargo types
+function getCargoTypes(edges) {
+    let cargoTypes = [];
 
     edges.features.forEach(edge => {
-        let goodsType = edge.properties.type;
-        if (goodsTypes.indexOf(goodsType) === -1) {
-            goodsTypes.push(goodsType);
+        let cargoType = edge.properties.type;
+        if (cargoTypes.indexOf(cargoType) === -1) {
+            cargoTypes.push(cargoType);
         }
     });
 
-    return goodsTypes;
+    return cargoTypes;
 }
 
-// function to get random colors array for different types of goods
-function getRandomGoodsColorArray(goodsTypes) {
+// function to get random colors array for different types of cargo
+function getRandomCargoColorArray(cargoTypes) {
 
-    let randomGoodsColorArray = [];
+    let randomCargoColorArray = [];
     let idCounter = 0;
 
-    goodsTypes.forEach(goodsType => {
-        randomGoodsColorArray.push({
+    cargoTypes.forEach(cargoType => {
+        randomCargoColorArray.push({
             id: idCounter,
-            type: goodsType,
+            type: cargoType,
             color: getRandomColor()
         });
         idCounter += 1;
     });
 
-    return randomGoodsColorArray;
+    return randomCargoColorArray;
 
 }
 
@@ -114,10 +114,10 @@ function getRandomGoodsColorArray(goodsTypes) {
 function addColors(edges, colorArray) {
     edges.features.forEach(f => {
 
-        let goodsType = f.properties.type;
+        let cargoType = f.properties.type;
 
         colorArray.forEach(item => {
-            if (item.type === goodsType) {
+            if (item.type === cargoType) {
                 f.properties.color = item.color;
             }
         });
@@ -185,6 +185,7 @@ function calculateWidestSideWidth(edges, line) {
     return widthFirstSide >= widthSecondSide ? widthFirstSide : widthSecondSide;
 }
 
+// function to calculate total width of tape
 function calculateTapeTotalWidth(edges, line) {
     let sameLineEdges = collectSameLineEdges(edges, line);
 
@@ -195,6 +196,31 @@ function calculateTapeTotalWidth(edges, line) {
     });
 
     return tapeTotalWidth;
+}
+
+// function to calculate shadow offset for background lines
+function calculateShadowOffset(origLines, shadowOffset) {
+    origLines.features.forEach(line => {
+
+        let firstNodelat, lastNodelat;
+
+        if (line.geometry.type === "LineString") {
+
+            firstNodelat = line.geometry.coordinates[0][1];
+            lastNodelat = line.geometry.coordinates[line.geometry.coordinates.length - 1][1];
+
+        } else if (line.geometry.type === "MultiLineString") {
+
+            firstNodelat = line.geometry.coordinates[0][0][1];
+            lastNodelat = line.geometry.coordinates[0][line.geometry.coordinates[0].length - 1][1];
+        }
+
+        if (firstNodelat <= lastNodelat) {
+            line.properties.shadowOffset = shadowOffset;
+        } else {
+            line.properties.shadowOffset = -shadowOffset;
+        }
+    });
 }
 
 // function to find lines that adjacent to specific node
@@ -296,7 +322,7 @@ function renderBackgroundLines(map, origLines, origLineWidth) {
                 "line-opacity": 0.5,
                 "line-width": ['get', 'tapeTotalWidth'],
                 "line-blur": 10,
-                'line-offset': 12
+                'line-offset': ['get', 'shadowOffset']
             },
             "layout": {
                 "line-cap": "round"
@@ -306,7 +332,7 @@ function renderBackgroundLines(map, origLines, origLineWidth) {
 }
 
 // function to render edges
-function renderEdges(map, edges, goodsTypes) {
+function renderEdges(map, edges, cargoTypes) {
 
     if (map.getSource('edges')) {
         map.getSource('edges').setData(edges);
@@ -316,12 +342,12 @@ function renderEdges(map, edges, goodsTypes) {
         map.addSource("edges", { type: "geojson", data: edges });
 
         // add array of layers to map (one for each type of cargo)
-        goodsTypes.reverse().forEach(good => {
+        cargoTypes.reverse().forEach(cargoType => {
             map.addLayer({
-                "id": good,
+                "id": cargoType,
                 "source": "edges",
                 "type": "line",
-                "filter": ["==", "type", good],
+                "filter": ["==", "type", cargoType],
                 "paint": {
                     'line-color': ['get', 'color'],
                     "line-opacity": 1,
@@ -430,30 +456,30 @@ FUNCTIONS FOR EDIT INTERFACE
 */
 
 // function to create color box
-function createColorBox(good) {
+function createColorBox(cargo) {
     let colorBox = document.createElement('span');
     colorBox.classList.add('color-box');
-    colorBox.style.backgroundColor = good.color;
-    colorBox.id = good.id;
+    colorBox.style.backgroundColor = cargo.color;
+    colorBox.id = cargo.id;
 
     return colorBox;
 }
 
 // function to create color table
-function createColorTable(tableBody, goodsColorArray, edges, map) {
+function createColorTable(tableBody, cargoColorArray, edges, map) {
 
-    goodsColorArray.forEach(good => {
+    cargoColorArray.forEach(cargo => {
         let row = document.createElement('tr');
         let colId = document.createElement('td');
-        colId.innerHTML = good.id;
+        colId.innerHTML = cargo.id;
         let colType = document.createElement('td');
-        colType.innerHTML = good.type;
+        colType.innerHTML = cargo.type;
 
         let colColor = document.createElement('td');
-        let colorBox = createColorBox(good);
+        let colorBox = createColorBox(cargo);
         colColor.appendChild(colorBox);
 
-        bindColorPicker(colorBox, goodsColorArray, edges, map);
+        bindColorPicker(colorBox, cargoColorArray, edges, map);
 
         let cols = [colId, colType, colColor];
 
@@ -466,26 +492,26 @@ function createColorTable(tableBody, goodsColorArray, edges, map) {
 }
 
 // function to bind color picker and change color handler
-function bindColorPicker(colorBox, goodsColorArray, edges, map) {
+function bindColorPicker(colorBox, cargoColorArray, edges, map) {
     var hueb = new Huebee(colorBox, {
         setText: false,
         notation: 'hex'
     });
 
     hueb.on('change', function (color) {
-        let goodID = +this.anchor.id;
-        changeGoodColor(goodsColorArray, goodID, color);
-        addColors(edges, goodsColorArray);
+        let cargoID = +this.anchor.id;
+        changeCargoColor(cargoColorArray, cargoID, color);
+        addColors(edges, cargoColorArray);
         renderEdges(map, edges);
     });
 
 }
 
-// function to change color in array of goods
-function changeGoodColor(goodsColorArray, id, color) {
-    goodsColorArray.forEach(good => {
-        if (good.id === id) {
-            good.color = color;
+// function to change color in array of cargo
+function changeCargoColor(cargoColorArray, id, color) {
+    cargoColorArray.forEach(cargo => {
+        if (cargo.id === id) {
+            cargo.color = color;
         };
     });
 }
@@ -508,6 +534,7 @@ FUNCTIONS FOR OTHER INTERFACE
 
 */
 
+// function to toggle layer visibility
 function toggleLayerVisibility(layerCheckbox, map, layerId) {
 
     if (layerCheckbox.checked) {
