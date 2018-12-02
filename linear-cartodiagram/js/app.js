@@ -158,7 +158,7 @@ onLoad = () => {
 
                 // initialize render counter
                 let startRenderCounter = 0;
-                
+
                 // bind update listener to slider
                 widthSlider.noUiSlider.on('update', function (values, handle) {
 

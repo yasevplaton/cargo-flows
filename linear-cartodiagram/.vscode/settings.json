@@ -1,3 +1,5 @@
 {
-    "python.pythonPath": "C:\\Users\\PlatonYasev\\Miniconda3\\envs\\MyEnv\\python.exe"
+    "python.pythonPath": "C:\\Users\\PlatonYasev\\Miniconda3\\envs\\MyEnv\\python.exe",
+    "files.autoSave": "onFocusChange",
+    "editor.tabSize": 2
 }
