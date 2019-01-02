@@ -89,6 +89,9 @@ onLoad = () => {
                 const origLineWidth = 2;
                 const shadowOffset = 12;
 
+                // get bounding box of data to center and zoom map
+                let boundingBox = getBoundingBox(nodes);
+
                 // get flow values
                 let flowValues = getFlowValues(edges);
 
@@ -225,6 +228,15 @@ onLoad = () => {
                     renderEdges(map, edges, cargoTypes);
                     renderNodes(map, nodes);
                 }
+
+                // center and zoom map to data
+                map.fitBounds(
+                    [[boundingBox.xMin, boundingBox.yMin], [boundingBox.xMax, boundingBox.yMax]],
+                    {
+                        linear: false,
+                        speed: 0.3
+                    }
+                );
 
             }).catch(error => console.log("Error with the loading of data:", error));
 
