@@ -436,6 +436,7 @@ function renderOrigLines(map, origLines, origLineWidth) {
         map.addLayer({
             "id": "lines",
             "source": "lines",
+            "filter": ["!=", "widestSideWidth", origLineWidth / 2],
             "type": "line",
             "paint": {
                 'line-color': "#ffffff",

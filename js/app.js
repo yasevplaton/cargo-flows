@@ -32,10 +32,10 @@ onLoad = () => {
 
         // store server url
         // localhost url for testing
-        // const url = 'http://127.0.0.1:5000/upload_data';
+        const url = 'http://127.0.0.1:5000/upload_data';
 
         // pythonanywhere url for production
-        const url = 'https://yasevplaton.pythonanywhere.com/upload_data';
+        // const url = 'https://yasevplaton.pythonanywhere.com/upload_data';
 
         // initialize variable to store input file
         var cargoTable;
@@ -62,17 +62,17 @@ onLoad = () => {
             Promise.all([
 
                 // edges for production
-                fetch(url, {
-                    method: 'POST',
-                    body: inputFileElement.files[0]
-                }).then(response => response.json()),
+                // fetch(url, {
+                //     method: 'POST',
+                //     body: inputFileElement.files[0]
+                // }).then(response => response.json()),
 
                 // edges for testing
-                // fetch('data/edges4326.geojson?ass=' + Math.random())
-                //     .then(response => response.json()),
+                fetch('data/edgesVolga.geojson?ass=' + Math.random())
+                    .then(response => response.json()),
 
                 // nodes
-                fetch('data/nodes4326.geojson?ass=' + Math.random())
+                fetch('data/pointsVolga.geojson?ass=' + Math.random())
                     .then(response => response.json())
 
             ]).then(([edges, nodes]) => {
