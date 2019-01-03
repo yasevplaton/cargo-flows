@@ -58,24 +58,49 @@ onLoad = () => {
             // show loading panel
             loadingPanel.classList.remove('hidden');
 
-            // request edges and nodes
-            Promise.all([
+            if (inputFileElement.files[0]) {
 
-                // edges for production
-                // fetch(url, {
-                //     method: 'POST',
-                //     body: inputFileElement.files[0]
-                // }).then(response => response.json()),
+                // request edges and nodes
+                Promise.all([
 
-                // edges for testing
-                fetch('data/edgesVolga.geojson?ass=' + Math.random())
-                    .then(response => response.json()),
+                    // edges for production
+                    fetch(url, {
+                        method: 'POST',
+                        body: inputFileElement.files[0]
+                    }).then(response => response.json()),
 
-                // nodes
-                fetch('data/pointsVolga.geojson?ass=' + Math.random())
-                    .then(response => response.json())
+                    // nodes
+                    fetch('data/pointsVolga.geojson?ass=' + Math.random())
+                        .then(response => response.json())
 
-            ]).then(([edges, nodes]) => {
+                ]).then(([edges, nodes]) => {
+
+                    main(edges, nodes);
+
+                }).catch(error => console.log("Error with the loading of data:", error));
+
+
+            } else {
+                
+                Promise.all([
+
+                    // edges for testing
+                    fetch('data/edgesVolga.geojson?ass=' + Math.random())
+                        .then(response => response.json()),
+
+                    // nodes
+                    fetch('data/pointsVolga.geojson?ass=' + Math.random())
+                        .then(response => response.json())
+
+                ]).then(([edges, nodes]) => {
+
+                    main(edges, nodes);
+
+                }).catch(error => console.log("Error with the loading of data:", error));
+            }
+
+
+            function main(edges, nodes) {
 
                 cargoTable = inputFileElement.files[0];
 
@@ -237,9 +262,7 @@ onLoad = () => {
                         speed: 0.3
                     }
                 );
-
-            }).catch(error => console.log("Error with the loading of data:", error));
-
+            }
         });
 
     });
