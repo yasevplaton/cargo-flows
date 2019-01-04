@@ -26,7 +26,7 @@
     </head>
 
     <body onload=onLoad()>
-        <div id="main-interface-wrapper">
+        <div id="main-interface-wrapper" class="hidden">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-12">
@@ -133,10 +133,21 @@
         </div>
 
         <div id='map'>
-            <div id="greeting-panel">
-                <h6>Подождите, карта загружается...</h6>
+            <div class="loading-map-panel" id="loading-map-panel">
+                <h6>Подождите, карта загружается</h6>
             </div>
-            <div id="loading-panel" class="hidden">Подождите, идет обработка данных...</div>
+            <div id="greeting-panel" class="hidden">
+                <h2>Здравствуйте! Вас приветствует мастер построения карт грузопотоков. Если вы хотите работать со своими данными - загрузите их с помощью специальной формы. Если вы хотите ознакомиться с функционалом приложения на заранее подготовленных данных, нажмите "Демо". Enjoy it!</h2>
+                <div class="greeting-panel__btns-container">
+                    <button class="demo btn" id="btn-demo">
+                        Демо
+                    </button>
+                    <button class="upload btn btn-primary" id="btn-upload">
+                        Загрузить данные
+                    </button>
+                </div>
+            </div>
+            <div id="loading-data-panel" class="hidden">Подождите, идет обработка данных...</div>
         </div>
 
     </body>
