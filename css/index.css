@@ -6,6 +6,11 @@ body {
   overflow: hidden;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-weight: normal;
+}
+
 ::-webkit-scrollbar {
   display: none;
 }
@@ -17,19 +22,41 @@ body {
   height: 100%;
 }
 
+.loading-map-panel {
+  position: fixed;
+  z-index: 1;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  text-align: center;
+}
+
 #greeting-panel {
   position: fixed;
   z-index: 1;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  color: #ffffff;
+  color: #333;
+  background-color: rgba(255, 255, 255, 0.9);
+  text-align: center;
+  width: 500px;
+  padding: 13px;
+  border-radius: 5px;
+}
+
+#greeting-panel h2 {
+  font-size: 20px;
+}
+
+.greeting-panel__btns-container {
+  margin-top: 10px;
 }
 
 #main-interface-wrapper {
   z-index: 1;
   position: absolute;
-  visibility: hidden;
   background: #ffffff;
   border-radius: 5px;
   margin-top: 5px;
@@ -55,7 +82,7 @@ body {
   right: 5px;
 }
 
-#loading-panel {
+#loading-data-panel {
   position: fixed;
   z-index: 2;
   left: 50%;
