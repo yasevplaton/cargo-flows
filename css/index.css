@@ -32,18 +32,22 @@ h1, h2, h3, h4, h5, h6 {
   text-align: center;
 }
 
-#greeting-panel {
+.greeting-panel__container {
   position: fixed;
   z-index: 1;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
+}
+
+#greeting-panel {
   color: #333;
   background-color: rgba(255, 255, 255, 0.9);
   text-align: center;
   width: 500px;
   padding: 13px;
   border-radius: 5px;
+  animation: emersion .7s .5s both cubic-bezier(0.04, 0.36, 0.1, 1.06);
 }
 
 #greeting-panel h2 {
@@ -52,6 +56,18 @@ h1, h2, h3, h4, h5, h6 {
 
 .greeting-panel__btns-container {
   margin-top: 10px;
+}
+
+@keyframes emersion {
+  0% {
+    opacity: 0;
+    transform: scale(.8);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 #main-interface-wrapper {
