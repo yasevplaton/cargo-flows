@@ -354,9 +354,17 @@ function renderBackgroundLines(map, origLines, origLineWidth) {
             "paint": {
                 'line-color': "#000",
                 "line-opacity": 0.5,
-                "line-width": ['get', 'tapeTotalWidth'],
+                "line-width": [
+                    'interpolate', ['linear'], ['zoom'],
+                    5, ['/', ['get', 'tapeTotalWidth'], 6],
+                    10, ['get', 'tapeTotalWidth']
+                ],
                 "line-blur": 10,
-                'line-offset': ['get', 'shadowOffset']
+                'line-offset': [
+                    'interpolate', ['linear'], ['zoom'],
+                    5, ['/', ['get', 'shadowOffest'], 1],
+                    10, ['get', 'shadowOffest']
+                ]
             },
             "layout": {
                 "line-cap": "round"
@@ -389,8 +397,16 @@ function renderEdges(map, edges, cargoTypes) {
                 "paint": {
                     'line-color': ['get', 'color'],
                     "line-opacity": 1,
-                    'line-offset': ['get', 'offset'],
-                    "line-width": ['get', 'width']
+                    'line-offset': [
+                        'interpolate', ['linear'], ['zoom'],
+                        5, ['/', ['get', 'offset'], 10],
+                        10, ['get', 'offset']
+                    ],
+                    "line-width": [
+                        'interpolate', ['linear'], ['zoom'],
+                        5, ['/', ['get', 'width'], 10],
+                        10, ['get', 'width']
+                    ]
                 }
             });
         });
@@ -418,7 +434,11 @@ function renderNodes(map, nodes) {
             },
             "paint": {
                 "circle-color": "#c4c4c4",
-                "circle-radius": ['get', 'radius'],
+                "circle-radius": [
+                    'interpolate', ['linear'], ['zoom'],
+                    5, ['/', ['get', 'radius'], 10],
+                    10, ['get', 'radius']
+                ],
                 "circle-stroke-color": "#000000",
                 "circle-stroke-width": 2
             }
@@ -432,7 +452,11 @@ function renderNodes(map, nodes) {
             "filter": ["!=", "NAME", "junction"],
             "paint": {
                 "circle-color": "#ffffff",
-                "circle-radius": ['get', 'radius'],
+                "circle-radius": [
+                    'interpolate', ['linear'], ['zoom'],
+                    5, ['/', ['get', 'radius'], 10],
+                    10, ['get', 'radius']
+                ],
                 "circle-stroke-color": "#000000",
                 "circle-stroke-width": 2
             }
@@ -447,7 +471,11 @@ function renderNodes(map, nodes) {
             "layout": {
                 "text-font": ["PT Sans Narrow Bold"],
                 "text-field": "{NAME}",
-                "text-size": ['get', 'radius'],
+                "text-size": [
+                    'interpolate', ['linear'], ['zoom'],
+                    5, ['/', ['get', 'radius'], 3],
+                    10, ['get', 'radius']
+                ],
                 "text-offset": [1.2, -1.5]
             },
             "paint": {
