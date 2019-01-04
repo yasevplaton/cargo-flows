@@ -241,7 +241,7 @@ onLoad = () => {
             fillOrigLines(linesIDArray, origLines, edges);
 
             // set default values for width of edges
-            let minWidthDefault = 2, maxWidthDefault = 10;
+            let minWidthDefault = 2, maxWidthDefault = 15;
 
             minWidthInput.value = minWidthDefault;
             maxWidthInput.value = maxWidthDefault;
