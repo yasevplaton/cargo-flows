@@ -207,7 +207,7 @@ onLoad = () => {
             editInterface.classList.remove('hidden');
 
             // set original line width
-            const origLineWidth = 2;
+            const origLineWidth = 1;
             const shadowOffset = 12;
 
             // get bounding box of data to center and zoom map

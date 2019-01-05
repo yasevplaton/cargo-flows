@@ -6,7 +6,12 @@ body {
   overflow: hidden;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin: 0;
   font-weight: normal;
 }
@@ -44,14 +49,15 @@ h1, h2, h3, h4, h5, h6 {
   color: #333;
   background-color: rgba(255, 255, 255, 0.9);
   text-align: center;
-  width: 500px;
-  padding: 13px;
+  width: 450px;
+  padding: 20px 25px;
   border-radius: 5px;
   animation: emersion .7s .5s both cubic-bezier(0.04, 0.36, 0.1, 1.06);
 }
 
 #greeting-panel h2 {
-  font-size: 20px;
+  font-size: 17px;
+  line-height: 1.4em;
 }
 
 .greeting-panel__btns-container {
@@ -63,7 +69,6 @@ h1, h2, h3, h4, h5, h6 {
     opacity: 0;
     transform: scale(.8);
   }
-
   100% {
     opacity: 1;
     transform: scale(1);

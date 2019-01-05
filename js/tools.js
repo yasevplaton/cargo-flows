@@ -505,7 +505,7 @@ function renderOrigLines(map, origLines, origLineWidth) {
             "filter": ["!=", "widestSideWidth", origLineWidth / 2],
             "type": "line",
             "paint": {
-                'line-color': "#ffffff",
+                'line-color': "#333",
                 "line-opacity": 1,
                 "line-width": origLineWidth
             },
