@@ -3,7 +3,7 @@ onLoad = () => {
     // get access to mapbox api
     mapboxgl.accessToken = 'pk.eyJ1IjoieWFzZXZwbGF0b24iLCJhIjoiY2poaTJrc29jMDF0YzM2cDU1ZnM1c2xoMiJ9.FhmWdHG7ar14dQv1Aoqx4A';
 
-    var map = new mapboxgl.Map({
+    const map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/dark-v9', // mapbox tiles location
         // style: 'https://maps.tilehosting.com/styles/darkmatter/style.json?key=9jsySrA6E6EKeAPy7tod', // tiles from tilehosting.com
@@ -41,111 +41,88 @@ onLoad = () => {
         const url = 'https://yasevplaton.pythonanywhere.com/upload_data';
 
         // initialize variable to store input file
-        var cargoTable,
+        let cargoTable,
             edgesPromise,
             nodesPromise;
 
-        uploadBtn.addEventListener('click', () => {
-            document.getElementById("greeting-panel").classList.add('hidden');
-            mainInterface.classList.remove('hidden');
+        // add click listener to sumbit button
+        buttonSubmit.addEventListener('click', (e) => {
+            // prevent default submit action
+            e.preventDefault();
 
-            buttonSubmit.addEventListener('click', (e) => {
-                // prevent default submit action
-                e.preventDefault();
-
-                // if we've already have input file
-                if (cargoTable) {
-                    //  compare its name with name of current input file
-                    if (inputFileElement.files[0].name = cargoTable.name) {
-                        // if names are same don't do anything
-                        console.log('The same file was selected, select another file');
-                        return;
-                    }
+            // if we've already have input file
+            if (cargoTable) {
+                //  compare its name with name of current input file
+                if (inputFileElement.files[0].name = cargoTable.name) {
+                    // if names are same don't do anything
+                    alert('Выбран тот же файл! Пожалуйста, выберите другой.');
+                    return;
                 }
+            }
+
+            if (inputFileElement.files[0]) {
 
                 // show loading panel
                 loadingDataPanel.classList.remove('hidden');
 
-                if (inputFileElement.files[0]) {
-
-                    edgesPromise = fetch(url, {
-                        method: 'POST',
-                        body: inputFileElement.files[0]
-                    }).then(response => response.json());
-
-                } else {
-
-                    edgesPromise = fetch('data/edgesVolga.geojson?ass=' + Math.random()).then(response => response.json());
-
-                }
+                edgesPromise = fetch(url, {
+                    method: 'POST',
+                    body: inputFileElement.files[0]
+                }).then(response => response.json());
 
                 nodesPromise = fetch('data/pointsVolga.geojson?ass=' + Math.random()).then(response => response.json());
 
                 Promise.all([edgesPromise, nodesPromise])
                     .then(([edges, nodes]) => main(edges, nodes))
-                    .catch(error => console.error("Error with the loading of data:", error));
-            });
+                    .catch(error => {
+                        loadingDataPanel.classList.add('hidden');
+                        alert("Увы, произошла какая-то ошибка :( Если вы разработчик, можете глянуть в консоли и зарепортить багу на гитхабе https://github.com/yasevplaton/linear-cartodiagram. Если вы не понимаете, что такое консоль, бага или гитхаб, обратитесь в службу поддержки по адресу yasevplaton@gmail.com");
+                        console.error("Error with loading of data:", error)
+                    });
+
+            } else {
+
+                alert("Сначала нужно выбрать файл!");
+                return;
+
+            }
         });
 
+        // add click listener to upload button
+        uploadBtn.addEventListener('click', () => {
+            document.getElementById("greeting-panel").classList.add('hidden');
+            mainInterface.classList.remove('hidden');
+        });
+
+        // add click listener to demo button
         demoBtn.addEventListener('click', () => {
 
+            // hide greeting panel
             document.getElementById("greeting-panel").classList.add('hidden');
             // show loading panel
             loadingDataPanel.classList.remove('hidden');
 
+            // initialize promises for data
             edgesPromise = fetch('data/edgesVolga.geojson?ass=' + Math.random()).then(response => response.json());
             nodesPromise = fetch('data/pointsVolga.geojson?ass=' + Math.random()).then(response => response.json());
 
+            // if all promises are resolved invoke main function
             Promise.all([edgesPromise, nodesPromise])
                 .then(([edges, nodes]) => main(edges, nodes))
-                .catch(error => console.error("Error with the loading of data:", error));
-
-            buttonSubmit.addEventListener('click', (e) => {
-                // prevent default submit action
-                e.preventDefault();
-
-                // if we've already have input file
-                if (cargoTable) {
-                    //  compare its name with name of current input file
-                    if (inputFileElement.files[0].name = cargoTable.name) {
-                        // if names are same don't do anything
-                        console.log('The same file was selected, select another file');
-                        return;
-                    }
-                }
-
-                // show loading panel
-                loadingDataPanel.classList.remove('hidden');
-
-                if (inputFileElement.files[0]) {
-
-                    edgesPromise = fetch(url, {
-                        method: 'POST',
-                        body: inputFileElement.files[0]
-                    }).then(response => response.json());
-
-                } else {
-
-                    edgesPromise = fetch('data/edgesVolga.geojson?ass=' + Math.random()).then(response => response.json());
-
-                }
-
-                nodesPromise = fetch('data/pointsVolga.geojson?ass=' + Math.random()).then(response => response.json());
-
-                Promise.all([edgesPromise, nodesPromise])
-                    .then(([edges, nodes]) => main(edges, nodes))
-                    .catch(error => console.error("Error with the loading of data:", error));
-            });
+                .catch(error => console.error("Error with loading of data:", error));
         });
 
 
+        // main function
         function main(edges, nodes) {
 
+            // store input file in variable
             cargoTable = inputFileElement.files[0];
 
             // hide loading panel
             loadingDataPanel.classList.add('hidden');
 
+            // show main interface if it is hidden
             if (mainInterface.classList.contains('hidden')) {
                 mainInterface.classList.remove('hidden');
             }
@@ -178,7 +155,7 @@ onLoad = () => {
             addColors(edges, cargoColorArray);
 
             // collect ids of lines
-            var linesIDArray = collectLinesIDs(edges);
+            let linesIDArray = collectLinesIDs(edges);
 
             // fill adjacent lines attribute to nodes
             fillAdjacentLinesAttr(nodes, edges);
@@ -237,7 +214,7 @@ onLoad = () => {
                     return;
                 }
 
-                var value = values[handle];
+                let value = values[handle];
 
                 if (handle) {
                     maxWidthInput.value = Math.round(value);
@@ -283,6 +260,7 @@ onLoad = () => {
                 });
             });
 
+            // function to update map when slider updates
             function updateSliderHandler() {
                 widthArray = getWidthArray(+minWidthInput.value, +maxWidthInput.value);
                 calculateWidth(edges, widthArray, jenks);
@@ -299,10 +277,7 @@ onLoad = () => {
             // center and zoom map to data
             map.fitBounds(
                 [[boundingBox.xMin, boundingBox.yMin], [boundingBox.xMax, boundingBox.yMax]],
-                {
-                    linear: false,
-                    speed: 0.3
-                }
+                { linear: false, speed: 0.3 }
             );
         }
 
