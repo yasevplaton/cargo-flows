@@ -41,7 +41,9 @@ onLoad = () => {
         const url = 'https://yasevplaton.pythonanywhere.com/upload_data';
 
         // initialize variable to store input file
-        var cargoTable;
+        var cargoTable,
+            edgesPromise,
+            nodesPromise;
 
         uploadBtn.addEventListener('click', () => {
             document.getElementById("greeting-panel").classList.add('hidden');
@@ -66,46 +68,22 @@ onLoad = () => {
 
                 if (inputFileElement.files[0]) {
 
-                    // request edges and nodes
-                    Promise.all([
-
-                        // edges for production
-                        fetch(url, {
-                            method: 'POST',
-                            body: inputFileElement.files[0]
-                        }).then(response => response.json()),
-
-                        // nodes
-                        fetch('data/pointsVolga.geojson?ass=' + Math.random())
-                            .then(response => response.json())
-
-                    ]).then(([edges, nodes]) => {
-
-                        main(edges, nodes);
-
-                    }).catch(error => console.log("Error with the loading of data:", error));
-
+                    edgesPromise = fetch(url, {
+                        method: 'POST',
+                        body: inputFileElement.files[0]
+                    }).then(response => response.json());
 
                 } else {
 
-                    Promise.all([
+                    edgesPromise = fetch('data/edgesVolga.geojson?ass=' + Math.random()).then(response => response.json());
 
-                        // edges for testing
-                        fetch('data/edgesVolga.geojson?ass=' + Math.random())
-                            .then(response => response.json()),
+                }
 
-                        // nodes
-                        fetch('data/pointsVolga.geojson?ass=' + Math.random())
-                            .then(response => response.json())
+                nodesPromise = fetch('data/pointsVolga.geojson?ass=' + Math.random()).then(response => response.json());
 
-                    ]).then(([edges, nodes]) => {
-
-                        main(edges, nodes);
-
-                    }).catch(error => console.log("Error with the loading of data:", error));
-
-
-                }    
+                Promise.all([edgesPromise, nodesPromise])
+                    .then(([edges, nodes]) => main(edges, nodes))
+                    .catch(error => console.error("Error with the loading of data:", error));
             });
         });
 
@@ -115,23 +93,13 @@ onLoad = () => {
             // show loading panel
             loadingDataPanel.classList.remove('hidden');
 
-            Promise.all([
+            edgesPromise = fetch('data/edgesVolga.geojson?ass=' + Math.random()).then(response => response.json());
+            nodesPromise = fetch('data/pointsVolga.geojson?ass=' + Math.random()).then(response => response.json());
 
-                // edges for testing
-                fetch('data/edgesVolga.geojson?ass=' + Math.random())
-                    .then(response => response.json()),
+            Promise.all([edgesPromise, nodesPromise])
+                .then(([edges, nodes]) => main(edges, nodes))
+                .catch(error => console.error("Error with the loading of data:", error));
 
-                // nodes
-                fetch('data/pointsVolga.geojson?ass=' + Math.random())
-                    .then(response => response.json())
-
-            ]).then(([edges, nodes]) => {
-
-                main(edges, nodes);
-
-            }).catch(error => console.log("Error with the loading of data:", error));
-
-            // add click listener to submit button
             buttonSubmit.addEventListener('click', (e) => {
                 // prevent default submit action
                 e.preventDefault();
@@ -151,44 +119,22 @@ onLoad = () => {
 
                 if (inputFileElement.files[0]) {
 
-                    // request edges and nodes
-                    Promise.all([
-
-                        // edges for production
-                        fetch(url, {
-                            method: 'POST',
-                            body: inputFileElement.files[0]
-                        }).then(response => response.json()),
-
-                        // nodes
-                        fetch('data/pointsVolga.geojson?ass=' + Math.random())
-                            .then(response => response.json())
-
-                    ]).then(([edges, nodes]) => {
-
-                        main(edges, nodes);
-
-                    }).catch(error => console.log("Error with the loading of data:", error));
-
+                    edgesPromise = fetch(url, {
+                        method: 'POST',
+                        body: inputFileElement.files[0]
+                    }).then(response => response.json());
 
                 } else {
 
-                    Promise.all([
+                    edgesPromise = fetch('data/edgesVolga.geojson?ass=' + Math.random()).then(response => response.json());
 
-                        // edges for testing
-                        fetch('data/edgesVolga.geojson?ass=' + Math.random())
-                            .then(response => response.json()),
-
-                        // nodes
-                        fetch('data/pointsVolga.geojson?ass=' + Math.random())
-                            .then(response => response.json())
-
-                    ]).then(([edges, nodes]) => {
-
-                        main(edges, nodes);
-
-                    }).catch(error => console.log("Error with the loading of data:", error));
                 }
+
+                nodesPromise = fetch('data/pointsVolga.geojson?ass=' + Math.random()).then(response => response.json());
+
+                Promise.all([edgesPromise, nodesPromise])
+                    .then(([edges, nodes]) => main(edges, nodes))
+                    .catch(error => console.error("Error with the loading of data:", error));
             });
         });
 
