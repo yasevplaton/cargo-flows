@@ -103,7 +103,7 @@ onLoad = () => {
             loadingDataPanel.classList.remove('hidden');
 
             // initialize promises for data
-            edgesPromise = fetch('data/edgesVolga.geojson?ass=' + Math.random()).then(response => response.json());
+            edgesPromise = fetch('data/edgesVolgaAssym.geojson?ass=' + Math.random()).then(response => response.json());
             nodesPromise = fetch('data/pointsVolga.geojson?ass=' + Math.random()).then(response => response.json());
 
             // if all promises are resolved invoke main function
@@ -164,7 +164,7 @@ onLoad = () => {
             fillOrigLines(linesIDArray, origLines, edges);
 
             // set default values for width of edges
-            let minWidthDefault = 2, maxWidthDefault = 15;
+            let minWidthDefault = 2, maxWidthDefault = 20;
 
             minWidthInput.value = minWidthDefault;
             maxWidthInput.value = maxWidthDefault;
