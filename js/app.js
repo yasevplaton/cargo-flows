@@ -201,7 +201,7 @@ onLoad = () => {
             createColorTable(colorTableBody, cargoColorArray, edges, map);
 
             // create width slider
-            createSlider(widthSlider, minWidthDefault, maxWidthDefault, 30);
+            createSlider(widthSlider, minWidthDefault, maxWidthDefault, 100);
 
             // initialize render counter
             let startRenderCounter = 0;
