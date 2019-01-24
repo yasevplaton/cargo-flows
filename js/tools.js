@@ -219,6 +219,28 @@ function calculateWidestSideWidth(edges, line) {
     return widthFirstSide >= widthSecondSide ? widthFirstSide : widthSecondSide;
 }
 
+function calcCargoMaxWidth(edges, line, cargoTypes) {
+    let cargoMaxWidth = {};
+    let sameLineEdges = collectSameLineEdges(edges, line);
+
+    cargoTypes.forEach(cargo => {
+
+        sameLineEdges.forEach(e => {
+            if (e.properties.type === cargo) {
+                if (cargoMaxWidth[cargo]) {
+                    if (e.properties.width > cargoMaxWidth[cargo]) {
+                        cargoMaxWidth[cargo] = e.properties.width;
+                    }
+                } else {
+                    cargoMaxWidth[cargo] = e.properties.width;
+                }
+            }
+        });
+    });
+
+    return cargoMaxWidth;
+}
+
 // function to calculate total width of tape
 function calculateTapeTotalWidth(edges, line) {
     let sameLineEdges = collectSameLineEdges(edges, line);
@@ -313,26 +335,51 @@ function fillOrigLines(linesIDArray, origLines, edges) {
 }
 
 // function to add total width of line to original lines
-function addWidthAttr(origLines, edges, origLineWidth) {
+function addWidthAttr(origLines, edges, origLineWidth, cargoTypes) {
 
     origLines.features.forEach(line => {
         let widestSideWidth = calculateWidestSideWidth(edges, line) + (origLineWidth / 2);
         let tapeTotalWidth = calculateTapeTotalWidth(edges, line) + origLineWidth + 2;
 
+        let cargoMaxWidth = calcCargoMaxWidth(edges, line, cargoTypes);
+
         line.properties.widestSideWidth = widestSideWidth;
         line.properties.tapeTotalWidth = tapeTotalWidth;
+        line.properties.cargoMaxWidth = cargoMaxWidth;
     });
+}
+
+function getMaxCargoRadius(origLines, adjacentLines, cargo) {
+    let cargoMaxRadius;
+    let cargoRadiusArray = [];
+
+    adjacentLines.forEach(adjLine => {
+        origLines.features.forEach(line => {
+            if (adjLine === line.properties.lineID) {
+                cargoRadiusArray.push(line.properties.cargoMaxWidth[cargo]);
+            }
+        });
+    });
+
+    cargoMaxRadius = Math.max(...cargoRadiusArray);
+
+    return cargoMaxRadius;
 }
 
 
 // function to calculate node radius
-function calculateNodeRadius(origLines, node) {
+function addRadiusAttr(origLines, node, cargoTypes) {
 
     var adjacentLines = node.properties.adjacentLines;
     var maxWidth = calculateMaxWidth(origLines, adjacentLines);
-    var nodeRadius = maxWidth;
+    node.properties.radius = maxWidth - 1;
 
-    return nodeRadius;
+    
+    cargoTypes.forEach(cargo => {
+        let cargoPropName = cargo + "MaxRadius";
+        node.properties[cargoPropName] = getMaxCargoRadius(origLines, adjacentLines, cargo);
+    });
+
 }
 
 // function to render background lines
@@ -374,24 +421,29 @@ function renderBackgroundLines(map, origLines, origLineWidth) {
 }
 
 // function to render edges
-function renderEdges(map, edges, cargoTypes) {
+function renderEdges(map, edges, cargoColorArray, nodes) {
 
     if (map.getSource('edges')) {
         map.getSource('edges').setData(edges);
+        map.getSource('junction-nodes').setData(nodes);
 
     } else {
 
         map.addSource("edges", { type: "geojson", data: edges });
+        map.addSource("junction-nodes", { type: "geojson", data: nodes });
+
+        let reverseCargoArray = cargoColorArray.slice().reverse();
 
         // add array of layers to map (one for each type of cargo)
-        cargoTypes.reverse().forEach(cargoType => {
+        reverseCargoArray.forEach(cargoObj => {
+
             map.addLayer({
-                "id": cargoType,
+                "id": cargoObj.type,
                 "source": "edges",
                 "type": "line",
                 "filter": [
                     "all",
-                    ["==", "type", cargoType],
+                    ["==", "type", cargoObj.type],
                     ["!=", "value", 0]
                 ],
                 "paint": {
@@ -409,6 +461,27 @@ function renderEdges(map, edges, cargoTypes) {
                     ]
                 }
             });
+
+
+            let cargoPropName = cargoObj.type + "MaxRadius";
+
+            map.addLayer({
+                "id": cargoObj.type + "node",
+                "source": "junction-nodes",
+                "type": "circle",
+                'layout': {
+                    'visibility': 'visible'
+                },
+                "paint": {
+                    "circle-color": cargoObj.color,
+                    "circle-radius": [
+                        'interpolate', ['linear'], ['zoom'],
+                        5, ['/', ['get', cargoPropName], 10],
+                        10, ['get', cargoPropName]
+                    ]
+                }
+            });
+
         });
     }
 }
@@ -533,7 +606,7 @@ function createColorBox(cargo) {
 }
 
 // function to create color table
-function createColorTable(tableBody, cargoColorArray, edges, map) {
+function createColorTable(tableBody, cargoColorArray, edges, map, nodes) {
 
     cargoColorArray.forEach(cargo => {
         let row = document.createElement('tr');
@@ -546,7 +619,7 @@ function createColorTable(tableBody, cargoColorArray, edges, map) {
         let colorBox = createColorBox(cargo);
         colColor.appendChild(colorBox);
 
-        bindColorPicker(colorBox, cargoColorArray, edges, map);
+        bindColorPicker(colorBox, cargoColorArray, edges, map, nodes);
 
         let cols = [colId, colType, colColor];
 
@@ -559,7 +632,7 @@ function createColorTable(tableBody, cargoColorArray, edges, map) {
 }
 
 // function to bind color picker and change color handler
-function bindColorPicker(colorBox, cargoColorArray, edges, map) {
+function bindColorPicker(colorBox, cargoColorArray, edges, map, nodes) {
     var hueb = new Huebee(colorBox, {
         setText: false,
         notation: 'hex'
@@ -569,7 +642,7 @@ function bindColorPicker(colorBox, cargoColorArray, edges, map) {
         let cargoID = +this.anchor.id;
         changeCargoColor(cargoColorArray, cargoID, color);
         addColors(edges, cargoColorArray);
-        renderEdges(map, edges);
+        renderEdges(map, edges, cargoColorArray, nodes);
     });
 
 }

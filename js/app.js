@@ -179,19 +179,19 @@ onLoad = () => {
             calculateOffset(edges, origLineWidth);
 
             // add attribute with total width of band to original lines
-            addWidthAttr(origLines, edges, origLineWidth);
+            addWidthAttr(origLines, edges, origLineWidth, cargoTypes);
 
             calculateShadowOffset(origLines, shadowOffset);
 
             // calculate node radius
             nodes.features.forEach(node => {
-                node.properties.radius = calculateNodeRadius(origLines, node) - 1;
+                addRadiusAttr(origLines, node, cargoTypes);
             });
 
             // render background lines
-            renderBackgroundLines(map, origLines, origLineWidth);
+            // renderBackgroundLines(map, origLines, origLineWidth);
             // render edges
-            renderEdges(map, edges, cargoTypes);
+            renderEdges(map, edges, cargoColorArray, nodes);
             // render original lines
             renderOrigLines(map, origLines, origLineWidth);
             // render nodes
@@ -265,12 +265,12 @@ onLoad = () => {
                 widthArray = getWidthArray(+minWidthInput.value, +maxWidthInput.value);
                 calculateWidth(edges, widthArray, jenks);
                 calculateOffset(edges, origLineWidth);
-                addWidthAttr(origLines, edges, origLineWidth);
+                addWidthAttr(origLines, edges, origLineWidth, cargoTypes);
                 nodes.features.forEach(node => {
-                    node.properties.radius = calculateNodeRadius(origLines, node) - 1;
+                    addRadiusAttr(origLines, node, cargoTypes);
                 });
-                renderBackgroundLines(map, origLines, origLineWidth);
-                renderEdges(map, edges, cargoTypes);
+                // renderBackgroundLines(map, origLines, origLineWidth);
+                renderEdges(map, edges, cargoColorArray, nodes);
                 renderNodes(map, nodes);
             }
 
