@@ -227,12 +227,15 @@ function calcCargoMaxWidth(edges, line, cargoTypes) {
 
         sameLineEdges.forEach(e => {
             if (e.properties.type === cargo) {
+
+                let sumWidth = e.properties.width + e.properties.offset
+
                 if (cargoMaxWidth[cargo]) {
-                    if (e.properties.width > cargoMaxWidth[cargo]) {
-                        cargoMaxWidth[cargo] = e.properties.width;
+                    if (sumWidth > cargoMaxWidth[cargo]) {
+                        cargoMaxWidth[cargo] = sumWidth;
                     }
                 } else {
-                    cargoMaxWidth[cargo] = e.properties.width;
+                    cargoMaxWidth[cargo] = sumWidth;
                 }
             }
         });
@@ -374,7 +377,7 @@ function addRadiusAttr(origLines, node, cargoTypes) {
     var maxWidth = calculateMaxWidth(origLines, adjacentLines);
     node.properties.radius = maxWidth - 1;
 
-    
+
     cargoTypes.forEach(cargo => {
         let cargoPropName = cargo + "MaxRadius";
         node.properties[cargoPropName] = getMaxCargoRadius(origLines, adjacentLines, cargo);
@@ -463,15 +466,13 @@ function renderEdges(map, edges, cargoColorArray, nodes) {
             });
 
 
+            // render junctions nodes layer
             let cargoPropName = cargoObj.type + "MaxRadius";
 
             map.addLayer({
                 "id": cargoObj.type + "node",
                 "source": "junction-nodes",
                 "type": "circle",
-                'layout': {
-                    'visibility': 'visible'
-                },
                 "paint": {
                     "circle-color": cargoObj.color,
                     "circle-radius": [
@@ -484,6 +485,19 @@ function renderEdges(map, edges, cargoColorArray, nodes) {
 
         });
     }
+}
+
+
+// function to change colors of edges
+function changeEdgesColor(map, cargoColorArray) {
+    let reverseCargoArray = cargoColorArray.slice().reverse();
+
+    reverseCargoArray.forEach(cargoObj => {
+        map.setPaintProperty(cargoObj.type, 'line-color', cargoObj.color);
+        let layerNodeID = cargoObj.type + "node";
+        map.setPaintProperty(layerNodeID, 'circle-color', cargoObj.color);
+    })
+    
 }
 
 // function to render nodes
@@ -503,7 +517,7 @@ function renderNodes(map, nodes) {
             "type": "circle",
             "filter": ["==", "NAME", "junction"],
             'layout': {
-                'visibility': 'visible'
+                'visibility': 'none'
             },
             "paint": {
                 "circle-color": "#c4c4c4",
@@ -641,8 +655,9 @@ function bindColorPicker(colorBox, cargoColorArray, edges, map, nodes) {
     hueb.on('change', function (color) {
         let cargoID = +this.anchor.id;
         changeCargoColor(cargoColorArray, cargoID, color);
-        addColors(edges, cargoColorArray);
-        renderEdges(map, edges, cargoColorArray, nodes);
+        // addColors(edges, cargoColorArray);
+        // renderEdges(map, edges, cargoColorArray, nodes);
+        changeEdgesColor(map, cargoColorArray);
     });
 
 }
