@@ -152,7 +152,7 @@ onLoad = () => {
             let origLines = { "type": 'FeatureCollection', features: [] };
 
             // add colors to edges
-            addColors(edges, cargoColorArray);
+            // addColors(edges, cargoColorArray);
 
             // collect ids of lines
             let linesIDArray = collectLinesIDs(edges);

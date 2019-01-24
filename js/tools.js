@@ -450,7 +450,7 @@ function renderEdges(map, edges, cargoColorArray, nodes) {
                     ["!=", "value", 0]
                 ],
                 "paint": {
-                    'line-color': ['get', 'color'],
+                    'line-color': cargoObj.color,
                     "line-opacity": 1,
                     'line-offset': [
                         'interpolate', ['linear'], ['zoom'],
