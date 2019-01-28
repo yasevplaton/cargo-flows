@@ -1,4 +1,18 @@
-onLoad = () => {
+// import css
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import 'huebee/dist/huebee.min.css';
+import 'nouislider/distribute/nouislider.min.css';
+import '../lib/pretty-checkbox/pretty-checkbox.min.css';
+
+import '../css/index.css';
+
+// import js modules
+import 'bootstrap';
+import mapboxgl from 'mapbox-gl';
+import * as tools from "./tools";
+
+window.onload = () => {
 
     // get access to mapbox api
     mapboxgl.accessToken = 'pk.eyJ1IjoieWFzZXZwbGF0b24iLCJhIjoiY2poaTJrc29jMDF0YzM2cDU1ZnM1c2xoMiJ9.FhmWdHG7ar14dQv1Aoqx4A';
@@ -134,19 +148,19 @@ onLoad = () => {
             const shadowOffset = 12;
 
             // get bounding box of data to center and zoom map
-            let boundingBox = getBoundingBox(nodes);
+            let boundingBox = tools.getBoundingBox(nodes);
 
             // get flow values
-            let flowValues = getFlowValues(edges);
+            let flowValues = tools.getFlowValues(edges);
 
             // get marks of classes for flow values
-            let jenks = classifyFlowValuesArray(flowValues, 4);
+            let jenks = tools.classifyFlowValuesArray(flowValues, 4);
 
             // get cargo types
-            let cargoTypes = getCargoTypes(edges);
+            let cargoTypes = tools.getCargoTypes(edges);
 
             // get random colors for cargo types
-            let cargoColorArray = getRandomCargoColorArray(cargoTypes);
+            let cargoColorArray = tools.getRandomCargoColorArray(cargoTypes);
 
             // create a blank object for storage original lines
             let origLines = { "type": 'FeatureCollection', features: [] };
@@ -155,13 +169,13 @@ onLoad = () => {
             // addColors(edges, cargoColorArray);
 
             // collect ids of lines
-            let linesIDArray = collectLinesIDs(edges);
+            let linesIDArray = tools.collectLinesIDs(edges);
 
             // fill adjacent lines attribute to nodes
-            fillAdjacentLinesAttr(nodes, edges);
+            tools.fillAdjacentLinesAttr(nodes, edges);
 
             // fill original lines object with data
-            fillOrigLines(linesIDArray, origLines, edges);
+            tools.fillOrigLines(linesIDArray, origLines, edges);
 
             // set default values for width of edges
             let minWidthDefault = 2, maxWidthDefault = 20;
@@ -170,38 +184,38 @@ onLoad = () => {
             maxWidthInput.value = maxWidthDefault;
 
             // get width array
-            widthArray = getWidthArray(minWidthDefault, maxWidthDefault);
+            let widthArray = tools.getWidthArray(minWidthDefault, maxWidthDefault);
 
             // calculate width for edges
-            calculateWidth(edges, widthArray, jenks);
+            tools.calculateWidth(edges, widthArray, jenks);
 
             // calculate offset for edges
-            calculateOffset(edges, origLineWidth);
+            tools.calculateOffset(edges, origLineWidth);
 
             // add attribute with total width of band to original lines
-            addWidthAttr(origLines, edges, origLineWidth, cargoTypes);
+            tools.addWidthAttr(origLines, edges, origLineWidth, cargoTypes);
 
-            calculateShadowOffset(origLines, shadowOffset);
+            tools.calculateShadowOffset(origLines, shadowOffset);
 
             // calculate node radius
             nodes.features.forEach(node => {
-                addRadiusAttr(origLines, node, cargoTypes);
+                tools.addRadiusAttr(origLines, node, cargoTypes);
             });
 
             // render background lines
             // renderBackgroundLines(map, origLines, origLineWidth);
             // render edges
-            renderEdges(map, edges, cargoColorArray, nodes);
+            tools.renderEdges(map, edges, cargoColorArray, nodes);
             // render original lines
-            renderOrigLines(map, origLines, origLineWidth);
+            tools.renderOrigLines(map, origLines, origLineWidth);
             // render nodes
-            renderNodes(map, nodes);
+            tools.renderNodes(map, nodes);
 
             // create color table
-            createColorTable(colorTableBody, cargoColorArray, edges, map);
+            tools.createColorTable(colorTableBody, cargoColorArray, edges, map);
 
             // create width slider
-            createSlider(widthSlider, minWidthDefault, maxWidthDefault, 100);
+            tools.createSlider(widthSlider, minWidthDefault, maxWidthDefault, 100);
 
             // initialize render counter
             let startRenderCounter = 0;
@@ -247,31 +261,31 @@ onLoad = () => {
 
             // add click listener to junctions, background lines and edges checkboxes to toggle visibility of layers
             junctionCheckbox.addEventListener('click', () => {
-                toggleLayerVisibility(junctionCheckbox, map, 'junctions');
+                tools.toggleLayerVisibility(junctionCheckbox, map, 'junctions');
             });
 
             backgroundLinesCheckbox.addEventListener('click', () => {
-                toggleLayerVisibility(backgroundLinesCheckbox, map, 'background-lines');
+                tools.toggleLayerVisibility(backgroundLinesCheckbox, map, 'background-lines');
             });
 
             edgesCheckbox.addEventListener('click', () => {
                 cargoTypes.forEach(type => {
-                    toggleLayerVisibility(edgesCheckbox, map, type);
+                    tools.toggleLayerVisibility(edgesCheckbox, map, type);
                 });
             });
 
             // function to update map when slider updates
             function updateSliderHandler() {
-                widthArray = getWidthArray(+minWidthInput.value, +maxWidthInput.value);
-                calculateWidth(edges, widthArray, jenks);
-                calculateOffset(edges, origLineWidth);
-                addWidthAttr(origLines, edges, origLineWidth, cargoTypes);
+                widthArray = tools.getWidthArray(+minWidthInput.value, +maxWidthInput.value);
+                tools.calculateWidth(edges, widthArray, jenks);
+                tools.calculateOffset(edges, origLineWidth);
+                tools.addWidthAttr(origLines, edges, origLineWidth, cargoTypes);
                 nodes.features.forEach(node => {
-                    addRadiusAttr(origLines, node, cargoTypes);
+                    tools.addRadiusAttr(origLines, node, cargoTypes);
                 });
                 // renderBackgroundLines(map, origLines, origLineWidth);
-                renderEdges(map, edges, cargoColorArray, nodes);
-                renderNodes(map, nodes);
+                tools.renderEdges(map, edges, cargoColorArray, nodes);
+                tools.renderNodes(map, nodes);
             }
 
             // center and zoom map to data

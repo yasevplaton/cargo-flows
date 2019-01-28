@@ -1,3 +1,10 @@
+import { interpolateRound } from 'd3-interpolate';
+import 'nouislider';
+
+const Huebee = require('huebee');
+var geostats = require('../lib/geostats');
+
+
 /* 
 
 FUNCTIONS FOR TREATMENT OF MAP FEATURES
@@ -5,7 +12,7 @@ FUNCTIONS FOR TREATMENT OF MAP FEATURES
 */
 
 // function to get bounding box of nodes layer
-function getBoundingBox(data) {
+export function getBoundingBox(data) {
     var bounds = {}, coords, point, latitude, longitude;
 
     // We want to use the “features” key of the FeatureCollection (see above)
@@ -39,7 +46,7 @@ function getBoundingBox(data) {
 }
 
 // function to get flow values
-function getFlowValues(edges) {
+export function getFlowValues(edges) {
     let flowValues = [];
 
     edges.features.forEach(edge => {
@@ -53,7 +60,7 @@ function getFlowValues(edges) {
 }
 
 // function to classify flow values array
-function classifyFlowValuesArray(flowValuesArray, classNum) {
+export function classifyFlowValuesArray(flowValuesArray, classNum) {
     let statSerie = new geostats(flowValuesArray);
 
     let jenks = statSerie.getClassJenks(classNum);
@@ -62,9 +69,9 @@ function classifyFlowValuesArray(flowValuesArray, classNum) {
 }
 
 // function to get width array
-function getWidthArray(widthMin, widthMax) {
+export function getWidthArray(widthMin, widthMax) {
 
-    let interpolator = d3.interpolateRound(widthMin, widthMax);
+    let interpolator = interpolateRound(widthMin, widthMax);
 
     let widthArray = [widthMin, interpolator(0.333), interpolator(0.666), widthMax];
 
@@ -72,7 +79,7 @@ function getWidthArray(widthMin, widthMax) {
 }
 
 // function to calculate width of edge
-function calculateWidth(edges, widthArray, jenks) {
+export function calculateWidth(edges, widthArray, jenks) {
     edges.features.forEach(f => {
         if (f.properties.value === 0) {
             f.properties.width = 0;
@@ -89,7 +96,7 @@ function calculateWidth(edges, widthArray, jenks) {
 }
 
 // function to calculate offset of edge
-function calculateOffset(edges, origLineWidth) {
+export function calculateOffset(edges, origLineWidth) {
     for (var i = 0, max = edges.features.length; i < max; i++) {
         if (edges.features[i].properties.order === 0) {
             edges.features[i].properties.offset = (origLineWidth / 2) + (edges.features[i].properties.width / 2);
@@ -102,7 +109,7 @@ function calculateOffset(edges, origLineWidth) {
 }
 
 // function to get random color
-function getRandomColor() {
+export function getRandomColor() {
     var letters = '0123456789ABCDEF';
     var color = '#';
     for (var i = 0; i < 6; i++) {
@@ -112,7 +119,7 @@ function getRandomColor() {
 }
 
 // function to get cargo types
-function getCargoTypes(edges) {
+export function getCargoTypes(edges) {
     let cargoTypes = [];
 
     edges.features.forEach(edge => {
@@ -126,7 +133,7 @@ function getCargoTypes(edges) {
 }
 
 // function to get random colors array for different types of cargo
-function getRandomCargoColorArray(cargoTypes) {
+export function getRandomCargoColorArray(cargoTypes) {
 
     let randomCargoColorArray = [];
     let idCounter = 0;
@@ -145,7 +152,7 @@ function getRandomCargoColorArray(cargoTypes) {
 }
 
 // function to add colors to edges
-function addColors(edges, colorArray) {
+export function addColors(edges, colorArray) {
     edges.features.forEach(f => {
 
         let cargoType = f.properties.type;
@@ -159,7 +166,7 @@ function addColors(edges, colorArray) {
 }
 
 // function to collect IDs of original lines
-function collectLinesIDs(edges) {
+export function collectLinesIDs(edges) {
 
     var linesIDArray = [];
 
@@ -175,7 +182,7 @@ function collectLinesIDs(edges) {
 }
 
 // function to get geometry of line by ID
-function getLineGeometry(edges, lineID) {
+export function getLineGeometry(edges, lineID) {
     var geom = {};
 
     edges.features.forEach(e => {
@@ -188,7 +195,7 @@ function getLineGeometry(edges, lineID) {
 }
 
 // function to collect edges that belong to the same original line
-function collectSameLineEdges(edges, line) {
+export function collectSameLineEdges(edges, line) {
 
     var sameLineEdges = [];
 
@@ -202,7 +209,7 @@ function collectSameLineEdges(edges, line) {
 }
 
 // function to calculate width of the widest side of specific original line
-function calculateWidestSideWidth(edges, line) {
+export function calculateWidestSideWidth(edges, line) {
 
     let sameLineEdges = collectSameLineEdges(edges, line);
     let widthFirstSide = 0;
@@ -219,7 +226,7 @@ function calculateWidestSideWidth(edges, line) {
     return widthFirstSide >= widthSecondSide ? widthFirstSide : widthSecondSide;
 }
 
-function calcCargoMaxWidth(edges, line, cargoTypes) {
+export function calcCargoMaxWidth(edges, line, cargoTypes) {
     let cargoMaxWidth = {};
     let sameLineEdges = collectSameLineEdges(edges, line);
 
@@ -245,7 +252,7 @@ function calcCargoMaxWidth(edges, line, cargoTypes) {
 }
 
 // function to calculate total width of tape
-function calculateTapeTotalWidth(edges, line) {
+export function calculateTapeTotalWidth(edges, line) {
     let sameLineEdges = collectSameLineEdges(edges, line);
 
     let tapeTotalWidth = 0;
@@ -258,7 +265,7 @@ function calculateTapeTotalWidth(edges, line) {
 }
 
 // function to calculate shadow offset for background lines
-function calculateShadowOffset(origLines, shadowOffset) {
+export function calculateShadowOffset(origLines, shadowOffset) {
     origLines.features.forEach(line => {
 
         let firstNodelat, lastNodelat;
@@ -283,7 +290,7 @@ function calculateShadowOffset(origLines, shadowOffset) {
 }
 
 // function to find lines that adjacent to specific node
-function findAdjacentLines(edges, nodeID) {
+export function findAdjacentLines(edges, nodeID) {
     var adjacentLines = [];
 
     edges.features.forEach(e => {
@@ -298,14 +305,14 @@ function findAdjacentLines(edges, nodeID) {
 }
 
 // function to fill adjacent lines attribute to nodes
-function fillAdjacentLinesAttr(nodes, edges) {
+export function fillAdjacentLinesAttr(nodes, edges) {
     nodes.features.forEach(node => {
         node.properties.adjacentLines = findAdjacentLines(edges, node.properties.OBJECTID);
     });
 }
 
 // function to calculate the maximum width of the adjacent line
-function calculateMaxWidth(origLines, adjacentLines) {
+export function calculateMaxWidth(origLines, adjacentLines) {
 
     var widthArray = [];
 
@@ -323,7 +330,7 @@ function calculateMaxWidth(origLines, adjacentLines) {
 }
 
 // function to fill orig lines with attributes
-function fillOrigLines(linesIDArray, origLines, edges) {
+export function fillOrigLines(linesIDArray, origLines, edges) {
     linesIDArray.forEach(id => {
 
         var origLine = {
@@ -338,7 +345,7 @@ function fillOrigLines(linesIDArray, origLines, edges) {
 }
 
 // function to add total width of line to original lines
-function addWidthAttr(origLines, edges, origLineWidth, cargoTypes) {
+export function addWidthAttr(origLines, edges, origLineWidth, cargoTypes) {
 
     origLines.features.forEach(line => {
         let widestSideWidth = calculateWidestSideWidth(edges, line) + (origLineWidth / 2);
@@ -352,7 +359,8 @@ function addWidthAttr(origLines, edges, origLineWidth, cargoTypes) {
     });
 }
 
-function getMaxCargoRadius(origLines, adjacentLines, cargo) {
+// function get cargo max radius
+export function getMaxCargoRadius(origLines, adjacentLines, cargo) {
     let cargoMaxRadius;
     let cargoRadiusArray = [];
 
@@ -371,7 +379,7 @@ function getMaxCargoRadius(origLines, adjacentLines, cargo) {
 
 
 // function to calculate node radius
-function addRadiusAttr(origLines, node, cargoTypes) {
+export function addRadiusAttr(origLines, node, cargoTypes) {
 
     var adjacentLines = node.properties.adjacentLines;
     var maxWidth = calculateMaxWidth(origLines, adjacentLines);
@@ -386,7 +394,7 @@ function addRadiusAttr(origLines, node, cargoTypes) {
 }
 
 // function to render background lines
-function renderBackgroundLines(map, origLines, origLineWidth) {
+export function renderBackgroundLines(map, origLines, origLineWidth) {
 
     if (map.getSource('background-lines')) {
         map.getSource('background-lines').setData(origLines);
@@ -424,7 +432,7 @@ function renderBackgroundLines(map, origLines, origLineWidth) {
 }
 
 // function to render edges
-function renderEdges(map, edges, cargoColorArray, nodes) {
+export function renderEdges(map, edges, cargoColorArray, nodes) {
 
     if (map.getSource('edges')) {
         map.getSource('edges').setData(edges);
@@ -489,7 +497,7 @@ function renderEdges(map, edges, cargoColorArray, nodes) {
 
 
 // function to change colors of edges
-function changeEdgesColor(map, cargoColorArray) {
+export function changeEdgesColor(map, cargoColorArray) {
     let reverseCargoArray = cargoColorArray.slice().reverse();
 
     reverseCargoArray.forEach(cargoObj => {
@@ -501,7 +509,7 @@ function changeEdgesColor(map, cargoColorArray) {
 }
 
 // function to render nodes
-function renderNodes(map, nodes) {
+export function renderNodes(map, nodes) {
 
     if (map.getSource('nodes')) {
         map.getSource('nodes').setData(nodes);
@@ -576,7 +584,7 @@ function renderNodes(map, nodes) {
 }
 
 // function to render original lines
-function renderOrigLines(map, origLines, origLineWidth) {
+export function renderOrigLines(map, origLines, origLineWidth) {
 
     if (map.getSource('lines')) {
         map.getSource('lines').setData(origLines);
@@ -610,7 +618,7 @@ FUNCTIONS FOR EDIT INTERFACE
 */
 
 // function to create color box
-function createColorBox(cargo) {
+export function createColorBox(cargo) {
     let colorBox = document.createElement('span');
     colorBox.classList.add('color-box');
     colorBox.style.backgroundColor = cargo.color;
@@ -620,7 +628,7 @@ function createColorBox(cargo) {
 }
 
 // function to create color table
-function createColorTable(tableBody, cargoColorArray, edges, map, nodes) {
+export function createColorTable(tableBody, cargoColorArray, edges, map, nodes) {
 
     cargoColorArray.forEach(cargo => {
         let row = document.createElement('tr');
@@ -646,7 +654,7 @@ function createColorTable(tableBody, cargoColorArray, edges, map, nodes) {
 }
 
 // function to bind color picker and change color handler
-function bindColorPicker(colorBox, cargoColorArray, edges, map, nodes) {
+export function bindColorPicker(colorBox, cargoColorArray, edges, map, nodes) {
     var hueb = new Huebee(colorBox, {
         setText: false,
         notation: 'hex'
@@ -663,7 +671,7 @@ function bindColorPicker(colorBox, cargoColorArray, edges, map, nodes) {
 }
 
 // function to change color in array of cargo
-function changeCargoColor(cargoColorArray, id, color) {
+export function changeCargoColor(cargoColorArray, id, color) {
     cargoColorArray.forEach(cargo => {
         if (cargo.id === id) {
             cargo.color = color;
@@ -672,7 +680,7 @@ function changeCargoColor(cargoColorArray, id, color) {
 }
 
 // function to set up width slider
-function createSlider(el, minWidthDefault, maxWidthDefault, maxWidth) {
+export function createSlider(el, minWidthDefault, maxWidthDefault, maxWidth) {
     noUiSlider.create(el, {
         start: [minWidthDefault, maxWidthDefault],
         connect: true,
@@ -690,7 +698,7 @@ FUNCTIONS FOR OTHER INTERFACE
 */
 
 // function to toggle layer visibility
-function toggleLayerVisibility(layerCheckbox, map, layerId) {
+export function toggleLayerVisibility(layerCheckbox, map, layerId) {
 
     if (layerCheckbox.checked) {
         map.setLayoutProperty(layerId, 'visibility', 'visible');
