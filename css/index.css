@@ -4,6 +4,7 @@ body {
   font-family: "Open Sans", sans-serif;
   font-size: 15px;
   overflow: hidden;
+  background: rgb(51,50,49);
 }
 
 h1,

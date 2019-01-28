@@ -1,11 +1,5 @@
 // import css
-import 'bootstrap/dist/css/bootstrap.min.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import 'huebee/dist/huebee.min.css';
-import 'nouislider/distribute/nouislider.min.css';
-import '../lib/pretty-checkbox.min.css';
-
-import '../css/index.css';
 
 // import js modules
 import 'bootstrap';
