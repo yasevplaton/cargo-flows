@@ -5,7 +5,7 @@ module.exports = {
   mode: "development",
   entry: './js/app.js',
   output: {
-    filename: 'build.js'
+    filename: 'bundle.min.js'
   },
 
   watch: true,
@@ -17,8 +17,6 @@ module.exports = {
 
   plugins: [
     new BrowserSyncPlugin({
-      // browse to http://localhost:3000/ during development,
-      // ./public directory is being served
       host: 'localhost',
       port: 5500,
       files: ["./css/*.css", "./*.html"],
@@ -36,5 +34,9 @@ module.exports = {
         use: ['style-loader', 'css-loader']
       }
     ]
+  },
+
+  optimization: {
+    minimize: false
   }
 };

@@ -2,7 +2,7 @@ import { interpolateRound } from 'd3-interpolate';
 import 'nouislider';
 
 const Huebee = require('huebee');
-var geostats = require('../lib/geostats');
+const geostats = require('../lib/geostats');
 
 
 /* 
