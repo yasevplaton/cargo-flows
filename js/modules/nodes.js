@@ -1,5 +1,40 @@
 import { calculateMaxWidth, getMaxCargoRadius } from "./edges";
 
+
+export function bindEdgesInfoToNodes(node, edges) {
+    let nodeID = node.properties.OBJECTID;
+    let inEdges = [];
+    let outEdges = [];
+    
+    edges.features.forEach(e => {
+        let edgesProps = e.properties;
+        let edgeID = e.id;
+        if (edgesProps.src === nodeID) {
+            outEdges.push({
+                'id': edgeID,
+                'type': edgesProps.type,
+                'value': edgesProps.value,
+                'width': edgesProps.width,
+                'offset': edgesProps.offset,
+                'lineID': edgesProps.ID_line
+            });
+        } else if (edgesProps.dest === nodeID) {
+            inEdges.push({
+                'id': edgeID,
+                'type': edgesProps.type,
+                'value': edgesProps.value,
+                'width': edgesProps.width,
+                'offset': edgesProps.offset,
+                'lineID': edgesProps.ID_line
+            });
+        }
+    });
+
+    node.properties.inEdges = inEdges;
+    node.properties.outEdges = outEdges;
+}
+
+
 // function to find lines that adjacent to specific node
 export function findAdjacentLines(edges, nodeID) {
   var adjacentLines = [];

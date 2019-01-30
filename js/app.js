@@ -13,9 +13,9 @@ import {
     calculateOffset,
     addWidthAttr } from "./modules/edges";
 
-import { fillAdjacentLinesAttr, addRadiusAttr } from "./modules/nodes";
+import { fillAdjacentLinesAttr, addRadiusAttr, bindEdgesInfoToNodes } from "./modules/nodes";
 import { renderEdges, renderOrigLines, renderNodes } from "./modules/render";
-import { createColorTable, createSlider } from "./modules/interface";
+import { createColorTable, createSlider, toggleLayerVisibility } from "./modules/interface";
 
 window.onload = () => {
 
@@ -48,6 +48,7 @@ window.onload = () => {
         const widthSlider = document.getElementById('widthSlider');
         const minWidthInput = document.getElementById('min-width-input');
         const maxWidthInput = document.getElementById('max-width-input');
+        const citiesCheckbox = document.getElementById('cities-checkbox');
         const junctionCheckbox = document.getElementById('junctions-checkbox');
         const backgroundLinesCheckbox = document.getElementById('background-lines-checkbox');
         const edgesCheckbox = document.getElementById('edges-checkbox');
@@ -205,6 +206,7 @@ window.onload = () => {
             // calculate node radius
             nodes.features.forEach(node => {
                 addRadiusAttr(origLines, node, cargoTypes);
+                bindEdgesInfoToNodes(node, edges);
             });
 
             // render background lines
@@ -265,17 +267,23 @@ window.onload = () => {
             });
 
             // add click listener to junctions, background lines and edges checkboxes to toggle visibility of layers
+            citiesCheckbox.addEventListener('click', () => {
+                toggleLayerVisibility(citiesCheckbox, map, 'cities');
+                toggleLayerVisibility(citiesCheckbox, map, 'nodes-label');
+            });
+
+
             junctionCheckbox.addEventListener('click', () => {
-                tools.toggleLayerVisibility(junctionCheckbox, map, 'junctions');
+                toggleLayerVisibility(junctionCheckbox, map, 'junctions');
             });
 
             backgroundLinesCheckbox.addEventListener('click', () => {
-                tools.toggleLayerVisibility(backgroundLinesCheckbox, map, 'background-lines');
+                toggleLayerVisibility(backgroundLinesCheckbox, map, 'background-lines');
             });
 
             edgesCheckbox.addEventListener('click', () => {
                 cargoTypes.forEach(type => {
-                    tools.toggleLayerVisibility(edgesCheckbox, map, type);
+                    toggleLayerVisibility(edgesCheckbox, map, type);
                 });
             });
 
