@@ -89,7 +89,7 @@ window.onload = () => {
                     body: inputFileElement.files[0]
                 }).then(response => response.json());
 
-                nodesPromise = fetch('../../public/data/pointsVolga.geojson?ass=' + Math.random()).then(response => response.json());
+                nodesPromise = fetch('../data/pointsVolga.geojson?ass=' + Math.random()).then(response => response.json());
 
                 Promise.all([edgesPromise, nodesPromise])
                     .then(([edges, nodes]) => main(edges, nodes))
@@ -122,8 +122,8 @@ window.onload = () => {
             loadingDataPanel.classList.remove('hidden');
 
             // initialize promises for data
-            edgesPromise = fetch('../../public/data/edgesVolgaAssym.geojson?ass=' + Math.random()).then(response => response.json());
-            nodesPromise = fetch('../../public/data/pointsVolga.geojson?ass=' + Math.random()).then(response => response.json());
+            edgesPromise = fetch('../data/edgesVolgaAssym.geojson?ass=' + Math.random()).then(response => response.json());
+            nodesPromise = fetch('../data/pointsVolga.geojson?ass=' + Math.random()).then(response => response.json());
 
             // if all promises are resolved invoke main function
             Promise.all([edgesPromise, nodesPromise])
