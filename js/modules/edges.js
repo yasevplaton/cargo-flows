@@ -141,7 +141,7 @@ export function calcCargoMaxWidth(edges, line, cargoTypes) {
       sameLineEdges.forEach(e => {
           if (e.properties.type === cargo) {
 
-              let sumWidth = e.properties.width + e.properties.offset
+              let sumWidth = e.properties.offset + ( e.properties.width / 2 )
 
               if (cargoMaxWidth[cargo]) {
                   if (sumWidth > cargoMaxWidth[cargo]) {

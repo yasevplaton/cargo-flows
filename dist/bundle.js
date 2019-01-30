@@ -248,7 +248,7 @@ window.onload = () => {
 
             // set original line width
             const origLineWidth = 1;
-            const shadowOffset = 12;
+            // const shadowOffset = 12;
 
             // get bounding box of data to center and zoom map
             let boundingBox = Object(_modules_common__WEBPACK_IMPORTED_MODULE_2__["getBoundingBox"])(nodes);
@@ -693,7 +693,7 @@ function calcCargoMaxWidth(edges, line, cargoTypes) {
       sameLineEdges.forEach(e => {
           if (e.properties.type === cargo) {
 
-              let sumWidth = e.properties.width + e.properties.offset
+              let sumWidth = e.properties.offset + ( e.properties.width / 2 )
 
               if (cargoMaxWidth[cargo]) {
                   if (sumWidth > cargoMaxWidth[cargo]) {

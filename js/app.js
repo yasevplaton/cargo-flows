@@ -151,7 +151,7 @@ window.onload = () => {
 
             // set original line width
             const origLineWidth = 1;
-            const shadowOffset = 12;
+            // const shadowOffset = 12;
 
             // get bounding box of data to center and zoom map
             let boundingBox = getBoundingBox(nodes);
