@@ -22,10 +22,6 @@
   "devDependencies": {
     "browser-sync": "^2.26.3",
     "browser-sync-webpack-plugin": "^2.2.2",
-    "css-loader": "^2.1.0",
-    "node-sass": "^4.11.0",
-    "sass-loader": "^7.1.0",
-    "style-loader": "^0.23.1",
     "webpack": "^4.29.0",
     "webpack-cli": "^3.2.1"
   },
@@ -36,7 +32,6 @@
     "jquery": "^3.3.1",
     "mapbox-gl": "^0.52.0",
     "nouislider": "^12.1.0",
-    "npm": "^6.7.0",
     "popper.js": "^1.14.6"
   }
 }
