@@ -1,11 +1,13 @@
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 const webpack = require('webpack');
+const path = require('path');
 
 module.exports = {
   mode: "development",
-  entry: './js/app.js',
+  entry: './src/js/app.js',
   output: {
-    filename: 'bundle.min.js'
+    path: path.resolve(__dirname, 'public/js'),
+    filename: 'bundle.js'
   },
 
   watch: true,
@@ -26,15 +28,6 @@ module.exports = {
       noUiSlider: 'nouislider'
     })
   ],
-
-  module: {
-    rules: [
-      {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader']
-      }
-    ]
-  },
 
   optimization: {
     minimize: false
