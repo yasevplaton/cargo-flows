@@ -13,7 +13,7 @@ import {
     calculateOffset,
     addWidthAttr } from "./modules/edges";
 
-import { fillAdjacentLinesAttr, addRadiusAttr, bindEdgesInfoToNodes } from "./modules/nodes";
+import { fillAdjacentLinesAttr, addNodeAttr, bindEdgesInfoToNodes } from "./modules/nodes";
 import { renderEdges, renderOrigLines, renderNodes } from "./modules/render";
 import { createColorTable, createSlider, toggleLayerVisibility } from "./modules/interface";
 
@@ -139,6 +139,15 @@ window.onload = () => {
             // store input file in variable
             cargoTable = inputFileElement.files[0];
 
+            // test project function
+            // let pt1 = edges.features[0].geometry.coordinates[0];
+            // let pt2 = edges.features[1].geometry.coordinates[0];
+            
+            // console.log(pt1, pt2);
+            // let pt1px = map.project(pt1);
+            // let pt2px = map.project(pt2);
+            // console.log(pt1px, pt2px);
+
             // hide loading panel
             loadingDataPanel.classList.add('hidden');
 
@@ -205,8 +214,8 @@ window.onload = () => {
 
             // calculate node radius
             nodes.features.forEach(node => {
-                addRadiusAttr(origLines, node, cargoTypes);
                 bindEdgesInfoToNodes(node, edges);
+                addNodeAttr(origLines, node, cargoTypes, map);
             });
 
             // render background lines
@@ -294,7 +303,7 @@ window.onload = () => {
                 calculateOffset(edges, origLineWidth);
                 addWidthAttr(origLines, edges, origLineWidth, cargoTypes);
                 nodes.features.forEach(node => {
-                    addRadiusAttr(origLines, node, cargoTypes);
+                    addNodeAttr(origLines, node, cargoTypes, map);
                 });
                 // renderBackgroundLines(map, origLines, origLineWidth);
                 renderEdges(map, edges, cargoColorArray, nodes);

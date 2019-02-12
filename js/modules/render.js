@@ -80,7 +80,8 @@ export function renderEdges(map, edges, cargoColorArray, nodes) {
 
 
             // render junctions nodes layer
-            let cargoPropName = cargoObj.type + "MaxRadius";
+            const cargoRadiusName = `${cargoObj.type}-radius`;
+            const cargoTranslateName = `${cargoObj.type}-translate`;
 
             map.addLayer({
                 "id": cargoObj.type + "node",
@@ -90,9 +91,10 @@ export function renderEdges(map, edges, cargoColorArray, nodes) {
                     "circle-color": cargoObj.color,
                     "circle-radius": [
                         'interpolate', ['linear'], ['zoom'],
-                        5, ['/', ['get', cargoPropName], 10],
-                        10, ['get', cargoPropName]
-                    ]
+                        5, ['/', ['get', cargoRadiusName], 10],
+                        10, ['get', cargoRadiusName]
+                    ],
+                    "circle-translate": ['get', cargoTranslateName]
                 }
             });
 
