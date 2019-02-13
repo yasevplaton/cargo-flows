@@ -52,6 +52,7 @@ window.onload = () => {
         const junctionCheckbox = document.getElementById('junctions-checkbox');
         const backgroundLinesCheckbox = document.getElementById('background-lines-checkbox');
         const edgesCheckbox = document.getElementById('edges-checkbox');
+        const cargoNodesCheckbox = document.getElementById('cargo-nodes-checkbox');
 
         // store server url
         // localhost url for testing
@@ -296,6 +297,12 @@ window.onload = () => {
                 });
             });
 
+            cargoNodesCheckbox.addEventListener('click', () => {
+                cargoTypes.forEach(type => {
+                    toggleLayerVisibility(cargoNodesCheckbox, map, `${type}-nodes`);
+                });
+            });
+
             // function to update map when slider updates
             function updateSliderHandler() {
                 widthArray = getWidthArray(+minWidthInput.value, +maxWidthInput.value);
@@ -303,6 +310,7 @@ window.onload = () => {
                 calculateOffset(edges, origLineWidth);
                 addWidthAttr(origLines, edges, origLineWidth, cargoTypes);
                 nodes.features.forEach(node => {
+                    bindEdgesInfoToNodes(node, edges);
                     addNodeAttr(origLines, node, cargoTypes, map);
                 });
                 // renderBackgroundLines(map, origLines, origLineWidth);

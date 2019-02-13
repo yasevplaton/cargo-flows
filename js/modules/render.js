@@ -84,17 +84,18 @@ export function renderEdges(map, edges, cargoColorArray, nodes) {
             const cargoTranslateName = `${cargoObj.type}-translate`;
 
             map.addLayer({
-                "id": cargoObj.type + "node",
+                "id": cargoObj.type + "-nodes",
                 "source": "junction-nodes",
                 "type": "circle",
+                "filter": ["!=", ['get', cargoRadiusName], 0],
                 "paint": {
                     "circle-color": cargoObj.color,
                     "circle-radius": [
                         'interpolate', ['linear'], ['zoom'],
                         5, ['/', ['get', cargoRadiusName], 10],
                         10, ['get', cargoRadiusName]
-                    ],
-                    "circle-translate": ['get', cargoTranslateName]
+                    ]
+                    // "circle-translate": ['get', cargoTranslateName]
                 }
             });
 
@@ -108,7 +109,7 @@ export function changeEdgesColor(map, cargoColorArray) {
 
     reverseCargoArray.forEach(cargoObj => {
         map.setPaintProperty(cargoObj.type, 'line-color', cargoObj.color);
-        let layerNodeID = cargoObj.type + "node";
+        let layerNodeID = cargoObj.type + "-nodes";
         map.setPaintProperty(layerNodeID, 'circle-color', cargoObj.color);
     })
 

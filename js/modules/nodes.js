@@ -11,7 +11,7 @@ export function bindEdgesInfoToNodes(node, edges) {
         let edgeID = e.id;
         let edgeGeom = e.geometry.coordinates;
         let numOfPoints = edgeGeom.length;
-        if (edgesProps.src === nodeID) {
+        if (edgesProps.src === nodeID && edgesProps.value !== 0) {
             outEdges.push({
                 'id': edgeID,
                 'type': edgesProps.type,
@@ -21,7 +21,7 @@ export function bindEdgesInfoToNodes(node, edges) {
                 'lineID': edgesProps.ID_line,
                 'secondPoint': edgeGeom[1]
             });
-        } else if (edgesProps.dest === nodeID) {
+        } else if (edgesProps.dest === nodeID && edgesProps.value !== 0) {
             inEdges.push({
                 'id': edgeID,
                 'type': edgesProps.type,
@@ -105,44 +105,52 @@ function getTapeCornersPoints(map, node, cargoType) {
 
     const edges = getSameCargoEdges(node, cargoType);
 
-    edges.forEach(edge => {
+    if (edges.length !== 0) {
+        edges.forEach(edge => {
 
-        // edge is output edge
-        if (edge.hasOwnProperty('secondPoint')) {
-            secondPoint = map.project(edge.secondPoint);
-            vector = getVector(nodeGeomPix, secondPoint);
-        
-        // or edge is input edge
-        } else {
-            secondPoint = map.project(edge.beforeLastPoint);
-            vector = getVector(secondPoint, nodeGeomPix);
-        }
-
-        const normalVector = getNormalVector(vector);
-        const dist = edge.offset + ( edge.width / 2 );
-        const corner = getCornerCoordinates(nodeGeomPix, normalVector, dist);
-
-        cornersPoints.push(corner);
-    });
+            // edge is output edge
+            if (edge.hasOwnProperty('secondPoint')) {
+                secondPoint = map.project(edge.secondPoint);
+                vector = getVector(nodeGeomPix, secondPoint);
+            
+            // or edge is input edge
+            } else {
+                secondPoint = map.project(edge.beforeLastPoint);
+                vector = getVector(secondPoint, nodeGeomPix);
+            }
+    
+            const normalVector = getNormalVector(vector);
+            const dist = edge.offset + ( edge.width / 2 );
+            const corner = getCornerCoordinates(nodeGeomPix, normalVector, dist);
+    
+            cornersPoints.push(corner);
+        });
+    }
 
     return cornersPoints;
 }
 
 // function to fill node attribute
 function addRadiusAndTranslate(node, cargoType, cornerPoints, map) {
-    const circle = makeCircle(cornerPoints);
 
     const cargoRadiusName = `${cargoType}-radius`;
-    node.properties[cargoRadiusName] = circle.r;
-
-    const nodeGeomPix = map.project(node.geometry.coordinates);
-    
-    const xTranslate = circle.x - nodeGeomPix.x;
-    const yTranslate = circle.y - nodeGeomPix.y;
-
     const cargoTranslateName = `${cargoType}-translate`;
 
-    node.properties[cargoTranslateName] = [xTranslate, yTranslate];
+    if (cornerPoints.length !== 0) {
+        const circle = makeCircle(cornerPoints);
+
+        node.properties[cargoRadiusName] = circle.r;
+    
+        const nodeGeomPix = map.project(node.geometry.coordinates);
+        
+        const xTranslate = circle.x - nodeGeomPix.x;
+        const yTranslate = circle.y - nodeGeomPix.y;
+    
+        node.properties[cargoTranslateName] = [xTranslate, yTranslate];
+    } else {
+        node.properties[cargoRadiusName] = 0;
+        node.properties[cargoTranslateName] = [0, 0];
+    }
 
 }
 

@@ -149,6 +149,7 @@ window.onload = () => {
         const junctionCheckbox = document.getElementById('junctions-checkbox');
         const backgroundLinesCheckbox = document.getElementById('background-lines-checkbox');
         const edgesCheckbox = document.getElementById('edges-checkbox');
+        const cargoNodesCheckbox = document.getElementById('cargo-nodes-checkbox');
 
         // store server url
         // localhost url for testing
@@ -393,6 +394,12 @@ window.onload = () => {
                 });
             });
 
+            cargoNodesCheckbox.addEventListener('click', () => {
+                cargoTypes.forEach(type => {
+                    Object(_modules_interface__WEBPACK_IMPORTED_MODULE_6__["toggleLayerVisibility"])(cargoNodesCheckbox, map, `${type}-nodes`);
+                });
+            });
+
             // function to update map when slider updates
             function updateSliderHandler() {
                 widthArray = Object(_modules_edges__WEBPACK_IMPORTED_MODULE_3__["getWidthArray"])(+minWidthInput.value, +maxWidthInput.value);
@@ -400,6 +407,7 @@ window.onload = () => {
                 Object(_modules_edges__WEBPACK_IMPORTED_MODULE_3__["calculateOffset"])(edges, origLineWidth);
                 Object(_modules_edges__WEBPACK_IMPORTED_MODULE_3__["addWidthAttr"])(origLines, edges, origLineWidth, cargoTypes);
                 nodes.features.forEach(node => {
+                    Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["bindEdgesInfoToNodes"])(node, edges);
                     Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["addNodeAttr"])(origLines, node, cargoTypes, map);
                 });
                 // renderBackgroundLines(map, origLines, origLineWidth);
@@ -2160,7 +2168,7 @@ function bindEdgesInfoToNodes(node, edges) {
         let edgeID = e.id;
         let edgeGeom = e.geometry.coordinates;
         let numOfPoints = edgeGeom.length;
-        if (edgesProps.src === nodeID) {
+        if (edgesProps.src === nodeID && edgesProps.value !== 0) {
             outEdges.push({
                 'id': edgeID,
                 'type': edgesProps.type,
@@ -2170,7 +2178,7 @@ function bindEdgesInfoToNodes(node, edges) {
                 'lineID': edgesProps.ID_line,
                 'secondPoint': edgeGeom[1]
             });
-        } else if (edgesProps.dest === nodeID) {
+        } else if (edgesProps.dest === nodeID && edgesProps.value !== 0) {
             inEdges.push({
                 'id': edgeID,
                 'type': edgesProps.type,
@@ -2254,44 +2262,52 @@ function getTapeCornersPoints(map, node, cargoType) {
 
     const edges = getSameCargoEdges(node, cargoType);
 
-    edges.forEach(edge => {
+    if (edges.length !== 0) {
+        edges.forEach(edge => {
 
-        // edge is output edge
-        if (edge.hasOwnProperty('secondPoint')) {
-            secondPoint = map.project(edge.secondPoint);
-            vector = getVector(nodeGeomPix, secondPoint);
-        
-        // or edge is input edge
-        } else {
-            secondPoint = map.project(edge.beforeLastPoint);
-            vector = getVector(secondPoint, nodeGeomPix);
-        }
-
-        const normalVector = getNormalVector(vector);
-        const dist = edge.offset + ( edge.width / 2 );
-        const corner = getCornerCoordinates(nodeGeomPix, normalVector, dist);
-
-        cornersPoints.push(corner);
-    });
+            // edge is output edge
+            if (edge.hasOwnProperty('secondPoint')) {
+                secondPoint = map.project(edge.secondPoint);
+                vector = getVector(nodeGeomPix, secondPoint);
+            
+            // or edge is input edge
+            } else {
+                secondPoint = map.project(edge.beforeLastPoint);
+                vector = getVector(secondPoint, nodeGeomPix);
+            }
+    
+            const normalVector = getNormalVector(vector);
+            const dist = edge.offset + ( edge.width / 2 );
+            const corner = getCornerCoordinates(nodeGeomPix, normalVector, dist);
+    
+            cornersPoints.push(corner);
+        });
+    }
 
     return cornersPoints;
 }
 
 // function to fill node attribute
 function addRadiusAndTranslate(node, cargoType, cornerPoints, map) {
-    const circle = makeCircle(cornerPoints);
 
     const cargoRadiusName = `${cargoType}-radius`;
-    node.properties[cargoRadiusName] = circle.r;
-
-    const nodeGeomPix = map.project(node.geometry.coordinates);
-    
-    const xTranslate = circle.x - nodeGeomPix.x;
-    const yTranslate = circle.y - nodeGeomPix.y;
-
     const cargoTranslateName = `${cargoType}-translate`;
 
-    node.properties[cargoTranslateName] = [xTranslate, yTranslate];
+    if (cornerPoints.length !== 0) {
+        const circle = makeCircle(cornerPoints);
+
+        node.properties[cargoRadiusName] = circle.r;
+    
+        const nodeGeomPix = map.project(node.geometry.coordinates);
+        
+        const xTranslate = circle.x - nodeGeomPix.x;
+        const yTranslate = circle.y - nodeGeomPix.y;
+    
+        node.properties[cargoTranslateName] = [xTranslate, yTranslate];
+    } else {
+        node.properties[cargoRadiusName] = 0;
+        node.properties[cargoTranslateName] = [0, 0];
+    }
 
 }
 
@@ -2555,17 +2571,18 @@ function renderEdges(map, edges, cargoColorArray, nodes) {
             const cargoTranslateName = `${cargoObj.type}-translate`;
 
             map.addLayer({
-                "id": cargoObj.type + "node",
+                "id": cargoObj.type + "-nodes",
                 "source": "junction-nodes",
                 "type": "circle",
+                "filter": ["!=", ['get', cargoRadiusName], 0],
                 "paint": {
                     "circle-color": cargoObj.color,
                     "circle-radius": [
                         'interpolate', ['linear'], ['zoom'],
                         5, ['/', ['get', cargoRadiusName], 10],
                         10, ['get', cargoRadiusName]
-                    ],
-                    "circle-translate": ['get', cargoTranslateName]
+                    ]
+                    // "circle-translate": ['get', cargoTranslateName]
                 }
             });
 
@@ -2579,7 +2596,7 @@ function changeEdgesColor(map, cargoColorArray) {
 
     reverseCargoArray.forEach(cargoObj => {
         map.setPaintProperty(cargoObj.type, 'line-color', cargoObj.color);
-        let layerNodeID = cargoObj.type + "node";
+        let layerNodeID = cargoObj.type + "-nodes";
         map.setPaintProperty(layerNodeID, 'circle-color', cargoObj.color);
     })
 
