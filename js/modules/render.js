@@ -37,7 +37,7 @@
 // }
 
 // function to render edges
-export function renderEdges(map, edges, cargoColorArray, nodes) {
+export function renderEdges(map, edges, cargoColorArray, nodes, multipleCargoNodesObject) {
 
     if (map.getSource('edges')) {
         map.getSource('edges').setData(edges);
@@ -46,7 +46,7 @@ export function renderEdges(map, edges, cargoColorArray, nodes) {
     } else {
 
         map.addSource("edges", { type: "geojson", data: edges });
-        map.addSource("junction-nodes", { type: "geojson", data: nodes });
+        // map.addSource("junction-nodes", { type: "geojson", data: nodes });
 
         let reverseCargoArray = cargoColorArray.slice().reverse();
 
@@ -65,16 +65,18 @@ export function renderEdges(map, edges, cargoColorArray, nodes) {
                 "paint": {
                     'line-color': cargoObj.color,
                     "line-opacity": 1,
-                    'line-offset': [
-                        'interpolate', ['linear'], ['zoom'],
-                        5, ['/', ['get', 'offset'], 10],
-                        10, ['get', 'offset']
-                    ],
-                    "line-width": [
-                        'interpolate', ['linear'], ['zoom'],
-                        5, ['/', ['get', 'width'], 10],
-                        10, ['get', 'width']
-                    ]
+                    "line-offset": ['get', 'offset'],
+                    // 'line-offset': [
+                    //     'interpolate', ['linear'], ['zoom'],
+                    //     5, ['/', ['get', 'offset'], 10],
+                    //     10, ['get', 'offset']
+                    // ],
+                    "line-width": ['get', 'width']
+                    // "line-width": [
+                    //     'interpolate', ['linear'], ['zoom'],
+                    //     5, ['/', ['get', 'width'], 10],
+                    //     10, ['get', 'width']
+                    // ]
                 }
             });
 
@@ -83,18 +85,21 @@ export function renderEdges(map, edges, cargoColorArray, nodes) {
             const cargoRadiusName = `${cargoObj.type}-radius`;
             const cargoTranslateName = `${cargoObj.type}-translate`;
 
+            map.addSource(`${cargoObj.type}-nodes`, { type: "geojson", data: multipleCargoNodesObject[cargoObj.type] });
+
             map.addLayer({
                 "id": cargoObj.type + "-nodes",
-                "source": "junction-nodes",
+                "source": `${cargoObj.type}-nodes`,
                 "type": "circle",
-                "filter": ["!=", ['get', cargoRadiusName], 0],
+                "filter": ["!=", ['get', "radius"], 0],
                 "paint": {
                     "circle-color": cargoObj.color,
-                    "circle-radius": [
-                        'interpolate', ['linear'], ['zoom'],
-                        5, ['/', ['get', cargoRadiusName], 10],
-                        10, ['get', cargoRadiusName]
-                    ]
+                    "circle-radius": ['get', "radius"]
+                    // "circle-radius": [
+                    //     'interpolate', ['linear'], ['zoom'],
+                    //     5, ['/', ['get', "radius"], 10],
+                    //     10, ['get', "radius"]
+                    // ]
                     // "circle-translate": ['get', cargoTranslateName]
                 }
             });

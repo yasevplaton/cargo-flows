@@ -13,7 +13,7 @@ import {
     calculateOffset,
     addWidthAttr } from "./modules/edges";
 
-import { fillAdjacentLinesAttr, addNodeAttr, bindEdgesInfoToNodes } from "./modules/nodes";
+import { fillAdjacentLinesAttr, addNodeAttr, bindEdgesInfoToNodes, createMultipleCargoNodesObject } from "./modules/nodes";
 import { renderEdges, renderOrigLines, renderNodes } from "./modules/render";
 import { createColorTable, createSlider, toggleLayerVisibility } from "./modules/interface";
 
@@ -194,7 +194,7 @@ window.onload = () => {
             fillOrigLines(linesIDArray, origLines, edges);
 
             // set default values for width of edges
-            let minWidthDefault = 2, maxWidthDefault = 20;
+            let minWidthDefault = 2, maxWidthDefault = 10;
 
             minWidthInput.value = minWidthDefault;
             maxWidthInput.value = maxWidthDefault;
@@ -219,10 +219,12 @@ window.onload = () => {
                 addNodeAttr(origLines, node, cargoTypes, map);
             });
 
+            const multipleCargoNodesObject = createMultipleCargoNodesObject(cargoTypes, nodes);
+
             // render background lines
             // renderBackgroundLines(map, origLines, origLineWidth);
             // render edges
-            renderEdges(map, edges, cargoColorArray, nodes);
+            renderEdges(map, edges, cargoColorArray, nodes, multipleCargoNodesObject);
             // render original lines
             renderOrigLines(map, origLines, origLineWidth);
             // render nodes
