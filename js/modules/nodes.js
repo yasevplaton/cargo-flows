@@ -70,8 +70,10 @@ export function addNodeAttr(origLines, node, cargoTypes, map) {
 
 
     cargoTypes.forEach(cargo => {
-        const cornerPoints = getTapeCornersPoints(map, node, cargo);
-        addRadiusAndPosition(node, cargo, cornerPoints, map);
+        const cornersPoints = getTapeCornersPoints(map, node, cargo);
+        console.log(cargo);
+        console.log(cornersPoints);
+        addRadiusAndPosition(node, cargo, cornersPoints, map);
     });
 
 }
@@ -100,6 +102,8 @@ function getTapeCornersPoints(map, node, cargoType) {
     const cornersPoints = [];
 
     const nodeGeomPix = map.project(node.geometry.coordinates);
+    console.log(node.properties.OBJECTID);
+    console.log(nodeGeomPix);
 
     let vector, secondPoint;
 
@@ -119,9 +123,9 @@ function getTapeCornersPoints(map, node, cargoType) {
                 vector = getVector(secondPoint, nodeGeomPix);
             }
 
-            const normalVector = getNormalVector(vector);
+            const offsetAngle = getOffsetAngle(vector);
             const dist = edge.offset + (edge.width / 2);
-            const corner = getCornerCoordinates(nodeGeomPix, normalVector, dist);
+            const corner = getCornerCoordinates(nodeGeomPix, dist, offsetAngle);
 
             cornersPoints.push(corner);
         });
@@ -131,13 +135,15 @@ function getTapeCornersPoints(map, node, cargoType) {
 }
 
 // function to fill node attribute
-function addRadiusAndPosition(node, cargoType, cornerPoints, map) {
+function addRadiusAndPosition(node, cargoType, cornersPoints, map) {
 
     const cargoRadiusName = `${cargoType}-radius`;
     const cargoPositionName = `${cargoType}-position`;
 
-    if (cornerPoints.length !== 0) {
-        const circle = makeCircle(cornerPoints);
+    if (cornersPoints.length !== 0) {
+        const circle = makeCircle(cornersPoints);
+
+        console.log(circle);
 
         node.properties[cargoRadiusName] = circle.r;
 
@@ -170,27 +176,23 @@ function getVector(pt1, pt2) {
     }
 }
 
-// function to get normal vector to current vector
-function getNormalVector(vector) {
-    const vecLength = Math.sqrt((vector.x * vector.x) + (vector.y * vector.y));
+// function to get offset angle
+function getOffsetAngle(vector) {
+    const segmentAngle = Math.atan2(vector.y, vector.x);
+    const offsetAngle = segmentAngle - Math.PI/2;
 
-    return {
-        x: vector.x / vecLength,
-        y: vector.y / vecLength
-    }
+    return offsetAngle;
 }
 
-// function to get coordinates of tape corner (in pixels)
-function getCornerCoordinates(pt, normalVector, dist) {
-    const deltaX = normalVector.x * dist;
-    const deltaY = normalVector.y * dist;
-
+// function to get corner coordinates
+function getCornerCoordinates(pt, dist, offsetAngle) {
     return {
-        x: pt.x + deltaX,
-        y: pt.y + deltaY
-    }
+        x: pt.x + dist * Math.cos(offsetAngle),
+        y: pt.y + dist * Math.sin(offsetAngle)
+    };
 }
 
+// function to create object for specific type of cargo
 function createSingleCargoNodesObject(cargoType, nodes) {
 
     const singleCargoNodesObject = { type: 'FeatureCollection', features: [] };
@@ -215,6 +217,8 @@ function createSingleCargoNodesObject(cargoType, nodes) {
     return singleCargoNodesObject;
 }
 
+
+// function to create object for all types of cargos
 export function createMultipleCargoNodesObject(cargoTypes, nodes) {
     const multipleCargoNodesObject = {};
 

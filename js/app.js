@@ -141,13 +141,11 @@ window.onload = () => {
             cargoTable = inputFileElement.files[0];
 
             // test project function
-            // let pt1 = edges.features[0].geometry.coordinates[0];
-            // let pt2 = edges.features[1].geometry.coordinates[0];
+            let pt1 = nodes.features[0].geometry.coordinates;
             
-            // console.log(pt1, pt2);
-            // let pt1px = map.project(pt1);
-            // let pt2px = map.project(pt2);
-            // console.log(pt1px, pt2px);
+            console.log(pt1);
+            let pt1px = map.project(pt1);
+            console.log(pt1px);
 
             // hide loading panel
             loadingDataPanel.classList.add('hidden');
@@ -325,6 +323,12 @@ window.onload = () => {
                 [[boundingBox.xMin, boundingBox.yMin], [boundingBox.xMax, boundingBox.yMax]],
                 { linear: false, speed: 0.3 }
             );
+
+            let pt2 = nodes.features[0].geometry.coordinates;
+            
+            console.log(pt2);
+            let pt2px = map.project(pt2);
+            console.log(pt2px);
         }
 
     });
