@@ -102,6 +102,7 @@ function getTapeCornersPoints(map, node, cargoType) {
     const cornersPoints = [];
 
     const nodeGeomPix = map.project(node.geometry.coordinates);
+    cornersPoints.push(nodeGeomPix);
     // console.log(node.properties.OBJECTID);
     // console.log(nodeGeomPix);
 

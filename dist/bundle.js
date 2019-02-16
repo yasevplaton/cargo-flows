@@ -2271,6 +2271,7 @@ function getTapeCornersPoints(map, node, cargoType) {
     const cornersPoints = [];
 
     const nodeGeomPix = map.project(node.geometry.coordinates);
+    cornersPoints.push(nodeGeomPix);
     // console.log(node.properties.OBJECTID);
     // console.log(nodeGeomPix);
 
@@ -2756,8 +2757,28 @@ function renderNodes(map, nodes) {
                 "circle-color": "#c4c4c4",
                 "circle-radius": [
                     'interpolate', ['linear'], ['zoom'],
-                    5, ['/', ['get', 'radius'], 10],
-                    10, ['get', 'radius']
+                        1, ['/', ['get', 'radius'], 512],
+                        2, ['/', ['get', 'radius'], 256],
+                        3, ['/', ['get', 'radius'], 128],
+                        4, ['/', ['get', 'radius'], 64],
+                        5, ['/', ['get', 'radius'], 32],
+                        6, ['/', ['get', 'radius'], 16],
+                        7, ['/', ['get', 'radius'], 8],
+                        8, ['/', ['get', 'radius'], 4],
+                        9, ['/', ['get', 'radius'], 2],
+                        10, ['get', 'radius'],
+                        11, ['*', ['get', 'radius'], 2],
+                        12, ['*', ['get', 'radius'], 4],
+                        13, ['*', ['get', 'radius'], 8],
+                        14, ['*', ['get', 'radius'], 16],
+                        15, ['*', ['get', 'radius'], 32],
+                        16, ['*', ['get', 'radius'], 64],
+                        17, ['*', ['get', 'radius'], 128],
+                        18, ['*', ['get', 'radius'], 256],
+                        19, ['*', ['get', 'radius'], 512],
+                        20, ['*', ['get', 'radius'], 1024],
+                        21, ['*', ['get', 'radius'], 2048],
+                        22, ['*', ['get', 'radius'], 4096],
                 ],
                 "circle-stroke-color": "#000000",
                 "circle-stroke-width": 2
@@ -2777,8 +2798,28 @@ function renderNodes(map, nodes) {
                 "circle-color": "#ffffff",
                 "circle-radius": [
                     'interpolate', ['linear'], ['zoom'],
-                    5, ['/', ['get', 'radius'], 10],
-                    10, ['get', 'radius']
+                        1, ['/', ['get', 'radius'], 512],
+                        2, ['/', ['get', 'radius'], 256],
+                        3, ['/', ['get', 'radius'], 128],
+                        4, ['/', ['get', 'radius'], 64],
+                        5, ['/', ['get', 'radius'], 32],
+                        6, ['/', ['get', 'radius'], 16],
+                        7, ['/', ['get', 'radius'], 8],
+                        8, ['/', ['get', 'radius'], 4],
+                        9, ['/', ['get', 'radius'], 2],
+                        10, ['get', 'radius'],
+                        11, ['*', ['get', 'radius'], 2],
+                        12, ['*', ['get', 'radius'], 4],
+                        13, ['*', ['get', 'radius'], 8],
+                        14, ['*', ['get', 'radius'], 16],
+                        15, ['*', ['get', 'radius'], 32],
+                        16, ['*', ['get', 'radius'], 64],
+                        17, ['*', ['get', 'radius'], 128],
+                        18, ['*', ['get', 'radius'], 256],
+                        19, ['*', ['get', 'radius'], 512],
+                        20, ['*', ['get', 'radius'], 1024],
+                        21, ['*', ['get', 'radius'], 2048],
+                        22, ['*', ['get', 'radius'], 4096],
                 ],
                 "circle-stroke-color": "#000000",
                 "circle-stroke-width": 2
@@ -2796,8 +2837,28 @@ function renderNodes(map, nodes) {
                 "text-field": "{NAME}",
                 "text-size": [
                     'interpolate', ['linear'], ['zoom'],
-                    5, ['/', ['get', 'radius'], 3],
-                    10, ['get', 'radius']
+                        1, ['/', ['get', 'radius'], 512],
+                        2, ['/', ['get', 'radius'], 256],
+                        3, ['/', ['get', 'radius'], 128],
+                        4, ['/', ['get', 'radius'], 64],
+                        5, ['/', ['get', 'radius'], 32],
+                        6, ['/', ['get', 'radius'], 16],
+                        7, ['/', ['get', 'radius'], 8],
+                        8, ['/', ['get', 'radius'], 4],
+                        9, ['/', ['get', 'radius'], 2],
+                        10, ['get', 'radius'],
+                        11, ['*', ['get', 'radius'], 2],
+                        12, ['*', ['get', 'radius'], 4],
+                        13, ['*', ['get', 'radius'], 8],
+                        14, ['*', ['get', 'radius'], 16],
+                        15, ['*', ['get', 'radius'], 32],
+                        16, ['*', ['get', 'radius'], 64],
+                        17, ['*', ['get', 'radius'], 128],
+                        18, ['*', ['get', 'radius'], 256],
+                        19, ['*', ['get', 'radius'], 512],
+                        20, ['*', ['get', 'radius'], 1024],
+                        21, ['*', ['get', 'radius'], 2048],
+                        22, ['*', ['get', 'radius'], 4096],
                 ],
                 "text-offset": [1.2, -1.5],
                 'visibility': 'none'
