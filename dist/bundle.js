@@ -124,7 +124,7 @@ window.onload = () => {
         style: 'mapbox://styles/mapbox/dark-v9', // mapbox tiles location
         // style: 'https://maps.tilehosting.com/styles/darkmatter/style.json?key=9jsySrA6E6EKeAPy7tod', // tiles from tilehosting.com
         center: [37.64, 55.75],
-        zoom: 8
+        zoom: 10
     });
 
     map.on('load', () => {
@@ -239,7 +239,7 @@ window.onload = () => {
 
             // test project function
             let pt1 = nodes.features[0].geometry.coordinates;
-            
+
             console.log(pt1);
             let pt1px = map.project(pt1);
             console.log(pt1px);
@@ -289,7 +289,7 @@ window.onload = () => {
             Object(_modules_edges__WEBPACK_IMPORTED_MODULE_3__["fillOrigLines"])(linesIDArray, origLines, edges);
 
             // set default values for width of edges
-            let minWidthDefault = 2, maxWidthDefault = 10;
+            let minWidthDefault = 20, maxWidthDefault = 100;
 
             minWidthInput.value = minWidthDefault;
             maxWidthInput.value = maxWidthDefault;
@@ -314,7 +314,7 @@ window.onload = () => {
                 Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["addNodeAttr"])(origLines, node, cargoTypes, map);
             });
 
-            const multipleCargoNodesObject = Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["createMultipleCargoNodesObject"])(cargoTypes, nodes);
+            let multipleCargoNodesObject = Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["createMultipleCargoNodesObject"])(cargoTypes, nodes);
 
             // render background lines
             // renderBackgroundLines(map, origLines, origLineWidth);
@@ -329,7 +329,7 @@ window.onload = () => {
             Object(_modules_interface__WEBPACK_IMPORTED_MODULE_6__["createColorTable"])(colorTableBody, cargoColorArray, edges, map);
 
             // create width slider
-            Object(_modules_interface__WEBPACK_IMPORTED_MODULE_6__["createSlider"])(widthSlider, minWidthDefault, maxWidthDefault, 100);
+            Object(_modules_interface__WEBPACK_IMPORTED_MODULE_6__["createSlider"])(widthSlider, minWidthDefault, maxWidthDefault, 200);
 
             // initialize render counter
             let startRenderCounter = 0;
@@ -410,8 +410,9 @@ window.onload = () => {
                     Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["bindEdgesInfoToNodes"])(node, edges);
                     Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["addNodeAttr"])(origLines, node, cargoTypes, map);
                 });
+                multipleCargoNodesObject = Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["createMultipleCargoNodesObject"])(cargoTypes, nodes);
                 // renderBackgroundLines(map, origLines, origLineWidth);
-                Object(_modules_render__WEBPACK_IMPORTED_MODULE_5__["renderEdges"])(map, edges, cargoColorArray, nodes);
+                Object(_modules_render__WEBPACK_IMPORTED_MODULE_5__["renderEdges"])(map, edges, cargoColorArray, nodes, multipleCargoNodesObject);
                 Object(_modules_render__WEBPACK_IMPORTED_MODULE_5__["renderNodes"])(map, nodes);
             }
 
@@ -422,13 +423,16 @@ window.onload = () => {
             );
 
             let pt2 = nodes.features[0].geometry.coordinates;
-            
+
             console.log(pt2);
             let pt2px = map.project(pt2);
             console.log(pt2px);
         }
 
     });
+    map.on('zoomend', function(){
+    document.getElementById('zoom-level').innerHTML = 'Zoom Level: ' + map.getZoom();
+});
 };
 
 
@@ -2128,7 +2132,7 @@ function createSlider(el, minWidthDefault, maxWidthDefault, maxWidth) {
       start: [minWidthDefault, maxWidthDefault],
       connect: true,
       range: {
-          'min': [minWidthDefault, 1],
+          'min': [0, 1],
           'max': [maxWidth]
       }
   });
@@ -2143,6 +2147,7 @@ function toggleLayerVisibility(layerCheckbox, map, layerId) {
       map.setLayoutProperty(layerId, 'visibility', 'none');
   }
 }
+
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! nouislider */ "./node_modules/nouislider/distribute/nouislider.js")))
 
 /***/ }),
@@ -2235,8 +2240,8 @@ function addNodeAttr(origLines, node, cargoTypes, map) {
 
     cargoTypes.forEach(cargo => {
         const cornersPoints = getTapeCornersPoints(map, node, cargo);
-        console.log(cargo);
-        console.log(cornersPoints);
+        // console.log(cargo);
+        // console.log(cornersPoints);
         addRadiusAndPosition(node, cargo, cornersPoints, map);
     });
 
@@ -2266,8 +2271,8 @@ function getTapeCornersPoints(map, node, cargoType) {
     const cornersPoints = [];
 
     const nodeGeomPix = map.project(node.geometry.coordinates);
-    console.log(node.properties.OBJECTID);
-    console.log(nodeGeomPix);
+    // console.log(node.properties.OBJECTID);
+    // console.log(nodeGeomPix);
 
     let vector, secondPoint;
 
@@ -2307,7 +2312,7 @@ function addRadiusAndPosition(node, cargoType, cornersPoints, map) {
     if (cornersPoints.length !== 0) {
         const circle = makeCircle(cornersPoints);
 
-        console.log(circle);
+        // console.log(circle);
 
         node.properties[cargoRadiusName] = circle.r;
 
@@ -2343,7 +2348,7 @@ function getVector(pt1, pt2) {
 // function to get offset angle
 function getOffsetAngle(vector) {
     const segmentAngle = Math.atan2(vector.y, vector.x);
-    const offsetAngle = segmentAngle - Math.PI/2;
+    const offsetAngle = segmentAngle + Math.PI/2;
 
     return offsetAngle;
 }
@@ -2522,6 +2527,7 @@ if (!("hypot" in Math)) {  // Polyfill
     };
 }
 
+
 /***/ }),
 
 /***/ "./js/modules/render.js":
@@ -2578,16 +2584,20 @@ __webpack_require__.r(__webpack_exports__);
 // function to render edges
 function renderEdges(map, edges, cargoColorArray, nodes, multipleCargoNodesObject) {
 
+    const reverseCargoArray = cargoColorArray.slice().reverse();
+
     if (map.getSource('edges')) {
         map.getSource('edges').setData(edges);
-        map.getSource('junction-nodes').setData(nodes);
+
+        reverseCargoArray.forEach(cargoObj => {
+          map.getSource(`${cargoObj.type}-nodes`).setData(multipleCargoNodesObject[cargoObj.type]);
+        });
+
 
     } else {
 
         map.addSource("edges", { type: "geojson", data: edges });
         // map.addSource("junction-nodes", { type: "geojson", data: nodes });
-
-        let reverseCargoArray = cargoColorArray.slice().reverse();
 
         // add array of layers to map (one for each type of cargo)
         reverseCargoArray.forEach(cargoObj => {
@@ -2604,18 +2614,61 @@ function renderEdges(map, edges, cargoColorArray, nodes, multipleCargoNodesObjec
                 "paint": {
                     'line-color': cargoObj.color,
                     "line-opacity": 1,
-                    "line-offset": ['get', 'offset'],
-                    // 'line-offset': [
-                    //     'interpolate', ['linear'], ['zoom'],
-                    //     5, ['/', ['get', 'offset'], 10],
-                    //     10, ['get', 'offset']
-                    // ],
-                    "line-width": ['get', 'width']
-                    // "line-width": [
-                    //     'interpolate', ['linear'], ['zoom'],
-                    //     5, ['/', ['get', 'width'], 10],
-                    //     10, ['get', 'width']
-                    // ]
+                    // "line-offset": ['get', 'offset'],
+                    'line-offset': [
+                        'interpolate', ['linear'], ['zoom'],
+                        1, ['/', ['get', 'offset'], 512],
+                        2, ['/', ['get', 'offset'], 256],
+                        3, ['/', ['get', 'offset'], 128],
+                        4, ['/', ['get', 'offset'], 64],
+                        5, ['/', ['get', 'offset'], 32],
+                        6, ['/', ['get', 'offset'], 16],
+                        7, ['/', ['get', 'offset'], 8],
+                        8, ['/', ['get', 'offset'], 4],
+                        9, ['/', ['get', 'offset'], 2],
+                        10, ['get', 'offset'],
+                        11, ['*', ['get', 'offset'], 2],
+                        12, ['*', ['get', 'offset'], 4],
+                        13, ['*', ['get', 'offset'], 8],
+                        14, ['*', ['get', 'offset'], 16],
+                        15, ['*', ['get', 'offset'], 32],
+                        16, ['*', ['get', 'offset'], 64],
+                        17, ['*', ['get', 'offset'], 128],
+                        18, ['*', ['get', 'offset'], 256],
+                        19, ['*', ['get', 'offset'], 512],
+                        20, ['*', ['get', 'offset'], 1024],
+                        21, ['*', ['get', 'offset'], 2048],
+                        22, ['*', ['get', 'offset'], 4096],
+
+                        // 22, ['*', ['get', 'offset'], 1],
+                    ],
+                    // "line-width": ['get', 'width']
+                    "line-width": [
+                      'interpolate', ['linear'], ['zoom'],
+                      1, ['/', ['get', 'width'], 512],
+                      2, ['/', ['get', 'width'], 256],
+                      3, ['/', ['get', 'width'], 128],
+                      4, ['/', ['get', 'width'], 64],
+                      5, ['/', ['get', 'width'], 32],
+                      6, ['/', ['get', 'width'], 16],
+                      7, ['/', ['get', 'width'], 8],
+                      8, ['/', ['get', 'width'], 4],
+                      9, ['/', ['get', 'width'], 2],
+                      10, ['get', 'width'],
+                      11, ['*', ['get', 'width'], 2],
+                      12, ['*', ['get', 'width'], 4],
+                      13, ['*', ['get', 'width'], 8],
+                      14, ['*', ['get', 'width'], 16],
+                      15, ['*', ['get', 'width'], 32],
+                      16, ['*', ['get', 'width'], 64],
+                      17, ['*', ['get', 'width'], 128],
+                      18, ['*', ['get', 'width'], 256],
+                      19, ['*', ['get', 'width'], 512],
+                      20, ['*', ['get', 'width'], 1024],
+                      21, ['*', ['get', 'width'], 2048],
+                      22, ['*', ['get', 'width'], 4096],
+                        // 22, ['*', ['get', 'width'], 1],
+                    ]
                 }
             });
 
@@ -2633,12 +2686,33 @@ function renderEdges(map, edges, cargoColorArray, nodes, multipleCargoNodesObjec
                 "filter": ["!=", ['get', "radius"], 0],
                 "paint": {
                     "circle-color": cargoObj.color,
-                    "circle-radius": ['get', "radius"]
-                    // "circle-radius": [
-                    //     'interpolate', ['linear'], ['zoom'],
-                    //     5, ['/', ['get', "radius"], 10],
-                    //     10, ['get', "radius"]
-                    // ]
+                    // "circle-radius": ['get', "radius"]
+                    "circle-radius": [
+                      'interpolate', ['linear'], ['zoom'],
+                      1, ['/', ['get', 'radius'], 512],
+                      2, ['/', ['get', 'radius'], 256],
+                      3, ['/', ['get', 'radius'], 128],
+                      4, ['/', ['get', 'radius'], 64],
+                      5, ['/', ['get', 'radius'], 32],
+                      6, ['/', ['get', 'radius'], 16],
+                      7, ['/', ['get', 'radius'], 8],
+                      8, ['/', ['get', 'radius'], 4],
+                      9, ['/', ['get', 'radius'], 2],
+                      10, ['get', 'radius'],
+                      11, ['*', ['get', 'radius'], 2],
+                      12, ['*', ['get', 'radius'], 4],
+                      13, ['*', ['get', 'radius'], 8],
+                      14, ['*', ['get', 'radius'], 16],
+                      15, ['*', ['get', 'radius'], 32],
+                      16, ['*', ['get', 'radius'], 64],
+                      17, ['*', ['get', 'radius'], 128],
+                      18, ['*', ['get', 'radius'], 256],
+                      19, ['*', ['get', 'radius'], 512],
+                      20, ['*', ['get', 'radius'], 1024],
+                      21, ['*', ['get', 'radius'], 2048],
+                      22, ['*', ['get', 'radius'], 4096],
+                        // 22, ['*', ['get', 'radius'], 1],
+                    ]
                     // "circle-translate": ['get', cargoTranslateName]
                 }
             });
@@ -2765,6 +2839,7 @@ function renderOrigLines(map, origLines, origLineWidth) {
         });
     }
 }
+
 
 /***/ }),
 

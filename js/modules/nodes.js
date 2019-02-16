@@ -71,8 +71,8 @@ export function addNodeAttr(origLines, node, cargoTypes, map) {
 
     cargoTypes.forEach(cargo => {
         const cornersPoints = getTapeCornersPoints(map, node, cargo);
-        console.log(cargo);
-        console.log(cornersPoints);
+        // console.log(cargo);
+        // console.log(cornersPoints);
         addRadiusAndPosition(node, cargo, cornersPoints, map);
     });
 
@@ -102,8 +102,8 @@ function getTapeCornersPoints(map, node, cargoType) {
     const cornersPoints = [];
 
     const nodeGeomPix = map.project(node.geometry.coordinates);
-    console.log(node.properties.OBJECTID);
-    console.log(nodeGeomPix);
+    // console.log(node.properties.OBJECTID);
+    // console.log(nodeGeomPix);
 
     let vector, secondPoint;
 
@@ -143,7 +143,7 @@ function addRadiusAndPosition(node, cargoType, cornersPoints, map) {
     if (cornersPoints.length !== 0) {
         const circle = makeCircle(cornersPoints);
 
-        console.log(circle);
+        // console.log(circle);
 
         node.properties[cargoRadiusName] = circle.r;
 
@@ -179,7 +179,7 @@ function getVector(pt1, pt2) {
 // function to get offset angle
 function getOffsetAngle(vector) {
     const segmentAngle = Math.atan2(vector.y, vector.x);
-    const offsetAngle = segmentAngle - Math.PI/2;
+    const offsetAngle = segmentAngle + Math.PI/2;
 
     return offsetAngle;
 }

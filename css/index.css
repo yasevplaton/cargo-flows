@@ -199,6 +199,10 @@ h6 {
   margin-left: 5px;
 }
 
+.max-width-input {
+  width: 40%;
+}
+
 .width-input-prefix,
 .width-input-postfix {
   color: rgb(121, 121, 121);

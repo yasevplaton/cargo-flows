@@ -61,7 +61,7 @@ export function createSlider(el, minWidthDefault, maxWidthDefault, maxWidth) {
       start: [minWidthDefault, maxWidthDefault],
       connect: true,
       range: {
-          'min': [minWidthDefault, 1],
+          'min': [0, 1],
           'max': [maxWidth]
       }
   });

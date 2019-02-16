@@ -2,7 +2,7 @@
 import 'bootstrap';
 import mapboxgl from 'mapbox-gl';
 import { getBoundingBox, collectLinesIDs } from "./modules/common";
-import { 
+import {
     getFlowValues,
     classifyFlowValuesArray,
     getCargoTypes,
@@ -27,7 +27,7 @@ window.onload = () => {
         style: 'mapbox://styles/mapbox/dark-v9', // mapbox tiles location
         // style: 'https://maps.tilehosting.com/styles/darkmatter/style.json?key=9jsySrA6E6EKeAPy7tod', // tiles from tilehosting.com
         center: [37.64, 55.75],
-        zoom: 8
+        zoom: 10
     });
 
     map.on('load', () => {
@@ -142,7 +142,7 @@ window.onload = () => {
 
             // test project function
             let pt1 = nodes.features[0].geometry.coordinates;
-            
+
             console.log(pt1);
             let pt1px = map.project(pt1);
             console.log(pt1px);
@@ -192,7 +192,7 @@ window.onload = () => {
             fillOrigLines(linesIDArray, origLines, edges);
 
             // set default values for width of edges
-            let minWidthDefault = 2, maxWidthDefault = 10;
+            let minWidthDefault = 20, maxWidthDefault = 100;
 
             minWidthInput.value = minWidthDefault;
             maxWidthInput.value = maxWidthDefault;
@@ -217,7 +217,7 @@ window.onload = () => {
                 addNodeAttr(origLines, node, cargoTypes, map);
             });
 
-            const multipleCargoNodesObject = createMultipleCargoNodesObject(cargoTypes, nodes);
+            let multipleCargoNodesObject = createMultipleCargoNodesObject(cargoTypes, nodes);
 
             // render background lines
             // renderBackgroundLines(map, origLines, origLineWidth);
@@ -232,7 +232,7 @@ window.onload = () => {
             createColorTable(colorTableBody, cargoColorArray, edges, map);
 
             // create width slider
-            createSlider(widthSlider, minWidthDefault, maxWidthDefault, 100);
+            createSlider(widthSlider, minWidthDefault, maxWidthDefault, 200);
 
             // initialize render counter
             let startRenderCounter = 0;
@@ -313,8 +313,9 @@ window.onload = () => {
                     bindEdgesInfoToNodes(node, edges);
                     addNodeAttr(origLines, node, cargoTypes, map);
                 });
+                multipleCargoNodesObject = createMultipleCargoNodesObject(cargoTypes, nodes);
                 // renderBackgroundLines(map, origLines, origLineWidth);
-                renderEdges(map, edges, cargoColorArray, nodes);
+                renderEdges(map, edges, cargoColorArray, nodes, multipleCargoNodesObject);
                 renderNodes(map, nodes);
             }
 
@@ -325,11 +326,14 @@ window.onload = () => {
             );
 
             let pt2 = nodes.features[0].geometry.coordinates;
-            
+
             console.log(pt2);
             let pt2px = map.project(pt2);
             console.log(pt2px);
         }
 
     });
+    map.on('zoomend', function(){
+    document.getElementById('zoom-level').innerHTML = 'Zoom Level: ' + map.getZoom();
+});
 };
