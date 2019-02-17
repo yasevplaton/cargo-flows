@@ -5,34 +5,50 @@ export function bindEdgesInfoToNodes(node, edges) {
     let nodeID = node.properties.OBJECTID;
     let inEdges = [];
     let outEdges = [];
+    let filledAdjacentLines = [];
 
     edges.features.forEach(e => {
         let edgesProps = e.properties;
         let edgeID = e.id;
         let edgeGeom = e.geometry.coordinates;
         let numOfPoints = edgeGeom.length;
-        if (edgesProps.src === nodeID && edgesProps.value !== 0) {
-            outEdges.push({
-                'id': edgeID,
-                'type': edgesProps.type,
-                'value': edgesProps.value,
-                'width': edgesProps.width,
-                'offset': edgesProps.offset,
-                'lineID': edgesProps.ID_line,
-                'secondPoint': edgeGeom[1]
-            });
-        } else if (edgesProps.dest === nodeID && edgesProps.value !== 0) {
-            inEdges.push({
-                'id': edgeID,
-                'type': edgesProps.type,
-                'value': edgesProps.value,
-                'width': edgesProps.width,
-                'offset': edgesProps.offset,
-                'lineID': edgesProps.ID_line,
-                'beforeLastPoint': edgeGeom[numOfPoints - 2]
-            });
+
+        if (edgesProps.value !== 0) {
+            if (edgesProps.src === nodeID) {
+                outEdges.push({
+                    'id': edgeID,
+                    'type': edgesProps.type,
+                    'value': edgesProps.value,
+                    'width': edgesProps.width,
+                    'offset': edgesProps.offset,
+                    'lineID': edgesProps.ID_line,
+                    'secondPoint': edgeGeom[1]
+                });
+
+                if (!filledAdjacentLines.includes(edgesProps.ID_line)) {
+                    filledAdjacentLines.push(edgesProps.ID_line);
+                }
+            } else if (edgesProps.dest === nodeID) {
+                inEdges.push({
+                    'id': edgeID,
+                    'type': edgesProps.type,
+                    'value': edgesProps.value,
+                    'width': edgesProps.width,
+                    'offset': edgesProps.offset,
+                    'lineID': edgesProps.ID_line,
+                    'beforeLastPoint': edgeGeom[numOfPoints - 2]
+                });
+
+                if (!filledAdjacentLines.includes(edgesProps.ID_line)) {
+                    filledAdjacentLines.push(edgesProps.ID_line);
+                }
+            }
+
         }
+
     });
+
+    node.properties.filledAdjacentLines = filledAdjacentLines;
 
     node.properties.inEdges = inEdges;
     node.properties.outEdges = outEdges;
@@ -65,14 +81,21 @@ export function fillAdjacentLinesAttr(nodes, edges) {
 export function addNodeAttr(origLines, node, cargoTypes, map) {
 
     var adjacentLines = node.properties.adjacentLines;
+    var filledAdjacentLines = node.properties.filledAdjacentLines;
+
+    if (filledAdjacentLines.length === 1) {
+        node.properties.deadEnd = true;
+    } else {
+        node.properties.deadEnd = false;
+    }
+
+
     var maxWidth = calculateMaxWidth(origLines, adjacentLines);
     node.properties.radius = maxWidth - 1;
 
 
     cargoTypes.forEach(cargo => {
         const cornersPoints = getTapeCornersPoints(map, node, cargo);
-        // console.log(cargo);
-        // console.log(cornersPoints);
         addRadiusAndPosition(node, cargo, cornersPoints, map);
     });
 
@@ -103,8 +126,6 @@ function getTapeCornersPoints(map, node, cargoType) {
 
     const nodeGeomPix = map.project(node.geometry.coordinates);
     cornersPoints.push(nodeGeomPix);
-    // console.log(node.properties.OBJECTID);
-    // console.log(nodeGeomPix);
 
     let vector, secondPoint;
 
@@ -144,8 +165,6 @@ function addRadiusAndPosition(node, cargoType, cornersPoints, map) {
     if (cornersPoints.length !== 0) {
         const circle = makeCircle(cornersPoints);
 
-        // console.log(circle);
-
         node.properties[cargoRadiusName] = circle.r;
 
         const coords = map.unproject([circle.x, circle.y]);
@@ -154,13 +173,6 @@ function addRadiusAndPosition(node, cargoType, cornersPoints, map) {
 
         node.properties[cargoPositionName] = [lng, lat];
 
-
-        // const nodeGeomPix = map.project(node.geometry.coordinates);
-
-        // const xTranslate = circle.x - nodeGeomPix.x;
-        // const yTranslate = circle.y - nodeGeomPix.y;
-
-        // node.properties[cargoPositionName] = [xTranslate, yTranslate];
     } else {
         node.properties[cargoRadiusName] = 0;
         node.properties[cargoPositionName] = node.geometry.coordinates;
@@ -204,7 +216,8 @@ function createSingleCargoNodesObject(cargoType, nodes) {
         const cargoNode = {
             type: "Feature",
             properties: {
-                radius: node.properties[cargoRadiusName]
+                radius: node.properties[cargoRadiusName],
+                deadEnd: node.properties.deadEnd
             },
             geometry: {
                 type: "Point",
