@@ -138,11 +138,12 @@ export function renderEdges(map, edges, cargoColorArray, nodes, multipleCargoNod
                 "id": cargoObj.type + "-nodes",
                 "source": `${cargoObj.type}-nodes`,
                 "type": "circle",
-                "filter": [
-                    "all",
-                    ["!=", "deadEnd", true],
-                    ["!=", "radius", 0]
-                ],
+                // "filter": [
+                //     "all",
+                //     ["!=", "deadEnd", true],
+                //     ["!=", "radius", 0]
+                // ],
+                "filter": ["!=", "radius", 0],
                 "paint": {
                     "circle-color": cargoObj.color,
                     // "circle-radius": ['get', "radius"]

@@ -11,7 +11,8 @@ import {
     getWidthArray,
     calculateWidth,
     calculateOffset,
-    addWidthAttr } from "./modules/edges";
+    addWidthAttr
+} from "./modules/edges";
 
 import { fillAdjacentLinesAttr, addNodeAttr, bindEdgesInfoToNodes, createMultipleCargoNodesObject } from "./modules/nodes";
 import { renderEdges, renderOrigLines, renderNodes } from "./modules/render";
@@ -140,13 +141,6 @@ window.onload = () => {
             // store input file in variable
             cargoTable = inputFileElement.files[0];
 
-            // test project function
-            let pt1 = nodes.features[0].geometry.coordinates;
-
-            console.log(pt1);
-            let pt1px = map.project(pt1);
-            console.log(pt1px);
-
             // hide loading panel
             loadingDataPanel.classList.add('hidden');
 
@@ -213,7 +207,7 @@ window.onload = () => {
 
             // calculate node radius
             nodes.features.forEach(node => {
-                bindEdgesInfoToNodes(node, edges);
+                bindEdgesInfoToNodes(node, edges, map);
                 addNodeAttr(origLines, node, cargoTypes, map);
             });
 
@@ -249,12 +243,11 @@ window.onload = () => {
 
                 if (handle) {
                     maxWidthInput.value = Math.round(value);
-                    updateSliderHandler();
-
                 } else {
                     minWidthInput.value = Math.round(value);
-                    updateSliderHandler();
                 }
+
+                updateSliderHandler();
             });
 
             // bind change listeners to width inputs
@@ -305,18 +298,24 @@ window.onload = () => {
 
             // function to update map when slider updates
             function updateSliderHandler() {
+                const currZoom = map.getZoom();
                 widthArray = getWidthArray(+minWidthInput.value, +maxWidthInput.value);
                 calculateWidth(edges, widthArray, jenks);
                 calculateOffset(edges, origLineWidth);
                 addWidthAttr(origLines, edges, origLineWidth, cargoTypes);
-                nodes.features.forEach(node => {
-                    bindEdgesInfoToNodes(node, edges);
+                map.setZoom(10);
+
+                nodes.features.forEach(node => {  
+                    bindEdgesInfoToNodes(node, edges, map);
                     addNodeAttr(origLines, node, cargoTypes, map);
                 });
+
                 multipleCargoNodesObject = createMultipleCargoNodesObject(cargoTypes, nodes);
                 // renderBackgroundLines(map, origLines, origLineWidth);
                 renderEdges(map, edges, cargoColorArray, nodes, multipleCargoNodesObject);
                 renderNodes(map, nodes);
+
+                map.setZoom(currZoom);
             }
 
             // center and zoom map to data
@@ -324,16 +323,13 @@ window.onload = () => {
                 [[boundingBox.xMin, boundingBox.yMin], [boundingBox.xMax, boundingBox.yMax]],
                 { linear: false, speed: 0.3 }
             );
-
-            let pt2 = nodes.features[0].geometry.coordinates;
-
-            console.log(pt2);
-            let pt2px = map.project(pt2);
-            console.log(pt2px);
         }
 
     });
-    map.on('zoomend', function(){
-    document.getElementById('zoom-level').innerHTML = 'Zoom Level: ' + map.getZoom();
-});
+    map.on('zoomend', function () {
+        document.getElementById('zoom-level').innerHTML = 'Zoom Level: ' + map.getZoom();
+    });
+
+    const to10ZoomBtn = document.getElementById('to-10-zoom-level');
+    to10ZoomBtn.addEventListener('click', () => map.setZoom(10));
 };

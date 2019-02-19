@@ -1,7 +1,7 @@
 import { calculateMaxWidth, getMaxCargoRadius } from "./edges";
 
 
-export function bindEdgesInfoToNodes(node, edges) {
+export function bindEdgesInfoToNodes(node, edges, map) {
     let nodeID = node.properties.OBJECTID;
     let inEdges = [];
     let outEdges = [];
@@ -22,7 +22,7 @@ export function bindEdgesInfoToNodes(node, edges) {
                     'width': edgesProps.width,
                     'offset': edgesProps.offset,
                     'lineID': edgesProps.ID_line,
-                    'secondPoint': edgeGeom[1]
+                    'secondPoint': map.project(edgeGeom[1])
                 });
 
                 if (!filledAdjacentLines.includes(edgesProps.ID_line)) {
@@ -36,7 +36,7 @@ export function bindEdgesInfoToNodes(node, edges) {
                     'width': edgesProps.width,
                     'offset': edgesProps.offset,
                     'lineID': edgesProps.ID_line,
-                    'beforeLastPoint': edgeGeom[numOfPoints - 2]
+                    'beforeLastPoint': map.project(edgeGeom[numOfPoints - 2])
                 });
 
                 if (!filledAdjacentLines.includes(edgesProps.ID_line)) {
@@ -125,6 +125,7 @@ function getTapeCornersPoints(map, node, cargoType) {
     const cornersPoints = [];
 
     const nodeGeomPix = map.project(node.geometry.coordinates);
+
     cornersPoints.push(nodeGeomPix);
 
     let vector, secondPoint;
@@ -136,16 +137,17 @@ function getTapeCornersPoints(map, node, cargoType) {
 
             // edge is output edge
             if (edge.hasOwnProperty('secondPoint')) {
-                secondPoint = map.project(edge.secondPoint);
+                secondPoint = edge.secondPoint;
                 vector = getVector(nodeGeomPix, secondPoint);
 
                 // or edge is input edge
             } else {
-                secondPoint = map.project(edge.beforeLastPoint);
+                secondPoint = edge.beforeLastPoint;
                 vector = getVector(secondPoint, nodeGeomPix);
             }
 
             const offsetAngle = getOffsetAngle(vector);
+
             const dist = edge.offset + (edge.width / 2);
             const corner = getCornerCoordinates(nodeGeomPix, dist, offsetAngle);
 
