@@ -409,7 +409,7 @@ window.onload = () => {
                 multipleCargoNodesObject = Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["createMultipleCargoNodesObject"])(cargoTypes, nodes);
                 // renderBackgroundLines(map, origLines, origLineWidth);
                 Object(_modules_render__WEBPACK_IMPORTED_MODULE_5__["renderEdges"])(map, edges, cargoColorArray, nodes, multipleCargoNodesObject);
-                Object(_modules_render__WEBPACK_IMPORTED_MODULE_5__["renderNodes"])(map, nodes);
+                // renderNodes(map, nodes);
 
                 map.setZoom(currZoom);
             }
@@ -2601,7 +2601,7 @@ function renderEdges(map, edges, cargoColorArray, nodes, multipleCargoNodesObjec
         map.getSource('edges').setData(edges);
 
         reverseCargoArray.forEach(cargoObj => {
-          map.getSource(`${cargoObj.type}-nodes`).setData(multipleCargoNodesObject[cargoObj.type]);
+            map.getSource(`${cargoObj.type}-nodes`).setData(multipleCargoNodesObject[cargoObj.type]);
         });
 
 
@@ -2655,29 +2655,29 @@ function renderEdges(map, edges, cargoColorArray, nodes, multipleCargoNodesObjec
                     ],
                     // "line-width": ['get', 'width']
                     "line-width": [
-                      'interpolate', ['linear'], ['zoom'],
-                      1, ['/', ['get', 'width'], 512],
-                      2, ['/', ['get', 'width'], 256],
-                      3, ['/', ['get', 'width'], 128],
-                      4, ['/', ['get', 'width'], 64],
-                      5, ['/', ['get', 'width'], 32],
-                      6, ['/', ['get', 'width'], 16],
-                      7, ['/', ['get', 'width'], 8],
-                      8, ['/', ['get', 'width'], 4],
-                      9, ['/', ['get', 'width'], 2],
-                      10, ['get', 'width'],
-                      11, ['*', ['get', 'width'], 2],
-                      12, ['*', ['get', 'width'], 4],
-                      13, ['*', ['get', 'width'], 8],
-                      14, ['*', ['get', 'width'], 16],
-                      15, ['*', ['get', 'width'], 32],
-                      16, ['*', ['get', 'width'], 64],
-                      17, ['*', ['get', 'width'], 128],
-                      18, ['*', ['get', 'width'], 256],
-                      19, ['*', ['get', 'width'], 512],
-                      20, ['*', ['get', 'width'], 1024],
-                      21, ['*', ['get', 'width'], 2048],
-                      22, ['*', ['get', 'width'], 4096],
+                        'interpolate', ['linear'], ['zoom'],
+                        1, ['/', ['get', 'width'], 512],
+                        2, ['/', ['get', 'width'], 256],
+                        3, ['/', ['get', 'width'], 128],
+                        4, ['/', ['get', 'width'], 64],
+                        5, ['/', ['get', 'width'], 32],
+                        6, ['/', ['get', 'width'], 16],
+                        7, ['/', ['get', 'width'], 8],
+                        8, ['/', ['get', 'width'], 4],
+                        9, ['/', ['get', 'width'], 2],
+                        10, ['get', 'width'],
+                        11, ['*', ['get', 'width'], 2],
+                        12, ['*', ['get', 'width'], 4],
+                        13, ['*', ['get', 'width'], 8],
+                        14, ['*', ['get', 'width'], 16],
+                        15, ['*', ['get', 'width'], 32],
+                        16, ['*', ['get', 'width'], 64],
+                        17, ['*', ['get', 'width'], 128],
+                        18, ['*', ['get', 'width'], 256],
+                        19, ['*', ['get', 'width'], 512],
+                        20, ['*', ['get', 'width'], 1024],
+                        21, ['*', ['get', 'width'], 2048],
+                        22, ['*', ['get', 'width'], 4096],
                         // 22, ['*', ['get', 'width'], 1],
                     ]
                 }
@@ -2702,34 +2702,31 @@ function renderEdges(map, edges, cargoColorArray, nodes, multipleCargoNodesObjec
                 "filter": ["!=", "radius", 0],
                 "paint": {
                     "circle-color": cargoObj.color,
-                    // "circle-radius": ['get', "radius"]
                     "circle-radius": [
-                      'interpolate', ['linear'], ['zoom'],
-                      1, ['/', ['get', 'radius'], 512],
-                      2, ['/', ['get', 'radius'], 256],
-                      3, ['/', ['get', 'radius'], 128],
-                      4, ['/', ['get', 'radius'], 64],
-                      5, ['/', ['get', 'radius'], 32],
-                      6, ['/', ['get', 'radius'], 16],
-                      7, ['/', ['get', 'radius'], 8],
-                      8, ['/', ['get', 'radius'], 4],
-                      9, ['/', ['get', 'radius'], 2],
-                      10, ['get', 'radius'],
-                      11, ['*', ['get', 'radius'], 2],
-                      12, ['*', ['get', 'radius'], 4],
-                      13, ['*', ['get', 'radius'], 8],
-                      14, ['*', ['get', 'radius'], 16],
-                      15, ['*', ['get', 'radius'], 32],
-                      16, ['*', ['get', 'radius'], 64],
-                      17, ['*', ['get', 'radius'], 128],
-                      18, ['*', ['get', 'radius'], 256],
-                      19, ['*', ['get', 'radius'], 512],
-                      20, ['*', ['get', 'radius'], 1024],
-                      21, ['*', ['get', 'radius'], 2048],
-                      22, ['*', ['get', 'radius'], 4096],
-                        // 22, ['*', ['get', 'radius'], 1],
+                        'interpolate', ['linear'], ['zoom'],
+                        1, ['/', ['get', 'radius'], 512],
+                        2, ['/', ['get', 'radius'], 256],
+                        3, ['/', ['get', 'radius'], 128],
+                        4, ['/', ['get', 'radius'], 64],
+                        5, ['/', ['get', 'radius'], 32],
+                        6, ['/', ['get', 'radius'], 16],
+                        7, ['/', ['get', 'radius'], 8],
+                        8, ['/', ['get', 'radius'], 4],
+                        9, ['/', ['get', 'radius'], 2],
+                        10, ['get', 'radius'],
+                        11, ['*', ['get', 'radius'], 2],
+                        12, ['*', ['get', 'radius'], 4],
+                        13, ['*', ['get', 'radius'], 8],
+                        14, ['*', ['get', 'radius'], 16],
+                        15, ['*', ['get', 'radius'], 32],
+                        16, ['*', ['get', 'radius'], 64],
+                        17, ['*', ['get', 'radius'], 128],
+                        18, ['*', ['get', 'radius'], 256],
+                        19, ['*', ['get', 'radius'], 512],
+                        20, ['*', ['get', 'radius'], 1024],
+                        21, ['*', ['get', 'radius'], 2048],
+                        22, ['*', ['get', 'radius'], 4096],
                     ]
-                    // "circle-translate": ['get', cargoTranslateName]
                 }
             });
 
@@ -2764,7 +2761,12 @@ function renderNodes(map, nodes) {
             "id": "junctions",
             "source": "nodes",
             "type": "circle",
-            "filter": ["==", "NAME", "junction"],
+            "filter": [
+                "all",
+                ["==", "NAME", "junction"],
+                [">", "radius", 0]
+            ],
+            // "filter": ["==", "NAME", "junction"],
             'layout': {
                 'visibility': 'none'
             },
@@ -2772,31 +2774,11 @@ function renderNodes(map, nodes) {
                 "circle-color": "#c4c4c4",
                 "circle-radius": [
                     'interpolate', ['linear'], ['zoom'],
-                        1, ['/', ['get', 'radius'], 512],
-                        2, ['/', ['get', 'radius'], 256],
-                        3, ['/', ['get', 'radius'], 128],
-                        4, ['/', ['get', 'radius'], 64],
-                        5, ['/', ['get', 'radius'], 32],
-                        6, ['/', ['get', 'radius'], 16],
-                        7, ['/', ['get', 'radius'], 8],
-                        8, ['/', ['get', 'radius'], 4],
-                        9, ['/', ['get', 'radius'], 2],
-                        10, ['get', 'radius'],
-                        11, ['*', ['get', 'radius'], 2],
-                        12, ['*', ['get', 'radius'], 4],
-                        13, ['*', ['get', 'radius'], 8],
-                        14, ['*', ['get', 'radius'], 16],
-                        15, ['*', ['get', 'radius'], 32],
-                        16, ['*', ['get', 'radius'], 64],
-                        17, ['*', ['get', 'radius'], 128],
-                        18, ['*', ['get', 'radius'], 256],
-                        19, ['*', ['get', 'radius'], 512],
-                        20, ['*', ['get', 'radius'], 1024],
-                        21, ['*', ['get', 'radius'], 2048],
-                        22, ['*', ['get', 'radius'], 4096],
+                    1, ['/', 5, 2],
+                    10, 5
                 ],
                 "circle-stroke-color": "#000000",
-                "circle-stroke-width": 2
+                "circle-stroke-width": 1
             }
         });
 
@@ -2805,39 +2787,20 @@ function renderNodes(map, nodes) {
             "id": "cities",
             "source": "nodes",
             "type": "circle",
-            "filter": ["!=", "NAME", "junction"],
-            'layout': {
-                'visibility': 'none'
-            },
+            "filter": [
+                "all",
+                ["!=", "NAME", "junction"],
+                [">", "radius", 0]
+            ],
             "paint": {
-                "circle-color": "#ffffff",
+                "circle-color": "#000",
                 "circle-radius": [
                     'interpolate', ['linear'], ['zoom'],
-                        1, ['/', ['get', 'radius'], 512],
-                        2, ['/', ['get', 'radius'], 256],
-                        3, ['/', ['get', 'radius'], 128],
-                        4, ['/', ['get', 'radius'], 64],
-                        5, ['/', ['get', 'radius'], 32],
-                        6, ['/', ['get', 'radius'], 16],
-                        7, ['/', ['get', 'radius'], 8],
-                        8, ['/', ['get', 'radius'], 4],
-                        9, ['/', ['get', 'radius'], 2],
-                        10, ['get', 'radius'],
-                        11, ['*', ['get', 'radius'], 2],
-                        12, ['*', ['get', 'radius'], 4],
-                        13, ['*', ['get', 'radius'], 8],
-                        14, ['*', ['get', 'radius'], 16],
-                        15, ['*', ['get', 'radius'], 32],
-                        16, ['*', ['get', 'radius'], 64],
-                        17, ['*', ['get', 'radius'], 128],
-                        18, ['*', ['get', 'radius'], 256],
-                        19, ['*', ['get', 'radius'], 512],
-                        20, ['*', ['get', 'radius'], 1024],
-                        21, ['*', ['get', 'radius'], 2048],
-                        22, ['*', ['get', 'radius'], 4096],
+                    1, ['/', 5, 2],
+                    10, 5
                 ],
-                "circle-stroke-color": "#000000",
-                "circle-stroke-width": 2
+                "circle-stroke-color": "#000",
+                "circle-stroke-width": 1
             }
         });
 
@@ -2852,31 +2815,10 @@ function renderNodes(map, nodes) {
                 "text-field": "{NAME}",
                 "text-size": [
                     'interpolate', ['linear'], ['zoom'],
-                        1, ['/', ['get', 'radius'], 512],
-                        2, ['/', ['get', 'radius'], 256],
-                        3, ['/', ['get', 'radius'], 128],
-                        4, ['/', ['get', 'radius'], 64],
-                        5, ['/', ['get', 'radius'], 32],
-                        6, ['/', ['get', 'radius'], 16],
-                        7, ['/', ['get', 'radius'], 8],
-                        8, ['/', ['get', 'radius'], 4],
-                        9, ['/', ['get', 'radius'], 2],
-                        10, ['get', 'radius'],
-                        11, ['*', ['get', 'radius'], 2],
-                        12, ['*', ['get', 'radius'], 4],
-                        13, ['*', ['get', 'radius'], 8],
-                        14, ['*', ['get', 'radius'], 16],
-                        15, ['*', ['get', 'radius'], 32],
-                        16, ['*', ['get', 'radius'], 64],
-                        17, ['*', ['get', 'radius'], 128],
-                        18, ['*', ['get', 'radius'], 256],
-                        19, ['*', ['get', 'radius'], 512],
-                        20, ['*', ['get', 'radius'], 1024],
-                        21, ['*', ['get', 'radius'], 2048],
-                        22, ['*', ['get', 'radius'], 4096],
+                    1, ['/', 25, 2],
+                    10, 25
                 ],
-                "text-offset": [1.2, -1.5],
-                'visibility': 'none'
+                "text-offset": [1, -1]
             },
             "paint": {
                 "text-color": "#000000",

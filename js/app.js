@@ -313,7 +313,7 @@ window.onload = () => {
                 multipleCargoNodesObject = createMultipleCargoNodesObject(cargoTypes, nodes);
                 // renderBackgroundLines(map, origLines, origLineWidth);
                 renderEdges(map, edges, cargoColorArray, nodes, multipleCargoNodesObject);
-                renderNodes(map, nodes);
+                // renderNodes(map, nodes);
 
                 map.setZoom(currZoom);
             }
