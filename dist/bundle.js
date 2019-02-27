@@ -2793,7 +2793,7 @@ function renderNodes(map, nodes) {
                 [">", "radius", 0]
             ],
             "paint": {
-                "circle-color": "#000",
+                "circle-color": "#fff",
                 "circle-radius": [
                     'interpolate', ['linear'], ['zoom'],
                     1, ['/', 5, 2],
@@ -2811,18 +2811,18 @@ function renderNodes(map, nodes) {
             "type": "symbol",
             "filter": ["!=", "NAME", "junction"],
             "layout": {
-                "text-font": ["PT Sans Narrow Bold"],
+                "text-font": ["Open Sans Regular"],
                 "text-field": "{NAME}",
                 "text-size": [
                     'interpolate', ['linear'], ['zoom'],
-                    1, ['/', 25, 2],
-                    10, 25
+                    1, ['/', 20, 2],
+                    10, 20
                 ],
                 "text-offset": [1, -1]
             },
             "paint": {
-                "text-color": "#000000",
-                "text-halo-color": "#ffffff",
+                "text-color": "#ffffff",
+                "text-halo-color": "#000",
                 "text-halo-width": 1,
                 "text-halo-blur": 1
             }
