@@ -1,6 +1,5 @@
 import { interpolateRound } from 'd3-interpolate';
 import { getRandomColor, collectSameLineEdges, getLineGeometry } from "./common";
-const geostats = require('./geostats');
 
 
 // function to get flow values
@@ -15,15 +14,6 @@ export function getFlowValues(edges) {
   });
 
   return flowValues;
-}
-
-// function to classify flow values array
-export function classifyFlowValuesArray(flowValuesArray, classNum) {
-  let statSerie = new geostats(flowValuesArray);
-
-  let jenks = statSerie.getClassJenks(classNum);
-
-  return jenks;
 }
 
 // function to get width array

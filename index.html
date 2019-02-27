@@ -9,7 +9,8 @@
 
         <!-- Third-party CSS -->
         <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+            integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 
         <link rel="stylesheet" href="./css/bootstrap.min.css">
         <link rel="stylesheet" href="./css/mapbox-gl.css">
@@ -98,13 +99,14 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <hr>
-                            <h6 class="step-title" data-toggle="collapse" href="#other-settings-wrapper" role="button"
-                                aria-expanded="false" aria-controls="edit-width">Прочие настройки
+                            <h6 class="step-title" data-toggle="collapse" href="#edit-nodes" role="button"
+                                aria-expanded="false" aria-controls="edit-nodes">Настройки отображения транспортных
+                                узлов
                                 <i class="fas fa-caret-down"></i>
                             </h6>
-                            <div id="other-settings-wrapper" class="collapse show">
+                            <div id="edit-nodes" class="collapse show">
                                 <div class="pretty p-default p-curve checkbox">
-                                    <input type="checkbox" id="cities-checkbox" checked/>
+                                    <input type="checkbox" id="cities-checkbox" checked />
                                     <div class="state p-gray">
                                         <label>Отображать населенные пункты</label>
                                     </div>
@@ -115,6 +117,38 @@
                                         <label>Отображать транзитные пункты</label>
                                     </div>
                                 </div>
+                                <div class="edit-nodes__fill-color">
+                                    <div class="edit-nodes__color-text">Выберите цвет заливки кружка</div>
+                                    <span class="edit-nodes__color-box color-box"></span>
+                                </div>
+                                <div class="edit-nodes__stroke-color">
+                                    <div class="edit-nodes__color-text">Выберите цвет обводки кружка</div>
+                                    <span class="edit-nodes__color-box color-box"></span>
+                                </div>
+                                <!-- <div id="widthSlider"></div>
+                                <div class="width-input-row">
+                                    <div class="min-width-col">
+                                        <label for="min-width-input" class="width-input-prefix">min:</label>
+                                        <input type="text" class="form-control min-width-input" id="min-width-input">
+                                        <span class="width-input-postfix">px</span>
+                                    </div>
+                                    <div class="max-width-col">
+                                        <label for="max-width-input" class="width-input-prefix">max:</label>
+                                        <input type="text" class="form-control max-width-input" id="max-width-input">
+                                        <span class="width-input-postfix">px</span>
+                                    </div>
+                                </div> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <hr>
+                            <h6 class="step-title" data-toggle="collapse" href="#other-settings-wrapper" role="button"
+                                aria-expanded="false" aria-controls="edit-width">Прочие настройки
+                                <i class="fas fa-caret-down"></i>
+                            </h6>
+                            <div id="other-settings-wrapper" class="collapse show">
                                 <div class="pretty p-default p-curve checkbox">
                                     <input type="checkbox" id="background-lines-checkbox" checked />
                                     <div class="state p-gray">

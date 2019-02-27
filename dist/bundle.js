@@ -114,6 +114,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
 window.onload = () => {
 
     // get access to mapbox api
@@ -258,7 +260,7 @@ window.onload = () => {
             let flowValues = Object(_modules_edges__WEBPACK_IMPORTED_MODULE_3__["getFlowValues"])(edges);
 
             // get marks of classes for flow values
-            let jenks = Object(_modules_edges__WEBPACK_IMPORTED_MODULE_3__["classifyFlowValuesArray"])(flowValues, 4);
+            let jenks = Object(_modules_common__WEBPACK_IMPORTED_MODULE_2__["classifyArray"])(flowValues, 4);
 
             // get cargo types
             let cargoTypes = Object(_modules_edges__WEBPACK_IMPORTED_MODULE_3__["getCargoTypes"])(edges);
@@ -283,6 +285,7 @@ window.onload = () => {
 
             // set default values for width of edges
             let minWidthDefault = 20, maxWidthDefault = 100;
+            let minDefaultCityRadius = 5, maxDefaultCityRadius = 15;
 
             minWidthInput.value = minWidthDefault;
             maxWidthInput.value = maxWidthDefault;
@@ -299,12 +302,22 @@ window.onload = () => {
             // add attribute with total width of band to original lines
             Object(_modules_edges__WEBPACK_IMPORTED_MODULE_3__["addWidthAttr"])(origLines, edges, origLineWidth, cargoTypes);
 
-            // calculateShadowOffset(origLines, shadowOffset);
+            const nodeTrafficArray = [];
 
             // calculate node radius
             nodes.features.forEach(node => {
                 Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["bindEdgesInfoToNodes"])(node, edges, map);
+                Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["fillNodeTrafficArray"])(nodeTrafficArray, node);
                 Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["addNodeAttr"])(origLines, node, cargoTypes, map);
+            });
+
+            const nodeJenks = Object(_modules_common__WEBPACK_IMPORTED_MODULE_2__["classifyArray"])(nodeTrafficArray, 5);
+
+            const cityRadiusArray = Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["getCityRadiusArray"])(minDefaultCityRadius, maxDefaultCityRadius);
+
+            nodes.features.forEach(node => {
+                Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["addLoadingClass"])(node, nodeJenks);
+                Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["addCityRadiusAttr"])(node, cityRadiusArray);
             });
 
             let multipleCargoNodesObject = Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["createMultipleCargoNodesObject"])(cargoTypes, nodes);
@@ -437,17 +450,21 @@ window.onload = () => {
 /*!******************************!*\
   !*** ./js/modules/common.js ***!
   \******************************/
-/*! exports provided: getBoundingBox, getRandomColor, collectLinesIDs, getLineGeometry, collectSameLineEdges, changeCargoColor */
+/*! exports provided: getBoundingBox, getRandomColor, classifyArray, collectLinesIDs, getLineGeometry, collectSameLineEdges, changeCargoColor, isInRange */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getBoundingBox", function() { return getBoundingBox; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getRandomColor", function() { return getRandomColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "classifyArray", function() { return classifyArray; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "collectLinesIDs", function() { return collectLinesIDs; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getLineGeometry", function() { return getLineGeometry; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "collectSameLineEdges", function() { return collectSameLineEdges; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "changeCargoColor", function() { return changeCargoColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isInRange", function() { return isInRange; });
+const geostats = __webpack_require__(/*! ./geostats */ "./js/modules/geostats.js");
+
 // function to get bounding box of nodes layer
 function getBoundingBox(data) {
   var bounds = {}, coords, point, latitude, longitude;
@@ -490,6 +507,15 @@ function getRandomColor() {
       color += letters[Math.floor(Math.random() * 16)];
   }
   return color;
+}
+
+// function to classify flow values array
+function classifyArray(arr, classNum) {
+  let statSerie = new geostats(arr);
+
+  let jenks = statSerie.getClassJenks(classNum);
+
+  return jenks;
 }
 
 // function to collect IDs of original lines
@@ -545,19 +571,23 @@ function changeCargoColor(cargoColorArray, id, color) {
   });
 }
 
+// function to check if value is in range of numbers 
+function isInRange(num, min, max) {
+  return num > min && num <= max;
+}
+
 /***/ }),
 
 /***/ "./js/modules/edges.js":
 /*!*****************************!*\
   !*** ./js/modules/edges.js ***!
   \*****************************/
-/*! exports provided: getFlowValues, classifyFlowValuesArray, getWidthArray, calculateWidth, calculateOffset, getCargoTypes, getRandomCargoColorArray, calculateWidestSideWidth, calcCargoMaxWidth, calculateTapeTotalWidth, calculateMaxWidth, fillOrigLines, addWidthAttr, getMaxCargoRadius */
+/*! exports provided: getFlowValues, getWidthArray, calculateWidth, calculateOffset, getCargoTypes, getRandomCargoColorArray, calculateWidestSideWidth, calcCargoMaxWidth, calculateTapeTotalWidth, calculateMaxWidth, fillOrigLines, addWidthAttr, getMaxCargoRadius */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getFlowValues", function() { return getFlowValues; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "classifyFlowValuesArray", function() { return classifyFlowValuesArray; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getWidthArray", function() { return getWidthArray; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "calculateWidth", function() { return calculateWidth; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "calculateOffset", function() { return calculateOffset; });
@@ -574,7 +604,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./common */ "./js/modules/common.js");
 
 
-const geostats = __webpack_require__(/*! ./geostats */ "./js/modules/geostats.js");
 
 
 // function to get flow values
@@ -589,15 +618,6 @@ function getFlowValues(edges) {
   });
 
   return flowValues;
-}
-
-// function to classify flow values array
-function classifyFlowValuesArray(flowValuesArray, classNum) {
-  let statSerie = new geostats(flowValuesArray);
-
-  let jenks = statSerie.getClassJenks(classNum);
-
-  return jenks;
 }
 
 // function to get width array
@@ -2151,17 +2171,25 @@ function toggleLayerVisibility(layerCheckbox, map, layerId) {
 /*!*****************************!*\
   !*** ./js/modules/nodes.js ***!
   \*****************************/
-/*! exports provided: bindEdgesInfoToNodes, findAdjacentLines, fillAdjacentLinesAttr, addNodeAttr, createMultipleCargoNodesObject */
+/*! exports provided: bindEdgesInfoToNodes, fillNodeTrafficArray, addLoadingClass, getCityRadiusArray, addCityRadiusAttr, findAdjacentLines, fillAdjacentLinesAttr, addNodeAttr, createMultipleCargoNodesObject */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bindEdgesInfoToNodes", function() { return bindEdgesInfoToNodes; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fillNodeTrafficArray", function() { return fillNodeTrafficArray; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addLoadingClass", function() { return addLoadingClass; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getCityRadiusArray", function() { return getCityRadiusArray; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addCityRadiusAttr", function() { return addCityRadiusAttr; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "findAdjacentLines", function() { return findAdjacentLines; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fillAdjacentLinesAttr", function() { return fillAdjacentLinesAttr; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addNodeAttr", function() { return addNodeAttr; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createMultipleCargoNodesObject", function() { return createMultipleCargoNodesObject; });
 /* harmony import */ var _edges__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./edges */ "./js/modules/edges.js");
+/* harmony import */ var d3_interpolate__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! d3-interpolate */ "./node_modules/d3-interpolate/src/index.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./common */ "./js/modules/common.js");
+
+
 
 
 
@@ -2170,6 +2198,7 @@ function bindEdgesInfoToNodes(node, edges, map) {
     let inEdges = [];
     let outEdges = [];
     let filledAdjacentLines = [];
+    let nodeTraffic = 0;
 
     edges.features.forEach(e => {
         let edgesProps = e.properties;
@@ -2179,6 +2208,8 @@ function bindEdgesInfoToNodes(node, edges, map) {
 
         if (edgesProps.value !== 0) {
             if (edgesProps.src === nodeID) {
+
+                nodeTraffic += edgesProps.value;
                 outEdges.push({
                     'id': edgeID,
                     'type': edgesProps.type,
@@ -2192,7 +2223,11 @@ function bindEdgesInfoToNodes(node, edges, map) {
                 if (!filledAdjacentLines.includes(edgesProps.ID_line)) {
                     filledAdjacentLines.push(edgesProps.ID_line);
                 }
+
             } else if (edgesProps.dest === nodeID) {
+
+                nodeTraffic += edgesProps.value;
+
                 inEdges.push({
                     'id': edgeID,
                     'type': edgesProps.type,
@@ -2213,11 +2248,81 @@ function bindEdgesInfoToNodes(node, edges, map) {
     });
 
     node.properties.filledAdjacentLines = filledAdjacentLines;
-
     node.properties.inEdges = inEdges;
     node.properties.outEdges = outEdges;
+    node.properties.nodeTraffic = nodeTraffic;
 }
 
+// function to fill array with node traffic for all nodes
+function fillNodeTrafficArray(nodeTrafficArray, node) {
+    const nodeTraffic = node.properties.nodeTraffic;
+
+    if (nodeTraffic !== 0) {
+        nodeTrafficArray.push(nodeTraffic);
+    }
+
+}
+
+// function to add loading class attributs to node
+function addLoadingClass(node, nodeJenks) {
+    const nodeTraffic = node.properties.nodeTraffic;
+    let loadingClass;
+
+    if (Object(_common__WEBPACK_IMPORTED_MODULE_2__["isInRange"])(nodeTraffic, nodeJenks[0], nodeJenks[1])) {
+        loadingClass = 1;
+    } else if (Object(_common__WEBPACK_IMPORTED_MODULE_2__["isInRange"])(nodeTraffic, nodeJenks[1], nodeJenks[2])) {
+        loadingClass = 2;
+    } else if (Object(_common__WEBPACK_IMPORTED_MODULE_2__["isInRange"])(nodeTraffic, nodeJenks[2], nodeJenks[3])) {
+        loadingClass = 3;
+    } else if (Object(_common__WEBPACK_IMPORTED_MODULE_2__["isInRange"])(nodeTraffic, nodeJenks[3], nodeJenks[4])) {
+        loadingClass = 4;
+    } else if (Object(_common__WEBPACK_IMPORTED_MODULE_2__["isInRange"])(nodeTraffic, nodeJenks[4], nodeJenks[5])) {
+        loadingClass = 5;
+    } else {
+        loadingClass = 0;
+    }
+
+    node.properties.loadingClass = loadingClass;
+}
+
+// function to get array of interpolated radii for nodes
+function getCityRadiusArray(minCityRadius, maxCityRadius) {
+
+    const interpolator = Object(d3_interpolate__WEBPACK_IMPORTED_MODULE_1__["interpolateRound"])(minCityRadius, maxCityRadius);
+
+    const cityRadiusArray = [minCityRadius, interpolator(0.25), interpolator(0.5), interpolator(0.75), maxCityRadius];
+
+    return cityRadiusArray;
+
+}
+
+function addCityRadiusAttr(node, cityRadiusArray) {
+    let cityRadius;
+
+    switch (node.properties.loadingClass) {
+        
+        case 0:
+            cityRadius = 0;
+            break;
+        case 1: 
+            cityRadius = cityRadiusArray[0];
+            break;
+        case 2:
+            cityRadius = cityRadiusArray[1];
+            break;
+        case 3:
+            cityRadius = cityRadiusArray[2];
+            break;
+        case 4:
+            cityRadius = cityRadiusArray[3];
+            break;
+        case 5:
+            cityRadius = cityRadiusArray[4];
+            break;
+    }
+
+    node.properties.cityRadius = cityRadius;
+}
 
 // function to find lines that adjacent to specific node
 function findAdjacentLines(edges, nodeID) {
@@ -2358,7 +2463,7 @@ function getVector(pt1, pt2) {
 // function to get offset angle
 function getOffsetAngle(vector) {
     const segmentAngle = Math.atan2(vector.y, vector.x);
-    const offsetAngle = segmentAngle + Math.PI/2;
+    const offsetAngle = segmentAngle + Math.PI / 2;
 
     return offsetAngle;
 }
@@ -2774,8 +2879,8 @@ function renderNodes(map, nodes) {
                 "circle-color": "#c4c4c4",
                 "circle-radius": [
                     'interpolate', ['linear'], ['zoom'],
-                    1, ['/', 5, 2],
-                    10, 5
+                    1, ['/', 3, 2],
+                    10, 3
                 ],
                 "circle-stroke-color": "#000000",
                 "circle-stroke-width": 1
@@ -2795,9 +2900,11 @@ function renderNodes(map, nodes) {
             "paint": {
                 "circle-color": "#fff",
                 "circle-radius": [
-                    'interpolate', ['linear'], ['zoom'],
-                    1, ['/', 5, 2],
-                    10, 5
+                    'interpolate', 
+                    ['linear'], 
+                    ['zoom'],
+                    2, ['/', ['get', 'cityRadius'], 4],
+                    10, ['get', 'cityRadius']
                 ],
                 "circle-stroke-color": "#000",
                 "circle-stroke-width": 1
@@ -2811,20 +2918,25 @@ function renderNodes(map, nodes) {
             "type": "symbol",
             "filter": ["!=", "NAME", "junction"],
             "layout": {
-                "text-font": ["Open Sans Regular"],
+                "text-font": ["Arial Unicode MS Regular"],
                 "text-field": "{NAME}",
                 "text-size": [
-                    'interpolate', ['linear'], ['zoom'],
-                    1, ['/', 20, 2],
-                    10, 20
+                    'match',
+                    ['get', 'loadingClass'],
+                    1, 13,
+                    2, 14,
+                    3, 15,
+                    4, 20,
+                    5, 22,
+                    0
                 ],
                 "text-offset": [1, -1]
             },
             "paint": {
-                "text-color": "#ffffff",
+                "text-color": "#fff",
                 "text-halo-color": "#000",
                 "text-halo-width": 1,
-                "text-halo-blur": 1
+                // "text-halo-blur": 2
             }
         });
     }

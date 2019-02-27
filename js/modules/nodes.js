@@ -1,4 +1,6 @@
 import { calculateMaxWidth, getMaxCargoRadius } from "./edges";
+import { interpolateRound } from 'd3-interpolate';
+import { isInRange } from "./common";
 
 
 export function bindEdgesInfoToNodes(node, edges, map) {
@@ -6,6 +8,7 @@ export function bindEdgesInfoToNodes(node, edges, map) {
     let inEdges = [];
     let outEdges = [];
     let filledAdjacentLines = [];
+    let nodeTraffic = 0;
 
     edges.features.forEach(e => {
         let edgesProps = e.properties;
@@ -15,6 +18,8 @@ export function bindEdgesInfoToNodes(node, edges, map) {
 
         if (edgesProps.value !== 0) {
             if (edgesProps.src === nodeID) {
+
+                nodeTraffic += edgesProps.value;
                 outEdges.push({
                     'id': edgeID,
                     'type': edgesProps.type,
@@ -28,7 +33,11 @@ export function bindEdgesInfoToNodes(node, edges, map) {
                 if (!filledAdjacentLines.includes(edgesProps.ID_line)) {
                     filledAdjacentLines.push(edgesProps.ID_line);
                 }
+
             } else if (edgesProps.dest === nodeID) {
+
+                nodeTraffic += edgesProps.value;
+
                 inEdges.push({
                     'id': edgeID,
                     'type': edgesProps.type,
@@ -49,11 +58,81 @@ export function bindEdgesInfoToNodes(node, edges, map) {
     });
 
     node.properties.filledAdjacentLines = filledAdjacentLines;
-
     node.properties.inEdges = inEdges;
     node.properties.outEdges = outEdges;
+    node.properties.nodeTraffic = nodeTraffic;
 }
 
+// function to fill array with node traffic for all nodes
+export function fillNodeTrafficArray(nodeTrafficArray, node) {
+    const nodeTraffic = node.properties.nodeTraffic;
+
+    if (nodeTraffic !== 0) {
+        nodeTrafficArray.push(nodeTraffic);
+    }
+
+}
+
+// function to add loading class attributs to node
+export function addLoadingClass(node, nodeJenks) {
+    const nodeTraffic = node.properties.nodeTraffic;
+    let loadingClass;
+
+    if (isInRange(nodeTraffic, nodeJenks[0], nodeJenks[1])) {
+        loadingClass = 1;
+    } else if (isInRange(nodeTraffic, nodeJenks[1], nodeJenks[2])) {
+        loadingClass = 2;
+    } else if (isInRange(nodeTraffic, nodeJenks[2], nodeJenks[3])) {
+        loadingClass = 3;
+    } else if (isInRange(nodeTraffic, nodeJenks[3], nodeJenks[4])) {
+        loadingClass = 4;
+    } else if (isInRange(nodeTraffic, nodeJenks[4], nodeJenks[5])) {
+        loadingClass = 5;
+    } else {
+        loadingClass = 0;
+    }
+
+    node.properties.loadingClass = loadingClass;
+}
+
+// function to get array of interpolated radii for nodes
+export function getCityRadiusArray(minCityRadius, maxCityRadius) {
+
+    const interpolator = interpolateRound(minCityRadius, maxCityRadius);
+
+    const cityRadiusArray = [minCityRadius, interpolator(0.25), interpolator(0.5), interpolator(0.75), maxCityRadius];
+
+    return cityRadiusArray;
+
+}
+
+export function addCityRadiusAttr(node, cityRadiusArray) {
+    let cityRadius;
+
+    switch (node.properties.loadingClass) {
+        
+        case 0:
+            cityRadius = 0;
+            break;
+        case 1: 
+            cityRadius = cityRadiusArray[0];
+            break;
+        case 2:
+            cityRadius = cityRadiusArray[1];
+            break;
+        case 3:
+            cityRadius = cityRadiusArray[2];
+            break;
+        case 4:
+            cityRadius = cityRadiusArray[3];
+            break;
+        case 5:
+            cityRadius = cityRadiusArray[4];
+            break;
+    }
+
+    node.properties.cityRadius = cityRadius;
+}
 
 // function to find lines that adjacent to specific node
 export function findAdjacentLines(edges, nodeID) {
@@ -194,7 +273,7 @@ function getVector(pt1, pt2) {
 // function to get offset angle
 function getOffsetAngle(vector) {
     const segmentAngle = Math.atan2(vector.y, vector.x);
-    const offsetAngle = segmentAngle + Math.PI/2;
+    const offsetAngle = segmentAngle + Math.PI / 2;
 
     return offsetAngle;
 }

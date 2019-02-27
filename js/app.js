@@ -1,10 +1,9 @@
 // import js modules
 import 'bootstrap';
 import mapboxgl from 'mapbox-gl';
-import { getBoundingBox, collectLinesIDs } from "./modules/common";
+import { getBoundingBox, collectLinesIDs, classifyArray } from "./modules/common";
 import {
     getFlowValues,
-    classifyFlowValuesArray,
     getCargoTypes,
     getRandomCargoColorArray,
     fillOrigLines,
@@ -14,7 +13,18 @@ import {
     addWidthAttr
 } from "./modules/edges";
 
-import { fillAdjacentLinesAttr, addNodeAttr, bindEdgesInfoToNodes, createMultipleCargoNodesObject } from "./modules/nodes";
+import {
+    fillAdjacentLinesAttr,
+    addNodeAttr,
+    bindEdgesInfoToNodes,
+    createMultipleCargoNodesObject,
+    fillNodeTrafficArray,
+    addLoadingClass,
+    getCityRadiusArray,
+    addCityRadiusAttr
+} from "./modules/nodes";
+
+
 import { renderEdges, renderOrigLines, renderNodes } from "./modules/render";
 import { createColorTable, createSlider, toggleLayerVisibility } from "./modules/interface";
 
@@ -162,7 +172,7 @@ window.onload = () => {
             let flowValues = getFlowValues(edges);
 
             // get marks of classes for flow values
-            let jenks = classifyFlowValuesArray(flowValues, 4);
+            let jenks = classifyArray(flowValues, 4);
 
             // get cargo types
             let cargoTypes = getCargoTypes(edges);
@@ -187,6 +197,7 @@ window.onload = () => {
 
             // set default values for width of edges
             let minWidthDefault = 20, maxWidthDefault = 100;
+            let minDefaultCityRadius = 5, maxDefaultCityRadius = 15;
 
             minWidthInput.value = minWidthDefault;
             maxWidthInput.value = maxWidthDefault;
@@ -203,12 +214,22 @@ window.onload = () => {
             // add attribute with total width of band to original lines
             addWidthAttr(origLines, edges, origLineWidth, cargoTypes);
 
-            // calculateShadowOffset(origLines, shadowOffset);
+            const nodeTrafficArray = [];
 
             // calculate node radius
             nodes.features.forEach(node => {
                 bindEdgesInfoToNodes(node, edges, map);
+                fillNodeTrafficArray(nodeTrafficArray, node);
                 addNodeAttr(origLines, node, cargoTypes, map);
+            });
+
+            const nodeJenks = classifyArray(nodeTrafficArray, 5);
+
+            const cityRadiusArray = getCityRadiusArray(minDefaultCityRadius, maxDefaultCityRadius);
+
+            nodes.features.forEach(node => {
+                addLoadingClass(node, nodeJenks);
+                addCityRadiusAttr(node, cityRadiusArray);
             });
 
             let multipleCargoNodesObject = createMultipleCargoNodesObject(cargoTypes, nodes);

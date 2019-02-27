@@ -112,7 +112,7 @@ h6 {
   padding-top: 10px;
   padding-bottom: 10px;
   max-height: 95%;
-  max-width: 400px;
+  max-width: 410px;
   overflow-y: auto;
 }
 
@@ -253,4 +253,23 @@ h6 {
 
 .demo {
   background: #d2d2d2;
+}
+
+.edit-nodes__fill-color {
+  display: flex;
+  align-items: center;
+  margin: 2% 0;
+}
+
+.edit-nodes__stroke-color {
+  display: flex;
+  align-items: center;
+}
+
+.edit-nodes__color-text {
+  width: 80%;
+}
+
+.edit-nodes__color-box {
+  background: #333;
 }

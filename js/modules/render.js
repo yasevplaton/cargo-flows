@@ -218,8 +218,8 @@ export function renderNodes(map, nodes) {
                 "circle-color": "#c4c4c4",
                 "circle-radius": [
                     'interpolate', ['linear'], ['zoom'],
-                    1, ['/', 5, 2],
-                    10, 5
+                    1, ['/', 3, 2],
+                    10, 3
                 ],
                 "circle-stroke-color": "#000000",
                 "circle-stroke-width": 1
@@ -239,9 +239,11 @@ export function renderNodes(map, nodes) {
             "paint": {
                 "circle-color": "#fff",
                 "circle-radius": [
-                    'interpolate', ['linear'], ['zoom'],
-                    1, ['/', 5, 2],
-                    10, 5
+                    'interpolate', 
+                    ['linear'], 
+                    ['zoom'],
+                    2, ['/', ['get', 'cityRadius'], 4],
+                    10, ['get', 'cityRadius']
                 ],
                 "circle-stroke-color": "#000",
                 "circle-stroke-width": 1
@@ -255,20 +257,25 @@ export function renderNodes(map, nodes) {
             "type": "symbol",
             "filter": ["!=", "NAME", "junction"],
             "layout": {
-                "text-font": ["Open Sans Regular"],
+                "text-font": ["Arial Unicode MS Regular"],
                 "text-field": "{NAME}",
                 "text-size": [
-                    'interpolate', ['linear'], ['zoom'],
-                    1, ['/', 20, 2],
-                    10, 20
+                    'match',
+                    ['get', 'loadingClass'],
+                    1, 13,
+                    2, 14,
+                    3, 15,
+                    4, 20,
+                    5, 22,
+                    0
                 ],
                 "text-offset": [1, -1]
             },
             "paint": {
-                "text-color": "#ffffff",
+                "text-color": "#fff",
                 "text-halo-color": "#000",
                 "text-halo-width": 1,
-                "text-halo-blur": 1
+                // "text-halo-blur": 2
             }
         });
     }

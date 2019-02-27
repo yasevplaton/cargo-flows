@@ -1,3 +1,5 @@
+const geostats = require('./geostats');
+
 // function to get bounding box of nodes layer
 export function getBoundingBox(data) {
   var bounds = {}, coords, point, latitude, longitude;
@@ -40,6 +42,15 @@ export function getRandomColor() {
       color += letters[Math.floor(Math.random() * 16)];
   }
   return color;
+}
+
+// function to classify flow values array
+export function classifyArray(arr, classNum) {
+  let statSerie = new geostats(arr);
+
+  let jenks = statSerie.getClassJenks(classNum);
+
+  return jenks;
 }
 
 // function to collect IDs of original lines
@@ -93,4 +104,9 @@ export function changeCargoColor(cargoColorArray, id, color) {
           cargo.color = color;
       };
   });
+}
+
+// function to check if value is in range of numbers 
+export function isInRange(num, min, max) {
+  return num > min && num <= max;
 }
