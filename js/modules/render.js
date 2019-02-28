@@ -308,3 +308,12 @@ export function renderOrigLines(map, origLines, origLineWidth) {
         });
     }
 }
+
+// functions to change fill color and stoke color of nodes
+export function changeCitiesFillColor(map, color) {
+    map.setPaintProperty('cities', 'circle-color', color);
+}
+
+export function changeCitiesStrokeColor(map, color) {
+    map.setPaintProperty('cities', 'circle-stroke-color', color);
+}

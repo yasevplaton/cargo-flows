@@ -149,6 +149,8 @@ window.onload = () => {
         const maxWidthInput = document.getElementById('max-width-input');
         const citiesCheckbox = document.getElementById('cities-checkbox');
         const junctionCheckbox = document.getElementById('junctions-checkbox');
+        const citiesFillColorBox = document.getElementById('cities-fill-color-box');
+        const citiesStrokeColorBox = document.getElementById('cities-stroke-color-box');
         const backgroundLinesCheckbox = document.getElementById('background-lines-checkbox');
         const edgesCheckbox = document.getElementById('edges-checkbox');
         const cargoNodesCheckbox = document.getElementById('cargo-nodes-checkbox');
@@ -336,6 +338,9 @@ window.onload = () => {
 
             // create width slider
             Object(_modules_interface__WEBPACK_IMPORTED_MODULE_6__["createSlider"])(widthSlider, minWidthDefault, maxWidthDefault, 200);
+
+            // bind color picker to cities layers
+            Object(_modules_interface__WEBPACK_IMPORTED_MODULE_6__["bindColorPickerToCitiesColorBoxes"])(citiesFillColorBox, citiesStrokeColorBox, map);
 
             // initialize render counter
             let startRenderCounter = 0;
@@ -2070,7 +2075,7 @@ return geostats;
 /*!*********************************!*\
   !*** ./js/modules/interface.js ***!
   \*********************************/
-/*! exports provided: createColorBox, bindColorPicker, createColorTable, createSlider, toggleLayerVisibility */
+/*! exports provided: createColorBox, bindColorPicker, createColorTable, createSlider, toggleLayerVisibility, bindColorPickerToCitiesColorBoxes */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2080,6 +2085,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createColorTable", function() { return createColorTable; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createSlider", function() { return createSlider; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "toggleLayerVisibility", function() { return toggleLayerVisibility; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bindColorPickerToCitiesColorBoxes", function() { return bindColorPickerToCitiesColorBoxes; });
 /* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./common */ "./js/modules/common.js");
 /* harmony import */ var _render__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./render */ "./js/modules/render.js");
 /* harmony import */ var nouislider__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! nouislider */ "./node_modules/nouislider/distribute/nouislider.js");
@@ -2101,16 +2107,16 @@ function createColorBox(cargo) {
 }
 
 // function to bind color picker and change color handler
-function bindColorPicker(colorBox, cargoColorArray, edges, map, nodes) {
+function bindColorPicker(colorBox, cargoColorArray, map) {
   var hueb = new Huebee(colorBox, {
-      setText: false,
-      notation: 'hex'
+    setText: false,
+    notation: 'hex'
   });
 
   hueb.on('change', function (color) {
-      let cargoID = +this.anchor.id;
-      Object(_common__WEBPACK_IMPORTED_MODULE_0__["changeCargoColor"])(cargoColorArray, cargoID, color);
-      Object(_render__WEBPACK_IMPORTED_MODULE_1__["changeEdgesColor"])(map, cargoColorArray);
+    let cargoID = +this.anchor.id;
+    Object(_common__WEBPACK_IMPORTED_MODULE_0__["changeCargoColor"])(cargoColorArray, cargoID, color);
+    Object(_render__WEBPACK_IMPORTED_MODULE_1__["changeEdgesColor"])(map, cargoColorArray);
   });
 
 }
@@ -2119,37 +2125,37 @@ function bindColorPicker(colorBox, cargoColorArray, edges, map, nodes) {
 function createColorTable(tableBody, cargoColorArray, edges, map, nodes) {
 
   cargoColorArray.forEach(cargo => {
-      let row = document.createElement('tr');
-      let colId = document.createElement('td');
-      colId.innerHTML = cargo.id;
-      let colType = document.createElement('td');
-      colType.innerHTML = cargo.type;
+    let row = document.createElement('tr');
+    let colId = document.createElement('td');
+    colId.innerHTML = cargo.id;
+    let colType = document.createElement('td');
+    colType.innerHTML = cargo.type;
 
-      let colColor = document.createElement('td');
-      let colorBox = createColorBox(cargo);
-      colColor.appendChild(colorBox);
+    let colColor = document.createElement('td');
+    let colorBox = createColorBox(cargo);
+    colColor.appendChild(colorBox);
 
-      bindColorPicker(colorBox, cargoColorArray, edges, map, nodes);
+    bindColorPicker(colorBox, cargoColorArray, map);
 
-      let cols = [colId, colType, colColor];
+    let cols = [colId, colType, colColor];
 
-      cols.forEach(col => {
-          row.appendChild(col);
-      });
+    cols.forEach(col => {
+      row.appendChild(col);
+    });
 
-      tableBody.appendChild(row);
+    tableBody.appendChild(row);
   });
 }
 
 // function to set up width slider
 function createSlider(el, minWidthDefault, maxWidthDefault, maxWidth) {
   noUiSlider.create(el, {
-      start: [minWidthDefault, maxWidthDefault],
-      connect: true,
-      range: {
-          'min': [0, 1],
-          'max': [maxWidth]
-      }
+    start: [minWidthDefault, maxWidthDefault],
+    connect: true,
+    range: {
+      'min': [0, 1],
+      'max': [maxWidth]
+    }
   });
 }
 
@@ -2157,11 +2163,39 @@ function createSlider(el, minWidthDefault, maxWidthDefault, maxWidth) {
 function toggleLayerVisibility(layerCheckbox, map, layerId) {
 
   if (layerCheckbox.checked) {
-      map.setLayoutProperty(layerId, 'visibility', 'visible');
+    map.setLayoutProperty(layerId, 'visibility', 'visible');
   } else {
-      map.setLayoutProperty(layerId, 'visibility', 'none');
+    map.setLayoutProperty(layerId, 'visibility', 'none');
   }
 }
+
+function bindColorPickerToCitiesColorBoxes(fillColorBox, strokeColorBox, map) {
+  const fillHueb = new Huebee(fillColorBox, {
+    setText: false,
+    notation: 'hex'
+  });
+
+  const strokeHueb = new Huebee(strokeColorBox, {
+    setText: false,
+    notation: 'hex'
+  });
+
+  fillHueb.element.classList.add('cities-huebee');
+  strokeHueb.element.classList.add('cities-huebee');
+
+  fillHueb.container.style.left = "-241px";
+  strokeHueb.container.style.left = "-241px";
+
+  console.log(fillHueb);
+
+  fillHueb.on('change', function (color) {
+    Object(_render__WEBPACK_IMPORTED_MODULE_1__["changeCitiesFillColor"])(map, color);
+  });
+
+  strokeHueb.on('change', function (color) {
+    Object(_render__WEBPACK_IMPORTED_MODULE_1__["changeCitiesStrokeColor"])(map, color);
+  });
+};
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! nouislider */ "./node_modules/nouislider/distribute/nouislider.js")))
 
@@ -2300,11 +2334,11 @@ function addCityRadiusAttr(node, cityRadiusArray) {
     let cityRadius;
 
     switch (node.properties.loadingClass) {
-        
+
         case 0:
             cityRadius = 0;
             break;
-        case 1: 
+        case 1:
             cityRadius = cityRadiusArray[0];
             break;
         case 2:
@@ -2650,7 +2684,7 @@ if (!("hypot" in Math)) {  // Polyfill
 /*!******************************!*\
   !*** ./js/modules/render.js ***!
   \******************************/
-/*! exports provided: renderEdges, changeEdgesColor, renderNodes, renderOrigLines */
+/*! exports provided: renderEdges, changeEdgesColor, renderNodes, renderOrigLines, changeCitiesFillColor, changeCitiesStrokeColor */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2659,6 +2693,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "changeEdgesColor", function() { return changeEdgesColor; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "renderNodes", function() { return renderNodes; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "renderOrigLines", function() { return renderOrigLines; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "changeCitiesFillColor", function() { return changeCitiesFillColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "changeCitiesStrokeColor", function() { return changeCitiesStrokeColor; });
 // function to render background lines
 // export function renderBackgroundLines(map, origLines, origLineWidth) {
 
@@ -2968,6 +3004,15 @@ function renderOrigLines(map, origLines, origLineWidth) {
             }
         });
     }
+}
+
+// functions to change fill color and stoke color of nodes
+function changeCitiesFillColor(map, color) {
+    map.setPaintProperty('cities', 'circle-color', color);
+}
+
+function changeCitiesStrokeColor(map, color) {
+    map.setPaintProperty('cities', 'circle-stroke-color', color);
 }
 
 

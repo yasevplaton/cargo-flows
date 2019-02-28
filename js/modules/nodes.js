@@ -110,11 +110,11 @@ export function addCityRadiusAttr(node, cityRadiusArray) {
     let cityRadius;
 
     switch (node.properties.loadingClass) {
-        
+
         case 0:
             cityRadius = 0;
             break;
-        case 1: 
+        case 1:
             cityRadius = cityRadiusArray[0];
             break;
         case 2:

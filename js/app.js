@@ -26,7 +26,7 @@ import {
 
 
 import { renderEdges, renderOrigLines, renderNodes } from "./modules/render";
-import { createColorTable, createSlider, toggleLayerVisibility } from "./modules/interface";
+import { createColorTable, createSlider, toggleLayerVisibility, bindColorPickerToCitiesColorBoxes } from "./modules/interface";
 
 window.onload = () => {
 
@@ -61,6 +61,8 @@ window.onload = () => {
         const maxWidthInput = document.getElementById('max-width-input');
         const citiesCheckbox = document.getElementById('cities-checkbox');
         const junctionCheckbox = document.getElementById('junctions-checkbox');
+        const citiesFillColorBox = document.getElementById('cities-fill-color-box');
+        const citiesStrokeColorBox = document.getElementById('cities-stroke-color-box');
         const backgroundLinesCheckbox = document.getElementById('background-lines-checkbox');
         const edgesCheckbox = document.getElementById('edges-checkbox');
         const cargoNodesCheckbox = document.getElementById('cargo-nodes-checkbox');
@@ -248,6 +250,9 @@ window.onload = () => {
 
             // create width slider
             createSlider(widthSlider, minWidthDefault, maxWidthDefault, 200);
+
+            // bind color picker to cities layers
+            bindColorPickerToCitiesColorBoxes(citiesFillColorBox, citiesStrokeColorBox, map);
 
             // initialize render counter
             let startRenderCounter = 0;

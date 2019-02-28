@@ -181,6 +181,11 @@ h6 {
   z-index: 10;
 }
 
+.cities-huebee {
+  top: unset !important;
+  bottom: 357px !important;
+}
+
 .huebee__container {
   background: white;
   left: -180px;
@@ -270,6 +275,11 @@ h6 {
   width: 80%;
 }
 
-.edit-nodes__color-box {
-  background: #333;
+#cities-fill-color-box {
+  background: #fff;
+  border: 1px solid grey;
+}
+
+#cities-stroke-color-box {
+  background: #000;
 }
