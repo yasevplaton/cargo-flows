@@ -94,7 +94,7 @@ h6 {
 }
 
 .hr--dark {
-  border-top: 1px solid rgba(0, 0, 0, .3);
+  border-top: 1px solid rgba(0, 0, 0, .4);
 }
 
 .greeting-panel__btns-container {
@@ -148,6 +148,7 @@ input[type='text'],
 input[type='text']:focus {
   background: rgba(41, 41, 41, 0.95);
   color: rgb(224, 224, 224);
+  text-align: center;
 }
 
 .main-interface-wrapper--dark {
@@ -191,7 +192,7 @@ input[type='text']:focus {
 
 .step-title--dark {
   font-weight: 400;
-  /* color: #fff; */
+  color: #fff;
 }
 
 #edit-interface-wrapper .step-title:hover {
@@ -256,18 +257,18 @@ input[type='text']:focus {
   border-bottom: 1px dotted #1b1b1b;
 }
 
-.width-input-row {
+.width-input-row, .radius-input-row {
   margin-top: 20px;
 }
 
-.min-width-col {
+.min-width-col, .min-radius-col {
   display: flex;
   width: 40%;
   align-items: baseline;
   float: left;
 }
 
-.max-width-col {
+.max-width-col, .max-radius-col {
   display: flex;
   width: 40%;
   justify-content: flex-end;
@@ -276,22 +277,28 @@ input[type='text']:focus {
 }
 
 .min-width-input,
-.max-width-input {
+.max-width-input,
+.min-radius-input,
+.max-radius-input
+ {
   width: 30%;
   margin-left: 5px;
   background: rgba(255, 255, 255, .95);
 }
 
-.max-width-input {
+.max-width-input, .max-radius-input {
   width: 40%;
 }
 
 .width-input-prefix,
-.width-input-postfix {
+.width-input-postfix,
+.radius-input-prefix,
+.radius-input-postfix
+ {
   color: rgb(121, 121, 121);
 }
 
-.width-input-postfix {
+.width-input-postfix, .radius-input-postfix {
   margin-left: 2px;
 }
 
@@ -338,6 +345,7 @@ input[type='text']:focus {
 .edit-nodes__stroke-color {
   display: flex;
   align-items: center;
+  margin-bottom: 11px;
 }
 
 .edit-nodes__color-text {

@@ -94,8 +94,6 @@ export function bindColorPickerToCitiesColorBoxes(fillColorBox, strokeColorBox, 
   fillHueb.container.style.left = "-241px";
   strokeHueb.container.style.left = "-241px";
 
-  console.log(fillHueb);
-
   fillHueb.on('change', function (color) {
     changeCitiesFillColor(map, color);
   });

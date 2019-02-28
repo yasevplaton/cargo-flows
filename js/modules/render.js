@@ -210,7 +210,6 @@ export function renderNodes(map, nodes) {
                 ["==", "NAME", "junction"],
                 [">", "radius", 0]
             ],
-            // "filter": ["==", "NAME", "junction"],
             'layout': {
                 'visibility': 'none'
             },

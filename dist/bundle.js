@@ -147,6 +147,9 @@ window.onload = () => {
         const widthSlider = document.getElementById('widthSlider');
         const minWidthInput = document.getElementById('min-width-input');
         const maxWidthInput = document.getElementById('max-width-input');
+        const cityRadiusSlider = document.getElementById('cityRadiusSlider');
+        const minCityRadiusInput = document.getElementById('min-radius-input');
+        const maxCityRadiusInput = document.getElementById('max-radius-input');
         const citiesCheckbox = document.getElementById('cities-checkbox');
         const junctionCheckbox = document.getElementById('junctions-checkbox');
         const citiesFillColorBox = document.getElementById('cities-fill-color-box');
@@ -273,9 +276,6 @@ window.onload = () => {
             // create a blank object for storage original lines
             let origLines = { "type": 'FeatureCollection', features: [] };
 
-            // add colors to edges
-            // addColors(edges, cargoColorArray);
-
             // collect ids of lines
             let linesIDArray = Object(_modules_common__WEBPACK_IMPORTED_MODULE_2__["collectLinesIDs"])(edges);
 
@@ -286,11 +286,14 @@ window.onload = () => {
             Object(_modules_edges__WEBPACK_IMPORTED_MODULE_3__["fillOrigLines"])(linesIDArray, origLines, edges);
 
             // set default values for width of edges
-            let minWidthDefault = 20, maxWidthDefault = 100;
-            let minDefaultCityRadius = 5, maxDefaultCityRadius = 15;
+            let minWidthDefault = 20, maxWidthDefault = 100, maxEdgeWidth = 200;
+            let minDefaultCityRadius = 5, maxDefaultCityRadius = 15, maxCityRadius = 40;
 
             minWidthInput.value = minWidthDefault;
             maxWidthInput.value = maxWidthDefault;
+
+            minCityRadiusInput.value = minDefaultCityRadius;
+            maxCityRadiusInput.value = maxDefaultCityRadius;
 
             // get width array
             let widthArray = Object(_modules_edges__WEBPACK_IMPORTED_MODULE_3__["getWidthArray"])(minWidthDefault, maxWidthDefault);
@@ -315,7 +318,7 @@ window.onload = () => {
 
             const nodeJenks = Object(_modules_common__WEBPACK_IMPORTED_MODULE_2__["classifyArray"])(nodeTrafficArray, 5);
 
-            const cityRadiusArray = Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["getCityRadiusArray"])(minDefaultCityRadius, maxDefaultCityRadius);
+            let cityRadiusArray = Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["getCityRadiusArray"])(minDefaultCityRadius, maxDefaultCityRadius);
 
             nodes.features.forEach(node => {
                 Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["addLoadingClass"])(node, nodeJenks);
@@ -337,19 +340,23 @@ window.onload = () => {
             Object(_modules_interface__WEBPACK_IMPORTED_MODULE_6__["createColorTable"])(colorTableBody, cargoColorArray, edges, map);
 
             // create width slider
-            Object(_modules_interface__WEBPACK_IMPORTED_MODULE_6__["createSlider"])(widthSlider, minWidthDefault, maxWidthDefault, 200);
+            Object(_modules_interface__WEBPACK_IMPORTED_MODULE_6__["createSlider"])(widthSlider, minWidthDefault, maxWidthDefault, maxEdgeWidth);
+
+            // create slider for cities radius
+            Object(_modules_interface__WEBPACK_IMPORTED_MODULE_6__["createSlider"])(cityRadiusSlider, minDefaultCityRadius, maxDefaultCityRadius, maxCityRadius);
 
             // bind color picker to cities layers
             Object(_modules_interface__WEBPACK_IMPORTED_MODULE_6__["bindColorPickerToCitiesColorBoxes"])(citiesFillColorBox, citiesStrokeColorBox, map);
 
             // initialize render counter
-            let startRenderCounter = 0;
+            let startWidthSliderCounter = 0;
+            let startRadiusSliderCounter = 0;
 
-            // bind update listener to slider
+            // bind update listener to edge width slider
             widthSlider.noUiSlider.on('update', function (values, handle) {
 
-                if (startRenderCounter === 0 || startRenderCounter === 1) {
-                    startRenderCounter += 1;
+                if (startWidthSliderCounter === 0 || startWidthSliderCounter === 1) {
+                    startWidthSliderCounter += 1;
                     return;
                 }
 
@@ -361,7 +368,26 @@ window.onload = () => {
                     minWidthInput.value = Math.round(value);
                 }
 
-                updateSliderHandler();
+                updateWidthSliderHandler();
+            });
+
+            // bind update listener to city radius slider
+            cityRadiusSlider.noUiSlider.on('update', function (values, handle) {
+
+                if (startRadiusSliderCounter === 0 || startRadiusSliderCounter === 1) {
+                    startRadiusSliderCounter += 1;
+                    return;
+                }
+
+                let value = values[handle];
+
+                if (handle) {
+                    maxCityRadiusInput.value = Math.round(value);
+                } else {
+                    minCityRadiusInput.value = Math.round(value);
+                }
+
+                updateCityRadiusSliderHandler();
             });
 
             // bind change listeners to width inputs
@@ -380,6 +406,25 @@ window.onload = () => {
                     widthSlider.noUiSlider.set([null, +minWidthInput.value]);
                 } else {
                     widthSlider.noUiSlider.set([null, this.value]);
+                }
+            });
+
+            // change listeners for city radius inputs
+            minCityRadiusInput.addEventListener('change', function () {
+                if (this.value > +maxCityRadiusInput.value) {
+                    minCityRadiusInput.value = maxCityRadiusInput.value;
+                    cityRadiusSlider.noUiSlider.set([+maxCityRadiusInput.value, null]);
+                } else {
+                    cityRadiusSlider.noUiSlider.set([this.value, null]);
+                }
+            });
+
+            maxCityRadiusInput.addEventListener('change', function () {
+                if (this.value < +minCityRadiusInput.value) {
+                    maxCityRadiusInput.value = minCityRadiusInput.value;
+                    cityRadiusSlider.noUiSlider.set([null, +minCityRadiusInput.value]);
+                } else {
+                    cityRadiusSlider.noUiSlider.set([null, this.value]);
                 }
             });
 
@@ -410,8 +455,8 @@ window.onload = () => {
                 });
             });
 
-            // function to update map when slider updates
-            function updateSliderHandler() {
+            // function to update edges width
+            function updateWidthSliderHandler() {
                 const currZoom = map.getZoom();
                 widthArray = Object(_modules_edges__WEBPACK_IMPORTED_MODULE_3__["getWidthArray"])(+minWidthInput.value, +maxWidthInput.value);
                 Object(_modules_edges__WEBPACK_IMPORTED_MODULE_3__["calculateWidth"])(edges, widthArray, jenks);
@@ -427,9 +472,19 @@ window.onload = () => {
                 multipleCargoNodesObject = Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["createMultipleCargoNodesObject"])(cargoTypes, nodes);
                 // renderBackgroundLines(map, origLines, origLineWidth);
                 Object(_modules_render__WEBPACK_IMPORTED_MODULE_5__["renderEdges"])(map, edges, cargoColorArray, nodes, multipleCargoNodesObject);
-                // renderNodes(map, nodes);
 
                 map.setZoom(currZoom);
+            }
+
+            // function to update cityRadius
+            function updateCityRadiusSliderHandler() {
+                cityRadiusArray = Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["getCityRadiusArray"])(+minCityRadiusInput.value, +maxCityRadiusInput.value);
+
+                nodes.features.forEach(node => {
+                    Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["addCityRadiusAttr"])(node, cityRadiusArray);
+                });
+
+                Object(_modules_render__WEBPACK_IMPORTED_MODULE_5__["renderNodes"])(map, nodes);
             }
 
             // center and zoom map to data
@@ -2186,8 +2241,6 @@ function bindColorPickerToCitiesColorBoxes(fillColorBox, strokeColorBox, map) {
   fillHueb.container.style.left = "-241px";
   strokeHueb.container.style.left = "-241px";
 
-  console.log(fillHueb);
-
   fillHueb.on('change', function (color) {
     Object(_render__WEBPACK_IMPORTED_MODULE_1__["changeCitiesFillColor"])(map, color);
   });
@@ -2907,7 +2960,6 @@ function renderNodes(map, nodes) {
                 ["==", "NAME", "junction"],
                 [">", "radius", 0]
             ],
-            // "filter": ["==", "NAME", "junction"],
             'layout': {
                 'visibility': 'none'
             },
