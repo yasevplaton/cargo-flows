@@ -8,7 +8,8 @@
         <link rel="icon" type="image/png" href="./data/img/favicon.png" />
 
         <!-- Third-party CSS -->
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&amp;subset=cyrillic"
+            rel="stylesheet">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
             integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 
@@ -24,148 +25,159 @@
 
     <body>
 
-        <div id="main-interface-wrapper" class="hidden">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <h5 class="master-title">Привет! Добро пожаловать в мастер построения карт грузопотоков!</h5>
-                        <br>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-12">
-                        <h6 class="step-title">Загрузка данных</h6>
-                        <div>
-                            <p>Загрузите файл .csv <i>(разделитель - запятая)</i> с данными о грузопотоках</p>
-                            <form>
-                                <div class="form-group">
-                                    <input type="file" class="form-control-file" name="CSVGoods" id="inputGoodsTable">
-                                </div>
-                                <button type="submit" class="btn btn-primary" id="btn-submit">Отправить</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <div id="edit-interface-wrapper" class="hidden">
+        <div class="wrapper">
+            <div id="main-interface-wrapper" class="hidden main-interface-wrapper main-interface-wrapper--dark">
+                <div class="container">
                     <div class="row">
                         <div class="col-lg-12">
-                            <hr>
-                            <h6 class="step-title" data-toggle="collapse" href="#edit-color" role="button"
-                                aria-expanded="false" aria-controls="edit-color">Настройки цветов для грузов
-                                <i class="fas fa-caret-down"></i>
-                            </h6>
-                            <div id="edit-color" class="collapse">
-                                <p>Выберите подходящие цвета для грузов</p>
-                                <table class="table borderless">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">ID</th>
-                                            <th scope="col">TYPE</th>
-                                            <th scope="col">COLOR</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="color-table-body">
-                                    </tbody>
-                                </table>
-                            </div>
-                            <hr>
+                            <h5 class="master-title">Привет! Добро пожаловать в мастер построения карт грузопотоков!
+                            </h5>
+                            <br>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-lg-12">
-                            <h6 class="step-title" data-toggle="collapse" href="#edit-width" role="button"
-                                aria-expanded="false" aria-controls="edit-width">Настройки линейного масштаба
-                                <i class="fas fa-caret-down"></i>
-                            </h6>
-                            <div id="edit-width" class="collapse">
-                                <p>Укажите минимальную и максимальную ширину линии в ленте с
-                                    помощью слайдера или введите значения вручную</p>
-                                <div id="widthSlider"></div>
-                                <div class="width-input-row">
-                                    <div class="min-width-col">
-                                        <label for="min-width-input" class="width-input-prefix">min:</label>
-                                        <input type="text" class="form-control min-width-input" id="min-width-input">
-                                        <span class="width-input-postfix">px</span>
+                            <h6 class="step-title step-title--dark">Загрузка данных</h6>
+                            <div>
+                                <p>Загрузите файл .csv <i>(разделитель - запятая)</i> с данными о грузопотоках</p>
+                                <form>
+                                    <div class="form-group">
+                                        <input type="file" class="form-control-file" name="CSVGoods"
+                                            id="inputGoodsTable">
                                     </div>
-                                    <div class="max-width-col">
-                                        <label for="max-width-input" class="width-input-prefix">max:</label>
-                                        <input type="text" class="form-control max-width-input" id="max-width-input">
-                                        <span class="width-input-postfix">px</span>
-                                    </div>
-                                </div>
+                                    <button type="submit" class="btn btn-dark" id="btn-submit">Отправить</button>
+                                </form>
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <hr>
-                            <h6 class="step-title" data-toggle="collapse" href="#edit-nodes" role="button"
-                                aria-expanded="false" aria-controls="edit-nodes">Настройки отображения транспортных
-                                узлов
-                                <i class="fas fa-caret-down"></i>
-                            </h6>
-                            <div id="edit-nodes" class="collapse">
-                                <div class="pretty p-default p-curve checkbox">
-                                    <input type="checkbox" id="cities-checkbox" checked />
-                                    <div class="state p-gray">
-                                        <label>Отображать населенные пункты</label>
-                                    </div>
+                    <div id="edit-interface-wrapper" class="hidden">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <hr class="hr--dark">
+                                <h6 class="step-title step-title--dark" data-toggle="collapse" href="#edit-color"
+                                    role="button" aria-expanded="false" aria-controls="edit-color">Настройки цветов для
+                                    грузов
+                                    <i class="fas fa-caret-down"></i>
+                                </h6>
+                                <div id="edit-color" class="collapse">
+                                    <p>Выберите подходящие цвета для грузов</p>
+                                    <table class="table borderless">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">ID</th>
+                                                <th scope="col">TYPE</th>
+                                                <th scope="col">COLOR</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="color-table-body">
+                                        </tbody>
+                                    </table>
                                 </div>
-                                <div class="pretty p-default p-curve checkbox">
-                                    <input type="checkbox" id="junctions-checkbox" />
-                                    <div class="state p-gray">
-                                        <label>Отображать транзитные пункты</label>
-                                    </div>
-                                </div>
-                                <div class="edit-nodes__fill-color">
-                                    <div class="edit-nodes__color-text">Выберите цвет заливки значка</div>
-                                    <span class="edit-nodes__color-box color-box" id="cities-fill-color-box"></span>
-                                </div>
-                                <div class="edit-nodes__stroke-color">
-                                    <div class="edit-nodes__color-text">Выберите цвет обводки значка</div>
-                                    <span class="edit-nodes__color-box color-box" id="cities-stroke-color-box"></span>
-                                </div>
-                                <!-- <div id="widthSlider"></div>
-                                <div class="width-input-row">
-                                    <div class="min-width-col">
-                                        <label for="min-width-input" class="width-input-prefix">min:</label>
-                                        <input type="text" class="form-control min-width-input" id="min-width-input">
-                                        <span class="width-input-postfix">px</span>
-                                    </div>
-                                    <div class="max-width-col">
-                                        <label for="max-width-input" class="width-input-prefix">max:</label>
-                                        <input type="text" class="form-control max-width-input" id="max-width-input">
-                                        <span class="width-input-postfix">px</span>
-                                    </div>
-                                </div> -->
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <hr>
-                            <h6 class="step-title" data-toggle="collapse" href="#other-settings-wrapper" role="button"
-                                aria-expanded="false" aria-controls="edit-width">Прочие настройки
-                                <i class="fas fa-caret-down"></i>
-                            </h6>
-                            <div id="other-settings-wrapper" class="collapse">
-                                <div class="pretty p-default p-curve checkbox">
-                                    <input type="checkbox" id="background-lines-checkbox" checked />
-                                    <div class="state p-gray">
-                                        <label>Отображать тень</label>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <hr class="hr--dark">
+                                <h6 class="step-title step-title--dark" data-toggle="collapse" href="#edit-width"
+                                    role="button" aria-expanded="false" aria-controls="edit-width">Настройки линейного
+                                    масштаба
+                                    <i class="fas fa-caret-down"></i>
+                                </h6>
+                                <div id="edit-width" class="collapse">
+                                    <p>Укажите минимальную и максимальную ширину линии в ленте с
+                                        помощью слайдера или введите значения вручную</p>
+                                    <div id="widthSlider"></div>
+                                    <div class="width-input-row">
+                                        <div class="min-width-col">
+                                            <label for="min-width-input" class="width-input-prefix">min:</label>
+                                            <input type="text" class="form-control min-width-input"
+                                                id="min-width-input">
+                                            <span class="width-input-postfix">px</span>
+                                        </div>
+                                        <div class="max-width-col">
+                                            <label for="max-width-input" class="width-input-prefix">max:</label>
+                                            <input type="text" class="form-control max-width-input"
+                                                id="max-width-input">
+                                            <span class="width-input-postfix">px</span>
+                                        </div>
                                     </div>
                                 </div>
-                                <br>
-                                <div class="pretty p-default p-curve checkbox">
-                                    <input type="checkbox" id="edges-checkbox" checked />
-                                    <div class="state p-gray">
-                                        <label>Отображать ленты</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <hr class="hr--dark">
+                                <h6 class="step-title step-title--dark" data-toggle="collapse" href="#edit-nodes"
+                                    role="button" aria-expanded="false" aria-controls="edit-nodes">Настройки отображения
+                                    транспортных
+                                    узлов
+                                    <i class="fas fa-caret-down"></i>
+                                </h6>
+                                <div id="edit-nodes" class="collapse">
+                                    <div class="pretty p-default p-curve checkbox">
+                                        <input type="checkbox" id="cities-checkbox" checked />
+                                        <div class="state p-gray">
+                                            <label>Отображать населенные пункты</label>
+                                        </div>
                                     </div>
+                                    <div class="pretty p-default p-curve checkbox">
+                                        <input type="checkbox" id="junctions-checkbox" />
+                                        <div class="state p-gray">
+                                            <label>Отображать транзитные пункты</label>
+                                        </div>
+                                    </div>
+                                    <div class="edit-nodes__fill-color">
+                                        <div class="edit-nodes__color-text">Выберите цвет заливки значка</div>
+                                        <span class="edit-nodes__color-box color-box" id="cities-fill-color-box"></span>
+                                    </div>
+                                    <div class="edit-nodes__stroke-color">
+                                        <div class="edit-nodes__color-text">Выберите цвет обводки значка</div>
+                                        <span class="edit-nodes__color-box color-box"
+                                            id="cities-stroke-color-box"></span>
+                                    </div>
+                                    <!-- <div id="widthSlider"></div>
+                                            <div class="width-input-row">
+                                                <div class="min-width-col">
+                                                    <label for="min-width-input" class="width-input-prefix">min:</label>
+                                                    <input type="text" class="form-control min-width-input" id="min-width-input">
+                                                    <span class="width-input-postfix">px</span>
+                                                </div>
+                                                <div class="max-width-col">
+                                                    <label for="max-width-input" class="width-input-prefix">max:</label>
+                                                    <input type="text" class="form-control max-width-input" id="max-width-input">
+                                                    <span class="width-input-postfix">px</span>
+                                                </div>
+                                            </div> -->
                                 </div>
-                                <div class="pretty p-default p-curve checkbox">
-                                    <input type="checkbox" id="cargo-nodes-checkbox" checked />
-                                    <div class="state p-gray">
-                                        <label>Отображать цветные кружки</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <hr class="hr--dark">
+                                <h6 class="step-title step-title--dark" data-toggle="collapse"
+                                    href="#other-settings-wrapper" role="button" aria-expanded="false"
+                                    aria-controls="edit-width">Прочие настройки
+                                    <i class="fas fa-caret-down"></i>
+                                </h6>
+                                <div id="other-settings-wrapper" class="collapse">
+                                    <div class="pretty p-default p-curve checkbox">
+                                        <input type="checkbox" id="background-lines-checkbox" checked />
+                                        <div class="state p-gray">
+                                            <label>Отображать тень</label>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="pretty p-default p-curve checkbox">
+                                        <input type="checkbox" id="edges-checkbox" checked />
+                                        <div class="state p-gray">
+                                            <label>Отображать ленты</label>
+                                        </div>
+                                    </div>
+                                    <div class="pretty p-default p-curve checkbox">
+                                        <input type="checkbox" id="cargo-nodes-checkbox" checked />
+                                        <div class="state p-gray">
+                                            <label>Отображать цветные кружки</label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -180,7 +192,7 @@
                 <h6>Подождите, карта загружается</h6>
             </div>
             <div class="greeting-panel__container">
-                <div id="greeting-panel" class="hidden">
+                <div id="greeting-panel" class="greeting-panel greeting-panel--dark hidden">
                     <h2>Здравствуйте! Вас приветствует мастер построения карт грузопотоков. Если вы хотите работать со
                         своими данными - загрузите их с помощью специальной формы. Если вы хотите ознакомиться с
                         функционалом приложения на заранее подготовленных данных, нажмите "Демо". Enjoy it!</h2>

@@ -4,7 +4,7 @@ body {
   font-family: "Open Sans", sans-serif;
   font-size: 15px;
   overflow: hidden;
-  background: rgb(51,50,49);
+  background: rgb(51, 50, 49);
 }
 
 h1,
@@ -26,7 +26,7 @@ h6 {
   padding: 10px;
   position: absolute;
   right: 0;
-  top:0;
+  top: 0;
   z-index: 1000;
   background: #ddd;
 }
@@ -72,9 +72,9 @@ h6 {
   transform: translate(-50%, -50%);
 }
 
-#greeting-panel {
+.greeting-panel {
   color: #333;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.85);
   text-align: center;
   width: 450px;
   padding: 20px 25px;
@@ -82,9 +82,19 @@ h6 {
   animation: emersion .7s .5s both cubic-bezier(0.04, 0.36, 0.1, 1.06);
 }
 
+.greeting-panel--dark {
+  background: rgba(41, 41, 41, 0.95);
+  color: rgb(224, 224, 224);
+}
+
 #greeting-panel h2 {
   font-size: 17px;
   line-height: 1.4em;
+  font-weight: 300;
+}
+
+.hr--dark {
+  border-top: 1px solid rgba(0, 0, 0, .3);
 }
 
 .greeting-panel__btns-container {
@@ -102,18 +112,48 @@ h6 {
   }
 }
 
-#main-interface-wrapper {
+.wrapper {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+.main-interface-wrapper {
   z-index: 1;
   position: absolute;
-  background: #ffffff;
+  background: rgba(255, 255, 255, .95);
   border-radius: 5px;
   margin-top: 5px;
   margin-left: 5px;
   padding-top: 10px;
   padding-bottom: 10px;
   max-height: 95%;
-  max-width: 410px;
+  max-width: 420px;
   overflow-y: auto;
+  margin-right: -16px;
+}
+
+input[type="file"] input[type="button"] {
+  background: #696969;
+  border: none;
+  cursor: pointer;
+  color: rgb(224, 224, 224);
+  padding: 2px 10px;
+  border-radius: 5px;
+}
+
+input[type='text'],
+input[type='text']:focus {
+  background: rgba(41, 41, 41, 0.95);
+  color: rgb(224, 224, 224);
+}
+
+.main-interface-wrapper--dark {
+  background: rgba(41, 41, 41, 0.95);
+  color: rgb(224, 224, 224);
+  font-weight: 300;
 }
 
 #other-interface-wrapper {
@@ -146,7 +186,12 @@ h6 {
 .step-title {
   margin: 0;
   margin-bottom: 5px;
-  font-weight: 900;
+  font-weight: 600;
+}
+
+.step-title--dark {
+  font-weight: 400;
+  /* color: #fff; */
 }
 
 #edit-interface-wrapper .step-title:hover {
@@ -158,7 +203,7 @@ h6 {
 }
 
 .master-title {
-  color: black;
+  color: inherit;
   text-align: center;
 }
 
@@ -185,11 +230,11 @@ h6 {
 
 .cities-huebee {
   top: unset !important;
-  bottom: 357px !important;
+  bottom: 355px !important;
 }
 
 .huebee__container {
-  background: white;
+  background: rgba(35, 35, 35, 0.95);
   left: -180px;
 }
 
@@ -202,9 +247,13 @@ h6 {
   border: none;
 }
 
+.table {
+  margin-bottom: 0;
+}
+
 .table thead th {
   border: none;
-  border-bottom: 1px dotted #e0e0e0;
+  border-bottom: 1px dotted #1b1b1b;
 }
 
 .width-input-row {
@@ -230,6 +279,7 @@ h6 {
 .max-width-input {
   width: 30%;
   margin-left: 5px;
+  background: rgba(255, 255, 255, .95);
 }
 
 .max-width-input {
@@ -252,6 +302,23 @@ h6 {
 .noUi-target {
   margin-left: 15px;
   margin-right: 15px;
+  border: none;
+  box-shadow: none;
+  background: rgba(53, 53, 53, 0.93);
+}
+
+.noUi-connect {
+  background: #717171;
+}
+
+.noUi-handle {
+  background: #656565;
+  border: none;
+  box-shadow: none;
+}
+
+.form-control {
+  border: 1px solid #616161;
 }
 
 .checkbox {
@@ -279,7 +346,7 @@ h6 {
 
 #cities-fill-color-box {
   background: #fff;
-  border: 1px solid grey;
+  /* border: 1px solid grey; */
 }
 
 #cities-stroke-color-box {
