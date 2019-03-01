@@ -1,0 +1,16 @@
+.handle-data-panel {
+  position: fixed;
+  z-index: 2;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: #000000;
+  background: rgba(189, 189, 189, 0.7);
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 17px;
+}
+
+.handle-data-panel__text {
+  margin-bottom: 0;
+}

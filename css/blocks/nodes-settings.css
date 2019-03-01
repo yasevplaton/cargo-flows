@@ -1,0 +1,15 @@
+.nodes-settings__fill-color {
+  display: flex;
+  align-items: center;
+  margin: 2% 0;
+}
+
+.nodes-settings__stroke-color {
+  display: flex;
+  align-items: center;
+  margin-bottom: 11px;
+}
+
+.nodes-settings__text {
+  width: 65%;
+}

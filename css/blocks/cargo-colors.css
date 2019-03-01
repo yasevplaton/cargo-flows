@@ -1,0 +1,12 @@
+.borderless td {
+  border: none;
+}
+
+.cargo-colors__table {
+  margin-bottom: 0;
+}
+
+.table thead th {
+  border: none;
+  border-bottom: 1px dotted #1b1b1b;
+}

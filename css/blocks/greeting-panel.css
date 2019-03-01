@@ -1,0 +1,43 @@
+.greeting-panel__wrapper {
+  position: fixed;
+  z-index: 1;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.greeting-panel {
+  color: #333;
+  background-color: rgba(255, 255, 255, 0.85);
+  text-align: center;
+  width: 450px;
+  padding: 20px 25px;
+  border-radius: 5px;
+  animation: emersion .7s .5s both cubic-bezier(0.04, 0.36, 0.1, 1.06);
+}
+
+.greeting-panel--dark {
+  background: rgba(41, 41, 41, 0.95);
+  color: rgb(224, 224, 224);
+}
+
+.greeting-panel__text {
+  font-size: 17px;
+  line-height: 1.4em;
+  font-weight: 300;
+}
+
+.greeting-panel__btns-row {
+  margin-top: 10px;
+}
+
+@keyframes emersion {
+  0% {
+    opacity: 0;
+    transform: scale(.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

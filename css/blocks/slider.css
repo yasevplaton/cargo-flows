@@ -1,0 +1,17 @@
+.noUi-target {
+  margin-left: 15px;
+  margin-right: 15px;
+  border: none;
+  box-shadow: none;
+  background: rgba(53, 53, 53, 0.93);
+}
+
+.noUi-connect {
+  background: #717171;
+}
+
+.noUi-handle {
+  background: #656565;
+  border: none;
+  box-shadow: none;
+}

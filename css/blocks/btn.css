@@ -1,0 +1,19 @@
+.btn--10-zoom-level {
+  margin: 10px;
+  padding: 10px;
+  position: absolute;
+  right: 0;
+  top: 50px;
+  z-index: 1000;
+  background: #ddd;
+  cursor: pointer;
+  transition: .3s;
+}
+
+.btn--10-zoom-level:hover {
+  background: #ea8585;
+}
+
+.btn-demo {
+  background: #d2d2d2;
+}

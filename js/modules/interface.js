@@ -34,6 +34,7 @@ export function createColorTable(tableBody, cargoColorArray, edges, map, nodes) 
 
   cargoColorArray.forEach(cargo => {
     let row = document.createElement('tr');
+    row.classList.add('cargo-colors__row');
     let colId = document.createElement('td');
     colId.innerHTML = cargo.id;
     let colType = document.createElement('td');
@@ -48,6 +49,7 @@ export function createColorTable(tableBody, cargoColorArray, edges, map, nodes) 
     let cols = [colId, colType, colColor];
 
     cols.forEach(col => {
+      col.classList.add('cargo-colors__col');
       row.appendChild(col);
     });
 
@@ -88,8 +90,8 @@ export function bindColorPickerToCitiesColorBoxes(fillColorBox, strokeColorBox, 
     notation: 'hex'
   });
 
-  fillHueb.element.classList.add('cities-huebee');
-  strokeHueb.element.classList.add('cities-huebee');
+  fillHueb.element.classList.add('huebee__cities-color');
+  strokeHueb.element.classList.add('huebee__cities-color');
 
   fillHueb.container.style.left = "-241px";
   strokeHueb.container.style.left = "-241px";

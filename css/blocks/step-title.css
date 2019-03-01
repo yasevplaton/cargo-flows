@@ -1,0 +1,14 @@
+.step-title {
+  margin: 0;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.step-title--dark {
+  font-weight: 400;
+  color: #fff;
+}
+
+.edit-interface-wrapper .step-title:hover {
+  cursor: pointer;
+}

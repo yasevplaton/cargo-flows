@@ -1,0 +1,55 @@
+.input-row {
+  margin-top: 20px;
+}
+
+.input-text {
+  width: 30%;
+  border: 1px solid #616161;
+  background: rgba(41, 41, 41, 0.95);
+  color: rgb(224, 224, 224);
+  text-align: center;
+}
+
+.input-text:focus {
+  background: rgba(41, 41, 41, 0.95);
+  color: rgb(224, 224, 224);
+  text-align: center;
+  width: 30%;
+  border: 1px solid #616161;
+}
+
+.input-col {
+  display: flex;
+  width: 40%;
+}
+
+.input-col--left {
+  align-items: baseline;
+  float: left;
+}
+
+.input-col--right {
+  justify-content: flex-end;
+  align-items: baseline;
+  float: right;
+}
+
+#max-width-input, #max-radius-input {
+  width: 40%;
+}
+
+.input-label {
+  color: rgb(121, 121, 121);
+}
+
+.input-label--prefix {
+  margin-right: 3px;
+}
+
+.input-label--postfix {
+  margin-left: 2px;
+}
+
+.form-row {
+  margin-top: 15px;
+}

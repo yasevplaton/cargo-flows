@@ -141,7 +141,7 @@ window.onload = () => {
         const mainInterface = document.getElementById('main-interface-wrapper');
         const inputFileElement = document.getElementById('inputGoodsTable');
         const buttonSubmit = document.getElementById('btn-submit');
-        const loadingDataPanel = document.getElementById('loading-data-panel');
+        const handleDataPanel = document.getElementById('handle-data-panel');
         const editInterface = document.getElementById('edit-interface-wrapper');
         const colorTableBody = document.getElementById('color-table-body');
         const widthSlider = document.getElementById('widthSlider');
@@ -188,7 +188,7 @@ window.onload = () => {
             if (inputFileElement.files[0]) {
 
                 // show loading panel
-                loadingDataPanel.classList.remove('hidden');
+                handleDataPanel.classList.remove('hidden');
 
                 edgesPromise = fetch(url, {
                     method: 'POST',
@@ -200,7 +200,7 @@ window.onload = () => {
                 Promise.all([edgesPromise, nodesPromise])
                     .then(([edges, nodes]) => main(edges, nodes))
                     .catch(error => {
-                        loadingDataPanel.classList.add('hidden');
+                        handleDataPanel.classList.add('hidden');
                         alert("Увы, произошла какая-то ошибка :( Если вы разработчик, можете глянуть в консоли и зарепортить багу на гитхабе https://github.com/yasevplaton/linear-cartodiagram. Если вы не понимаете, что такое консоль, бага или гитхаб, обратитесь в службу поддержки по адресу yasevplaton@gmail.com");
                         console.error("Error with loading of data:", error)
                     });
@@ -225,7 +225,7 @@ window.onload = () => {
             // hide greeting panel
             document.getElementById("greeting-panel").classList.add('hidden');
             // show loading panel
-            loadingDataPanel.classList.remove('hidden');
+            handleDataPanel.classList.remove('hidden');
 
             // initialize promises for data
             edgesPromise = fetch('./data/edgesVolgaAssym.geojson?ass=' + Math.random()).then(response => response.json());
@@ -245,7 +245,7 @@ window.onload = () => {
             cargoTable = inputFileElement.files[0];
 
             // hide loading panel
-            loadingDataPanel.classList.add('hidden');
+            handleDataPanel.classList.add('hidden');
 
             // show main interface if it is hidden
             if (mainInterface.classList.contains('hidden')) {
@@ -2181,6 +2181,7 @@ function createColorTable(tableBody, cargoColorArray, edges, map, nodes) {
 
   cargoColorArray.forEach(cargo => {
     let row = document.createElement('tr');
+    row.classList.add('cargo-colors__row');
     let colId = document.createElement('td');
     colId.innerHTML = cargo.id;
     let colType = document.createElement('td');
@@ -2195,6 +2196,7 @@ function createColorTable(tableBody, cargoColorArray, edges, map, nodes) {
     let cols = [colId, colType, colColor];
 
     cols.forEach(col => {
+      col.classList.add('cargo-colors__col');
       row.appendChild(col);
     });
 
@@ -2235,8 +2237,8 @@ function bindColorPickerToCitiesColorBoxes(fillColorBox, strokeColorBox, map) {
     notation: 'hex'
   });
 
-  fillHueb.element.classList.add('cities-huebee');
-  strokeHueb.element.classList.add('cities-huebee');
+  fillHueb.element.classList.add('huebee__cities-color');
+  strokeHueb.element.classList.add('huebee__cities-color');
 
   fillHueb.container.style.left = "-241px";
   strokeHueb.container.style.left = "-241px";

@@ -1,0 +1,28 @@
+/* layout rules */
+@import url("./layout/base.css");
+
+/* blocks rules */
+@import url("./blocks/loading-map-panel.css");
+@import url("./blocks/map.css");
+@import url("./blocks/greeting-panel.css");
+@import url("./blocks/btn.css");
+@import url("./blocks/handle-data-panel.css");
+@import url("./blocks/main-interface.css");
+@import url("./blocks/interface-text.css");
+@import url("./blocks/greeting-row.css");
+@import url("./blocks/title.css");
+/* @import url("./blocks/upload-data.css"); */
+@import url("./blocks/step-title.css");
+@import url("./blocks/hr.css");
+@import url("./blocks/edit-interface.css");
+@import url("./blocks/cargo-colors.css");
+@import url("./blocks/color-box.css");
+@import url("./blocks/huebee.css");
+/* @import url("./blocks/linear-scale.css"); */
+@import url("./blocks/slider.css");
+@import url("./blocks/input.css");
+@import url("./blocks/nodes-settings.css");
+@import url("./blocks/checkbox.css");
+/* @import url("./blocks/other-settings.css"); */
+/* @import url("./blocks/zoom-interface.css"); */
+@import url("./blocks/current-zoom.css");
