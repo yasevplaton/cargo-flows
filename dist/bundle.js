@@ -195,7 +195,7 @@ window.onload = () => {
                     body: inputFileElement.files[0]
                 }).then(response => response.json());
 
-                nodesPromise = fetch('./data/pointsVolga.geojson?ass=' + Math.random()).then(response => response.json());
+                nodesPromise = fetch('./data/pointsVolgaRus.geojson?ass=' + Math.random()).then(response => response.json());
 
                 Promise.all([edgesPromise, nodesPromise])
                     .then(([edges, nodes]) => main(edges, nodes))
@@ -229,7 +229,7 @@ window.onload = () => {
 
             // initialize promises for data
             edgesPromise = fetch('./data/edgesVolgaAssym.geojson?ass=' + Math.random()).then(response => response.json());
-            nodesPromise = fetch('./data/pointsVolga.geojson?ass=' + Math.random()).then(response => response.json());
+            nodesPromise = fetch('./data/pointsVolgaRus.geojson?ass=' + Math.random()).then(response => response.json());
 
             // if all promises are resolved invoke main function
             Promise.all([edgesPromise, nodesPromise])
@@ -752,20 +752,6 @@ function getRandomCargoColorArray(cargoTypes) {
   return randomCargoColorArray;
 
 }
-
-// function to add colors to edges
-// export function addColors(edges, colorArray) {
-//   edges.features.forEach(f => {
-
-//       let cargoType = f.properties.type;
-
-//       colorArray.forEach(item => {
-//           if (item.type === cargoType) {
-//               f.properties.color = item.color;
-//           }
-//       });
-//   });
-// }
 
 
 // function to calculate width of the widest side of specific original line
@@ -2959,7 +2945,7 @@ function renderNodes(map, nodes) {
             "type": "circle",
             "filter": [
                 "all",
-                ["==", "NAME", "junction"],
+                ["==", "name_rus", "junction"],
                 [">", "radius", 0]
             ],
             'layout': {
@@ -2972,6 +2958,7 @@ function renderNodes(map, nodes) {
                     1, ['/', 3, 2],
                     10, 3
                 ],
+                // "circle-radius": 2,
                 "circle-stroke-color": "#000000",
                 "circle-stroke-width": 1
             }
@@ -2984,7 +2971,7 @@ function renderNodes(map, nodes) {
             "type": "circle",
             "filter": [
                 "all",
-                ["!=", "NAME", "junction"],
+                ["!=", "name_rus", "junction"],
                 [">", "radius", 0]
             ],
             "paint": {
@@ -2996,6 +2983,7 @@ function renderNodes(map, nodes) {
                     2, ['/', ['get', 'cityRadius'], 4],
                     10, ['get', 'cityRadius']
                 ],
+                // "circle-radius": ['get', 'cityRadius'],
                 "circle-stroke-color": "#000",
                 "circle-stroke-width": 1
             }
@@ -3006,18 +2994,18 @@ function renderNodes(map, nodes) {
             "id": "nodes-label",
             "source": "nodes",
             "type": "symbol",
-            "filter": ["!=", "NAME", "junction"],
+            "filter": ["!=", "name_rus", "junction"],
             "layout": {
                 "text-font": ["Arial Unicode MS Regular"],
-                "text-field": "{NAME}",
+                "text-field": "{name_rus}",
                 "text-size": [
                     'match',
                     ['get', 'loadingClass'],
-                    1, 13,
-                    2, 14,
-                    3, 15,
-                    4, 20,
-                    5, 22,
+                    1, 12,
+                    2, 15,
+                    3, 18,
+                    4, 21,
+                    5, 24,
                     0
                 ],
                 "text-offset": [1, -1]

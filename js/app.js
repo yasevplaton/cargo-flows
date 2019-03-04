@@ -107,7 +107,7 @@ window.onload = () => {
                     body: inputFileElement.files[0]
                 }).then(response => response.json());
 
-                nodesPromise = fetch('./data/pointsVolga.geojson?ass=' + Math.random()).then(response => response.json());
+                nodesPromise = fetch('./data/pointsVolgaRus.geojson?ass=' + Math.random()).then(response => response.json());
 
                 Promise.all([edgesPromise, nodesPromise])
                     .then(([edges, nodes]) => main(edges, nodes))
@@ -141,7 +141,7 @@ window.onload = () => {
 
             // initialize promises for data
             edgesPromise = fetch('./data/edgesVolgaAssym.geojson?ass=' + Math.random()).then(response => response.json());
-            nodesPromise = fetch('./data/pointsVolga.geojson?ass=' + Math.random()).then(response => response.json());
+            nodesPromise = fetch('./data/pointsVolgaRus.geojson?ass=' + Math.random()).then(response => response.json());
 
             // if all promises are resolved invoke main function
             Promise.all([edgesPromise, nodesPromise])

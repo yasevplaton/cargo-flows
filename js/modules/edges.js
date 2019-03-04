@@ -89,20 +89,6 @@ export function getRandomCargoColorArray(cargoTypes) {
 
 }
 
-// function to add colors to edges
-// export function addColors(edges, colorArray) {
-//   edges.features.forEach(f => {
-
-//       let cargoType = f.properties.type;
-
-//       colorArray.forEach(item => {
-//           if (item.type === cargoType) {
-//               f.properties.color = item.color;
-//           }
-//       });
-//   });
-// }
-
 
 // function to calculate width of the widest side of specific original line
 export function calculateWidestSideWidth(edges, line) {
