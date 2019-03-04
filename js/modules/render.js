@@ -191,7 +191,7 @@ export function changeEdgesColor(map, cargoColorArray) {
 }
 
 // function to render nodes
-export function renderNodes(map, nodes) {
+export function renderNodes(map, nodes, loadingClassArray) {
 
     if (map.getSource('nodes')) {
         map.getSource('nodes').setData(nodes);
@@ -251,12 +251,19 @@ export function renderNodes(map, nodes) {
             }
         });
 
+        loadingClassArray.forEach(loadingClass => {
+
         // add cities labels
         map.addLayer({
-            "id": "nodes-label",
+            "id": `nodes-label-class-${loadingClass}`,
             "source": "nodes",
             "type": "symbol",
-            "filter": ["!=", "name_rus", "junction"],
+            "filter": [
+                "all",
+                ["!=", "name_rus", "junction"],
+                [">", "radius", 0],
+                ["==", "loadingClass", loadingClass]
+            ],
             "layout": {
                 "text-font": ["Arial Unicode MS Regular"],
                 "text-field": "{name_rus}",
@@ -270,7 +277,9 @@ export function renderNodes(map, nodes) {
                     5, 24,
                     0
                 ],
-                "text-offset": [1, -1]
+                // "text-anchor": 'bottom-left',
+                // "text-justify": 'left',
+                "text-offset": [0, -1]
             },
             "paint": {
                 "text-color": "#fff",
@@ -278,6 +287,7 @@ export function renderNodes(map, nodes) {
                 "text-halo-width": 1,
                 // "text-halo-blur": 2
             }
+        });
         });
     }
 }

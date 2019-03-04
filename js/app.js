@@ -232,6 +232,8 @@ window.onload = () => {
 
             let cityRadiusArray = getCityRadiusArray(minDefaultCityRadius, maxDefaultCityRadius);
 
+            const loadingClassArray = [1, 2, 3, 4, 5];
+
             nodes.features.forEach(node => {
                 addLoadingClass(node, nodeJenks);
                 addCityRadiusAttr(node, cityRadiusArray);
@@ -246,7 +248,7 @@ window.onload = () => {
             // render original lines
             renderOrigLines(map, origLines, origLineWidth);
             // render nodes
-            renderNodes(map, nodes);
+            renderNodes(map, nodes, loadingClassArray);
 
             // create color table
             createColorTable(colorTableBody, cargoColorArray, edges, map);
@@ -343,7 +345,9 @@ window.onload = () => {
             // add click listener to junctions, background lines and edges checkboxes to toggle visibility of layers
             citiesCheckbox.addEventListener('click', () => {
                 toggleLayerVisibility(citiesCheckbox, map, 'cities');
-                toggleLayerVisibility(citiesCheckbox, map, 'nodes-label');
+                loadingClassArray.forEach(loadingClass => {
+                    toggleLayerVisibility(citiesCheckbox, map, `nodes-label-class-${loadingClass}`);
+                });
             });
 
 
@@ -396,7 +400,7 @@ window.onload = () => {
                     addCityRadiusAttr(node, cityRadiusArray);
                 });
 
-                renderNodes(map, nodes);
+                renderNodes(map, nodes, loadingClassArray);
             }
 
             // center and zoom map to data

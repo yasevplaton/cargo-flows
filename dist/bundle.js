@@ -320,6 +320,8 @@ window.onload = () => {
 
             let cityRadiusArray = Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["getCityRadiusArray"])(minDefaultCityRadius, maxDefaultCityRadius);
 
+            const loadingClassArray = [1, 2, 3, 4, 5];
+
             nodes.features.forEach(node => {
                 Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["addLoadingClass"])(node, nodeJenks);
                 Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["addCityRadiusAttr"])(node, cityRadiusArray);
@@ -334,7 +336,7 @@ window.onload = () => {
             // render original lines
             Object(_modules_render__WEBPACK_IMPORTED_MODULE_5__["renderOrigLines"])(map, origLines, origLineWidth);
             // render nodes
-            Object(_modules_render__WEBPACK_IMPORTED_MODULE_5__["renderNodes"])(map, nodes);
+            Object(_modules_render__WEBPACK_IMPORTED_MODULE_5__["renderNodes"])(map, nodes, loadingClassArray);
 
             // create color table
             Object(_modules_interface__WEBPACK_IMPORTED_MODULE_6__["createColorTable"])(colorTableBody, cargoColorArray, edges, map);
@@ -431,7 +433,9 @@ window.onload = () => {
             // add click listener to junctions, background lines and edges checkboxes to toggle visibility of layers
             citiesCheckbox.addEventListener('click', () => {
                 Object(_modules_interface__WEBPACK_IMPORTED_MODULE_6__["toggleLayerVisibility"])(citiesCheckbox, map, 'cities');
-                Object(_modules_interface__WEBPACK_IMPORTED_MODULE_6__["toggleLayerVisibility"])(citiesCheckbox, map, 'nodes-label');
+                loadingClassArray.forEach(loadingClass => {
+                    Object(_modules_interface__WEBPACK_IMPORTED_MODULE_6__["toggleLayerVisibility"])(citiesCheckbox, map, `nodes-label-class-${loadingClass}`);
+                });
             });
 
 
@@ -484,7 +488,7 @@ window.onload = () => {
                     Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["addCityRadiusAttr"])(node, cityRadiusArray);
                 });
 
-                Object(_modules_render__WEBPACK_IMPORTED_MODULE_5__["renderNodes"])(map, nodes);
+                Object(_modules_render__WEBPACK_IMPORTED_MODULE_5__["renderNodes"])(map, nodes, loadingClassArray);
             }
 
             // center and zoom map to data
@@ -2929,7 +2933,7 @@ function changeEdgesColor(map, cargoColorArray) {
 }
 
 // function to render nodes
-function renderNodes(map, nodes) {
+function renderNodes(map, nodes, loadingClassArray) {
 
     if (map.getSource('nodes')) {
         map.getSource('nodes').setData(nodes);
@@ -2989,12 +2993,19 @@ function renderNodes(map, nodes) {
             }
         });
 
+        loadingClassArray.forEach(loadingClass => {
+
         // add cities labels
         map.addLayer({
-            "id": "nodes-label",
+            "id": `nodes-label-class-${loadingClass}`,
             "source": "nodes",
             "type": "symbol",
-            "filter": ["!=", "name_rus", "junction"],
+            "filter": [
+                "all",
+                ["!=", "name_rus", "junction"],
+                [">", "radius", 0],
+                ["==", "loadingClass", loadingClass]
+            ],
             "layout": {
                 "text-font": ["Arial Unicode MS Regular"],
                 "text-field": "{name_rus}",
@@ -3008,7 +3019,9 @@ function renderNodes(map, nodes) {
                     5, 24,
                     0
                 ],
-                "text-offset": [1, -1]
+                // "text-anchor": 'bottom-left',
+                // "text-justify": 'left',
+                "text-offset": [0, -1]
             },
             "paint": {
                 "text-color": "#fff",
@@ -3016,6 +3029,7 @@ function renderNodes(map, nodes) {
                 "text-halo-width": 1,
                 // "text-halo-blur": 2
             }
+        });
         });
     }
 }
