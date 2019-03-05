@@ -1,4 +1,4 @@
-import { calculateMaxWidth, getMaxCargoRadius } from "./edges";
+import { calculateMaxWidth } from "./orig-lines";
 import { interpolateRound } from 'd3-interpolate';
 import { isInRange } from "./common";
 
@@ -159,18 +159,18 @@ export function fillAdjacentLinesAttr(nodes, edges) {
 // function to calculate node radius
 export function addNodeAttr(origLines, node, cargoTypes, map) {
 
-    var adjacentLines = node.properties.adjacentLines;
-    var filledAdjacentLines = node.properties.filledAdjacentLines;
+    // var adjacentLines = node.properties.adjacentLines;
+    // var filledAdjacentLines = node.properties.filledAdjacentLines;
 
-    if (filledAdjacentLines.length === 1) {
-        node.properties.deadEnd = true;
-    } else {
-        node.properties.deadEnd = false;
-    }
+    // if (filledAdjacentLines.length === 1) {
+    //     node.properties.deadEnd = true;
+    // } else {
+    //     node.properties.deadEnd = false;
+    // }
 
 
-    var maxWidth = calculateMaxWidth(origLines, adjacentLines);
-    node.properties.radius = maxWidth - 1;
+    // var maxWidth = calculateMaxWidth(origLines, adjacentLines);
+    // node.properties.radius = maxWidth - 1;
 
 
     cargoTypes.forEach(cargo => {

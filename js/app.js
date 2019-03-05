@@ -6,12 +6,12 @@ import {
     getFlowValues,
     getCargoTypes,
     getRandomCargoColorArray,
-    fillOrigLines,
     getWidthArray,
     calculateWidth,
-    calculateOffset,
-    addWidthAttr
+    calculateOffset
 } from "./modules/edges";
+
+import { fillOrigLines } from "./modules/orig-lines";
 
 import {
     fillAdjacentLinesAttr,
@@ -25,8 +25,9 @@ import {
 } from "./modules/nodes";
 
 
-import { renderEdges, renderOrigLines, renderNodes } from "./modules/render";
+import { renderEdges, renderOrigLines, renderNodes, renderBackgroundLines } from "./modules/render";
 import { createColorTable, createSlider, toggleLayerVisibility, bindColorPickerToCitiesColorBoxes } from "./modules/interface";
+import { fillBackgroundLines } from './modules/bg-lines';
 
 window.onload = () => {
 
@@ -168,7 +169,7 @@ window.onload = () => {
 
             // set original line width
             const origLineWidth = 1;
-            // const shadowOffset = 12;
+            const shadowOffset = 12;
 
             // get bounding box of data to center and zoom map
             let boundingBox = getBoundingBox(nodes);
@@ -186,7 +187,9 @@ window.onload = () => {
             let cargoColorArray = getRandomCargoColorArray(cargoTypes);
 
             // create a blank object for storage original lines
-            let origLines = { "type": 'FeatureCollection', features: [] };
+            const origLines = { "type": 'FeatureCollection', features: [] };
+            const backgroundLines = { "type": 'FeatureCollection', features: [] };
+
 
             // collect ids of lines
             let linesIDArray = collectLinesIDs(edges);
@@ -216,8 +219,10 @@ window.onload = () => {
             // calculate offset for edges
             calculateOffset(edges, origLineWidth);
 
+            fillBackgroundLines(backgroundLines, edges, origLines);
+
             // add attribute with total width of band to original lines
-            addWidthAttr(origLines, edges, origLineWidth, cargoTypes);
+            // addWidthAttr(origLines, edges, origLineWidth, cargoTypes);
 
             const nodeTrafficArray = [];
 
@@ -242,9 +247,9 @@ window.onload = () => {
             let multipleCargoNodesObject = createMultipleCargoNodesObject(cargoTypes, nodes);
 
             // render background lines
-            // renderBackgroundLines(map, origLines, origLineWidth);
+            renderBackgroundLines(map, origLines, origLineWidth);
             // render edges
-            renderEdges(map, edges, cargoColorArray, nodes, multipleCargoNodesObject);
+            renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject);
             // render original lines
             renderOrigLines(map, origLines, origLineWidth);
             // render nodes
@@ -377,7 +382,7 @@ window.onload = () => {
                 widthArray = getWidthArray(+minWidthInput.value, +maxWidthInput.value);
                 calculateWidth(edges, widthArray, jenks);
                 calculateOffset(edges, origLineWidth);
-                addWidthAttr(origLines, edges, origLineWidth, cargoTypes);
+                // addWidthAttr(origLines, edges, origLineWidth, cargoTypes);
                 map.setZoom(10);
 
                 nodes.features.forEach(node => {  
@@ -387,7 +392,7 @@ window.onload = () => {
 
                 multipleCargoNodesObject = createMultipleCargoNodesObject(cargoTypes, nodes);
                 // renderBackgroundLines(map, origLines, origLineWidth);
-                renderEdges(map, edges, cargoColorArray, nodes, multipleCargoNodesObject);
+                renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject);
 
                 map.setZoom(currZoom);
             }

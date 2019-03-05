@@ -1,43 +1,83 @@
 // function to render background lines
-// export function renderBackgroundLines(map, origLines, origLineWidth) {
+export function renderBackgroundLines(map, origLines, origLineWidth) {
 
-//   if (map.getSource('background-lines')) {
-//       map.getSource('background-lines').setData(origLines);
+  if (map.getSource('background-lines')) {
+      map.getSource('background-lines').setData(origLines);
 
-//   } else {
+  } else {
 
-//       map.addSource("background-lines", { type: "geojson", data: origLines });
+      map.addSource("background-lines", { type: "geojson", data: origLines });
 
-//       // add background lines layer
-//       map.addLayer({
-//           "id": "background-lines",
-//           "source": "background-lines",
-//           "filter": ["!=", "widestSideWidth", origLineWidth / 2],
-//           "type": "line",
-//           "paint": {
-//               'line-color': "#000",
-//               "line-opacity": 0.5,
-//               "line-width": [
-//                   'interpolate', ['linear'], ['zoom'],
-//                   5, ['/', ['get', 'tapeTotalWidth'], 6],
-//                   10, ['get', 'tapeTotalWidth']
-//               ],
-//               "line-blur": 10,
-//               'line-offset': [
-//                   'interpolate', ['linear'], ['zoom'],
-//                   5, ['/', ['get', 'shadowOffest'], 1],
-//                   10, ['get', 'shadowOffest']
-//               ]
-//           },
-//           "layout": {
-//               "line-cap": "round"
-//           }
-//       });
-//   }
-// }
+      // add background lines layer
+      map.addLayer({
+          "id": "background-lines",
+          "source": "background-lines",
+          "filter": ["!=", "widestSideWidth", origLineWidth / 2],
+          "type": "line",
+          "paint": {
+              'line-color': "#000",
+              "line-opacity": 0.5,
+              'line-width': [
+                'interpolate', ['linear'], ['zoom'],
+                1, ['/', ['get', 'tapeTotalWidth'], 512],
+                2, ['/', ['get', 'tapeTotalWidth'], 256],
+                3, ['/', ['get', 'tapeTotalWidth'], 128],
+                4, ['/', ['get', 'tapeTotalWidth'], 64],
+                5, ['/', ['get', 'tapeTotalWidth'], 32],
+                6, ['/', ['get', 'tapeTotalWidth'], 16],
+                7, ['/', ['get', 'tapeTotalWidth'], 8],
+                8, ['/', ['get', 'tapeTotalWidth'], 4],
+                9, ['/', ['get', 'tapeTotalWidth'], 2],
+                10, ['get', 'tapeTotalWidth'],
+                11, ['*', ['get', 'tapeTotalWidth'], 2],
+                12, ['*', ['get', 'tapeTotalWidth'], 4],
+                13, ['*', ['get', 'tapeTotalWidth'], 8],
+                14, ['*', ['get', 'tapeTotalWidth'], 16],
+                15, ['*', ['get', 'tapeTotalWidth'], 32],
+                16, ['*', ['get', 'tapeTotalWidth'], 64],
+                17, ['*', ['get', 'tapeTotalWidth'], 128],
+                18, ['*', ['get', 'tapeTotalWidth'], 256],
+                19, ['*', ['get', 'tapeTotalWidth'], 512],
+                20, ['*', ['get', 'tapeTotalWidth'], 1024],
+                21, ['*', ['get', 'tapeTotalWidth'], 2048],
+                22, ['*', ['get', 'tapeTotalWidth'], 4096]
+              ],
+              'line-offset': [
+                'interpolate', ['linear'], ['zoom'],
+                1, ['/', ['get', 'shadowOffset'], 512],
+                2, ['/', ['get', 'shadowOffset'], 256],
+                3, ['/', ['get', 'shadowOffset'], 128],
+                4, ['/', ['get', 'shadowOffset'], 64],
+                5, ['/', ['get', 'shadowOffset'], 32],
+                6, ['/', ['get', 'shadowOffset'], 16],
+                7, ['/', ['get', 'shadowOffset'], 8],
+                8, ['/', ['get', 'shadowOffset'], 4],
+                9, ['/', ['get', 'shadowOffset'], 2],
+                10, ['get', 'shadowOffset'],
+                11, ['*', ['get', 'shadowOffset'], 2],
+                12, ['*', ['get', 'shadowOffset'], 4],
+                13, ['*', ['get', 'shadowOffset'], 8],
+                14, ['*', ['get', 'shadowOffset'], 16],
+                15, ['*', ['get', 'shadowOffset'], 32],
+                16, ['*', ['get', 'shadowOffset'], 64],
+                17, ['*', ['get', 'shadowOffset'], 128],
+                18, ['*', ['get', 'shadowOffset'], 256],
+                19, ['*', ['get', 'shadowOffset'], 512],
+                20, ['*', ['get', 'shadowOffset'], 1024],
+                21, ['*', ['get', 'shadowOffset'], 2048],
+                22, ['*', ['get', 'shadowOffset'], 4096]
+              ],
+              "line-blur": 10
+          }
+        //   "layout": {
+        //       "line-cap": "round"
+        //   }
+      });
+  }
+}
 
 // function to render edges
-export function renderEdges(map, edges, cargoColorArray, nodes, multipleCargoNodesObject) {
+export function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject) {
 
     const reverseCargoArray = cargoColorArray.slice().reverse();
 
@@ -52,7 +92,6 @@ export function renderEdges(map, edges, cargoColorArray, nodes, multipleCargoNod
     } else {
 
         map.addSource("edges", { type: "geojson", data: edges });
-        // map.addSource("junction-nodes", { type: "geojson", data: nodes });
 
         // add array of layers to map (one for each type of cargo)
         reverseCargoArray.forEach(cargoObj => {
@@ -129,8 +168,8 @@ export function renderEdges(map, edges, cargoColorArray, nodes, multipleCargoNod
 
 
             // render junctions nodes layer
-            const cargoRadiusName = `${cargoObj.type}-radius`;
-            const cargoTranslateName = `${cargoObj.type}-translate`;
+            // const cargoRadiusName = `${cargoObj.type}-radius`;
+            // const cargoTranslateName = `${cargoObj.type}-translate`;
 
             map.addSource(`${cargoObj.type}-nodes`, { type: "geojson", data: multipleCargoNodesObject[cargoObj.type] });
 
@@ -208,7 +247,7 @@ export function renderNodes(map, nodes, loadingClassArray) {
             "filter": [
                 "all",
                 ["==", "name_rus", "junction"],
-                [">", "radius", 0]
+                [">", "cityRadius", 0]
             ],
             'layout': {
                 'visibility': 'none'
@@ -234,7 +273,7 @@ export function renderNodes(map, nodes, loadingClassArray) {
             "filter": [
                 "all",
                 ["!=", "name_rus", "junction"],
-                [">", "radius", 0]
+                [">", "cityRadius", 0]
             ],
             "paint": {
                 "circle-color": "#fff",
@@ -261,7 +300,7 @@ export function renderNodes(map, nodes, loadingClassArray) {
             "filter": [
                 "all",
                 ["!=", "name_rus", "junction"],
-                [">", "radius", 0],
+                [">", "cityRadius", 0],
                 ["==", "loadingClass", loadingClass]
             ],
             "layout": {
@@ -306,7 +345,7 @@ export function renderOrigLines(map, origLines, origLineWidth) {
         map.addLayer({
             "id": "lines",
             "source": "lines",
-            "filter": ["!=", "widestSideWidth", origLineWidth / 2],
+            // "filter": ["!=", "tapeTotalWidth", 0],
             "type": "line",
             "paint": {
                 'line-color': "#333",
