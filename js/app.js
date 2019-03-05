@@ -27,7 +27,7 @@ import {
 
 import { renderEdges, renderOrigLines, renderNodes, renderBackgroundLines } from "./modules/render";
 import { createColorTable, createSlider, toggleLayerVisibility, bindColorPickerToCitiesColorBoxes } from "./modules/interface";
-import { fillBackgroundLines } from './modules/bg-lines';
+import { fillBackgroundLines, isShadowLine, addShadowOffset } from './modules/bg-lines';
 
 window.onload = () => {
 
@@ -219,8 +219,12 @@ window.onload = () => {
             // calculate offset for edges
             calculateOffset(edges, origLineWidth);
 
-            fillBackgroundLines(backgroundLines, edges, origLines);
+            fillBackgroundLines(backgroundLines, edges, origLines, origLineWidth);
 
+            backgroundLines.features.forEach(line => {
+                isShadowLine(line);
+                // addShadowOffset(line, origLineWidth);
+            });
             // add attribute with total width of band to original lines
             // addWidthAttr(origLines, edges, origLineWidth, cargoTypes);
 
@@ -247,7 +251,7 @@ window.onload = () => {
             let multipleCargoNodesObject = createMultipleCargoNodesObject(cargoTypes, nodes);
 
             // render background lines
-            renderBackgroundLines(map, origLines, origLineWidth);
+            renderBackgroundLines(map, backgroundLines, origLineWidth);
             // render edges
             renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject);
             // render original lines

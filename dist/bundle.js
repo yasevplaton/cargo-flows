@@ -311,8 +311,12 @@ window.onload = () => {
             // calculate offset for edges
             Object(_modules_edges__WEBPACK_IMPORTED_MODULE_3__["calculateOffset"])(edges, origLineWidth);
 
-            Object(_modules_bg_lines__WEBPACK_IMPORTED_MODULE_8__["fillBackgroundLines"])(backgroundLines, edges, origLines);
+            Object(_modules_bg_lines__WEBPACK_IMPORTED_MODULE_8__["fillBackgroundLines"])(backgroundLines, edges, origLines, origLineWidth);
 
+            backgroundLines.features.forEach(line => {
+                Object(_modules_bg_lines__WEBPACK_IMPORTED_MODULE_8__["isShadowLine"])(line);
+                // addShadowOffset(line, origLineWidth);
+            });
             // add attribute with total width of band to original lines
             // addWidthAttr(origLines, edges, origLineWidth, cargoTypes);
 
@@ -339,7 +343,7 @@ window.onload = () => {
             let multipleCargoNodesObject = Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["createMultipleCargoNodesObject"])(cargoTypes, nodes);
 
             // render background lines
-            Object(_modules_render__WEBPACK_IMPORTED_MODULE_6__["renderBackgroundLines"])(map, origLines, origLineWidth);
+            Object(_modules_render__WEBPACK_IMPORTED_MODULE_6__["renderBackgroundLines"])(map, backgroundLines, origLineWidth);
             // render edges
             Object(_modules_render__WEBPACK_IMPORTED_MODULE_6__["renderEdges"])(map, edges, cargoColorArray, multipleCargoNodesObject);
             // render original lines
@@ -523,32 +527,34 @@ window.onload = () => {
 /*!********************************!*\
   !*** ./js/modules/bg-lines.js ***!
   \********************************/
-/*! exports provided: fillBackgroundLines, calculateTotalWidthForDirection, calculateMaxWidth, addWidthAttr */
+/*! exports provided: fillBackgroundLines, addShadowOffset, isShadowLine, calculateTotalWidthForDirection, calculateMaxWidth, addWidthAttr */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fillBackgroundLines", function() { return fillBackgroundLines; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addShadowOffset", function() { return addShadowOffset; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isShadowLine", function() { return isShadowLine; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "calculateTotalWidthForDirection", function() { return calculateTotalWidthForDirection; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "calculateMaxWidth", function() { return calculateMaxWidth; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addWidthAttr", function() { return addWidthAttr; });
 /* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./common */ "./js/modules/common.js");
 
 
-function fillBackgroundLines(backgroundLines, edges, origLines) {
-  
+function fillBackgroundLines(backgroundLines, edges, origLines, origLineWidth) {
+
   const bgLinesOneDir = [];
   const bgLinesTwoDir = [];
 
-  fillSingleDirBgLines(edges, origLines, 1, bgLinesOneDir);
-  fillSingleDirBgLines(edges, origLines, -1, bgLinesTwoDir);
+  fillSingleDirBgLines(edges, origLines, 1, bgLinesOneDir, origLineWidth);
+  fillSingleDirBgLines(edges, origLines, -1, bgLinesTwoDir, origLineWidth);
 
   const bgFeatures = [...bgLinesOneDir, ...bgLinesTwoDir];
-  backgroundLines.features.push(bgFeatures);
+  backgroundLines.features.push(...bgFeatures);
 
 }
 
-function fillSingleDirBgLines(edges, origLines, direction, bgLinesArray) {
+function fillSingleDirBgLines(edges, origLines, direction, bgLinesArray, origLineWidth) {
   
   origLines.features.forEach(line => {
 
@@ -559,6 +565,7 @@ function fillSingleDirBgLines(edges, origLines, direction, bgLinesArray) {
     const values = {};
     let src, dest, dir, geom;
     const origLineId = line.properties.lineID;
+    const edgesId = [];
 
     sameLineEdges.forEach(edge => {
       
@@ -570,8 +577,8 @@ function fillSingleDirBgLines(edges, origLines, direction, bgLinesArray) {
         dest = edge.properties.dest;
         dir = edge.properties.dir;
         geom = edge.geometry;
+        edgesId.push(+edge.id);
       }
-
 
     });
 
@@ -581,15 +588,40 @@ function fillSingleDirBgLines(edges, origLines, direction, bgLinesArray) {
         dest: dest,
         dir: dir,
         values: values,
-        totalWidth: totalWidth,
+        totalWidth: totalWidth + (origLineWidth / 2),
         totalVolume: totalVolume,
-        origLineId: origLineId
+        origLineId: origLineId,
+        edgesId: edgesId,
+        offset: totalWidth / 2
       },
       geometry: geom
     };
 
     bgLinesArray.push(bgLine);
+    
   });
+}
+
+function addShadowOffset(line, origLineWidth) {
+  const isShadowLine = line.properties.isShadowLine;
+  const curTotalWidth = line.properties.totalWidth;
+
+  if (isShadowLine && (curTotalWidth !== origLineWidth / 2)) {
+    const shadowTotalWidth = curTotalWidth + 30;
+    line.properties.totalWidth = shadowTotalWidth;
+    line.properties.offset = shadowTotalWidth / 2;
+  }
+}
+
+function isShadowLine(line) {
+  const firstPoint = line.geometry.coordinates[0];
+  const lastPoint = line.geometry.coordinates[line.geometry.coordinates.length - 1];
+  if (lastPoint[0] >= firstPoint[0]) {
+    line.properties.isShadowLine = true;
+  } else {
+    line.properties.isShadowLine = false;
+  }
+
 }
 
 // function to calculate width of the widest side of specific original line
@@ -650,7 +682,7 @@ function addWidthAttr(origLines, edges, origLineWidth, cargoTypes) {
 /*!******************************!*\
   !*** ./js/modules/common.js ***!
   \******************************/
-/*! exports provided: getBoundingBox, getRandomColor, classifyArray, collectLinesIDs, getLineGeometry, collectSameLineEdges, changeCargoColor, isInRange */
+/*! exports provided: getBoundingBox, getRandomColor, classifyArray, collectLinesIDs, getLineGeometry, collectSameLineEdges, changeCargoColor, isInRange, getMaxCargoId */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -663,6 +695,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "collectSameLineEdges", function() { return collectSameLineEdges; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "changeCargoColor", function() { return changeCargoColor; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isInRange", function() { return isInRange; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getMaxCargoId", function() { return getMaxCargoId; });
 const geostats = __webpack_require__(/*! ./geostats */ "./js/modules/geostats.js");
 
 // function to get bounding box of nodes layer
@@ -774,6 +807,19 @@ function changeCargoColor(cargoColorArray, id, color) {
 // function to check if value is in range of numbers 
 function isInRange(num, min, max) {
   return num > min && num <= max;
+}
+
+function getMaxCargoId(cargoColorArray) {
+  let maxCargoId = 0;
+
+  cargoColorArray.forEach(cargoObj => {
+    const cargoId = cargoObj.id;
+    if (cargoId > maxCargoId) {
+      maxCargoId = cargoId;
+    }
+  });
+
+  return maxCargoId;
 }
 
 /***/ }),
@@ -2777,88 +2823,92 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "renderOrigLines", function() { return renderOrigLines; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "changeCitiesFillColor", function() { return changeCitiesFillColor; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "changeCitiesStrokeColor", function() { return changeCitiesStrokeColor; });
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./common */ "./js/modules/common.js");
+
+
 // function to render background lines
-function renderBackgroundLines(map, origLines, origLineWidth) {
+function renderBackgroundLines(map, backgroundLines, origLineWidth) {
 
-  if (map.getSource('background-lines')) {
-      map.getSource('background-lines').setData(origLines);
+    if (map.getSource('background-lines')) {
+        map.getSource('background-lines').setData(backgroundLines);
 
-  } else {
+    } else {
 
-      map.addSource("background-lines", { type: "geojson", data: origLines });
+        map.addSource("background-lines", { type: "geojson", data: backgroundLines });
 
-      // add background lines layer
-      map.addLayer({
-          "id": "background-lines",
-          "source": "background-lines",
-          "filter": ["!=", "widestSideWidth", origLineWidth / 2],
-          "type": "line",
-          "paint": {
-              'line-color': "#000",
-              "line-opacity": 0.5,
-              'line-width': [
-                'interpolate', ['linear'], ['zoom'],
-                1, ['/', ['get', 'tapeTotalWidth'], 512],
-                2, ['/', ['get', 'tapeTotalWidth'], 256],
-                3, ['/', ['get', 'tapeTotalWidth'], 128],
-                4, ['/', ['get', 'tapeTotalWidth'], 64],
-                5, ['/', ['get', 'tapeTotalWidth'], 32],
-                6, ['/', ['get', 'tapeTotalWidth'], 16],
-                7, ['/', ['get', 'tapeTotalWidth'], 8],
-                8, ['/', ['get', 'tapeTotalWidth'], 4],
-                9, ['/', ['get', 'tapeTotalWidth'], 2],
-                10, ['get', 'tapeTotalWidth'],
-                11, ['*', ['get', 'tapeTotalWidth'], 2],
-                12, ['*', ['get', 'tapeTotalWidth'], 4],
-                13, ['*', ['get', 'tapeTotalWidth'], 8],
-                14, ['*', ['get', 'tapeTotalWidth'], 16],
-                15, ['*', ['get', 'tapeTotalWidth'], 32],
-                16, ['*', ['get', 'tapeTotalWidth'], 64],
-                17, ['*', ['get', 'tapeTotalWidth'], 128],
-                18, ['*', ['get', 'tapeTotalWidth'], 256],
-                19, ['*', ['get', 'tapeTotalWidth'], 512],
-                20, ['*', ['get', 'tapeTotalWidth'], 1024],
-                21, ['*', ['get', 'tapeTotalWidth'], 2048],
-                22, ['*', ['get', 'tapeTotalWidth'], 4096]
-              ],
-              'line-offset': [
-                'interpolate', ['linear'], ['zoom'],
-                1, ['/', ['get', 'shadowOffset'], 512],
-                2, ['/', ['get', 'shadowOffset'], 256],
-                3, ['/', ['get', 'shadowOffset'], 128],
-                4, ['/', ['get', 'shadowOffset'], 64],
-                5, ['/', ['get', 'shadowOffset'], 32],
-                6, ['/', ['get', 'shadowOffset'], 16],
-                7, ['/', ['get', 'shadowOffset'], 8],
-                8, ['/', ['get', 'shadowOffset'], 4],
-                9, ['/', ['get', 'shadowOffset'], 2],
-                10, ['get', 'shadowOffset'],
-                11, ['*', ['get', 'shadowOffset'], 2],
-                12, ['*', ['get', 'shadowOffset'], 4],
-                13, ['*', ['get', 'shadowOffset'], 8],
-                14, ['*', ['get', 'shadowOffset'], 16],
-                15, ['*', ['get', 'shadowOffset'], 32],
-                16, ['*', ['get', 'shadowOffset'], 64],
-                17, ['*', ['get', 'shadowOffset'], 128],
-                18, ['*', ['get', 'shadowOffset'], 256],
-                19, ['*', ['get', 'shadowOffset'], 512],
-                20, ['*', ['get', 'shadowOffset'], 1024],
-                21, ['*', ['get', 'shadowOffset'], 2048],
-                22, ['*', ['get', 'shadowOffset'], 4096]
-              ],
-              "line-blur": 10
-          }
-        //   "layout": {
-        //       "line-cap": "round"
-        //   }
-      });
-  }
+        // add background lines layer
+        map.addLayer({
+            "id": "background-lines",
+            "source": "background-lines",
+            "filter": ["!=", "totalWidth", origLineWidth / 2],
+            "type": "line",
+            "paint": {
+                'line-color': "#000",
+                "line-opacity": 0.5,
+                'line-width': [
+                    'interpolate', ['linear'], ['zoom'],
+                    1, ['/', ['get', 'totalWidth'], 512],
+                    2, ['/', ['get', 'totalWidth'], 256],
+                    3, ['/', ['get', 'totalWidth'], 128],
+                    4, ['/', ['get', 'totalWidth'], 64],
+                    5, ['/', ['get', 'totalWidth'], 32],
+                    6, ['/', ['get', 'totalWidth'], 16],
+                    7, ['/', ['get', 'totalWidth'], 8],
+                    8, ['/', ['get', 'totalWidth'], 4],
+                    9, ['/', ['get', 'totalWidth'], 2],
+                    10, ['get', 'totalWidth'],
+                    11, ['*', ['get', 'totalWidth'], 2],
+                    12, ['*', ['get', 'totalWidth'], 4],
+                    13, ['*', ['get', 'totalWidth'], 8],
+                    14, ['*', ['get', 'totalWidth'], 16],
+                    15, ['*', ['get', 'totalWidth'], 32],
+                    16, ['*', ['get', 'totalWidth'], 64],
+                    17, ['*', ['get', 'totalWidth'], 128],
+                    18, ['*', ['get', 'totalWidth'], 256],
+                    19, ['*', ['get', 'totalWidth'], 512],
+                    20, ['*', ['get', 'totalWidth'], 1024],
+                    21, ['*', ['get', 'totalWidth'], 2048],
+                    22, ['*', ['get', 'totalWidth'], 4096]
+                ],
+                'line-offset': [
+                    'interpolate', ['linear'], ['zoom'],
+                    1, ['/', ['get', 'offset'], 512],
+                    2, ['/', ['get', 'offset'], 256],
+                    3, ['/', ['get', 'offset'], 128],
+                    4, ['/', ['get', 'offset'], 64],
+                    5, ['/', ['get', 'offset'], 32],
+                    6, ['/', ['get', 'offset'], 16],
+                    7, ['/', ['get', 'offset'], 8],
+                    8, ['/', ['get', 'offset'], 4],
+                    9, ['/', ['get', 'offset'], 2],
+                    10, ['get', 'offset'],
+                    11, ['*', ['get', 'offset'], 2],
+                    12, ['*', ['get', 'offset'], 4],
+                    13, ['*', ['get', 'offset'], 8],
+                    14, ['*', ['get', 'offset'], 16],
+                    15, ['*', ['get', 'offset'], 32],
+                    16, ['*', ['get', 'offset'], 64],
+                    17, ['*', ['get', 'offset'], 128],
+                    18, ['*', ['get', 'offset'], 256],
+                    19, ['*', ['get', 'offset'], 512],
+                    20, ['*', ['get', 'offset'], 1024],
+                    21, ['*', ['get', 'offset'], 2048],
+                    22, ['*', ['get', 'offset'], 4096]
+                ],
+                //   "line-blur": 10
+            }
+            //   "layout": {
+            //       "line-cap": "round"
+            //   }
+        });
+    }
 }
 
 // function to render edges
 function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject) {
 
     const reverseCargoArray = cargoColorArray.slice().reverse();
+    const maxCargoId = Object(_common__WEBPACK_IMPORTED_MODULE_0__["getMaxCargoId"])(cargoColorArray);
 
     if (map.getSource('edges')) {
         map.getSource('edges').setData(edges);
@@ -2875,6 +2925,140 @@ function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject) {
         // add array of layers to map (one for each type of cargo)
         reverseCargoArray.forEach(cargoObj => {
 
+            if (cargoObj.id === maxCargoId) {
+
+                map.addSource(`${cargoObj.type}-nodes`, { type: "geojson", data: multipleCargoNodesObject[cargoObj.type] });
+
+
+                map.addLayer({
+                    "id": "edges-shadow",
+                    "source": "edges",
+                    "type": "line",
+                    "filter": [
+                        "all",
+                        ["==", "type", cargoObj.type],
+                        ["!=", "value", 0]
+                    ],
+                    "paint": {
+                        'line-color': "#000",
+                        "line-opacity": 1,
+                        "line-translate": [
+                            'interpolate', ['linear'], ['zoom'],
+                            3, ["literal", [1, 0]],
+                            10, ["literal", [10, 0]]
+                        ],
+                        "line-blur": 1,
+                        // "line-width": [
+                        //     'interpolate', ['linear'], ['zoom'],
+                        //     1, 1,
+                        //     10, 20
+                        // ],
+                        'line-offset': [
+                            'interpolate', ['linear'], ['zoom'],
+                            1, ['/', ['get', 'offset'], 512],
+                            2, ['/', ['get', 'offset'], 256],
+                            3, ['/', ['get', 'offset'], 128],
+                            4, ['/', ['get', 'offset'], 64],
+                            5, ['/', ['get', 'offset'], 32],
+                            6, ['/', ['get', 'offset'], 16],
+                            7, ['/', ['get', 'offset'], 8],
+                            8, ['/', ['get', 'offset'], 4],
+                            9, ['/', ['get', 'offset'], 2],
+                            10, ['get', 'offset'],
+                            11, ['*', ['get', 'offset'], 2],
+                            12, ['*', ['get', 'offset'], 4],
+                            13, ['*', ['get', 'offset'], 8],
+                            14, ['*', ['get', 'offset'], 16],
+                            15, ['*', ['get', 'offset'], 32],
+                            16, ['*', ['get', 'offset'], 64],
+                            17, ['*', ['get', 'offset'], 128],
+                            18, ['*', ['get', 'offset'], 256],
+                            19, ['*', ['get', 'offset'], 512],
+                            20, ['*', ['get', 'offset'], 1024],
+                            21, ['*', ['get', 'offset'], 2048],
+                            22, ['*', ['get', 'offset'], 4096],
+    
+                            // 22, ['*', ['get', 'offset'], 1],
+                        ],
+                        "line-width": [
+                            'interpolate', ['linear'], ['zoom'],
+                            1, ['/', ['get', 'width'], 512],
+                            2, ['/', ['get', 'width'], 256],
+                            3, ['/', ['get', 'width'], 128],
+                            4, ['/', ['get', 'width'], 64],
+                            5, ['/', ['get', 'width'], 32],
+                            6, ['/', ['get', 'width'], 16],
+                            7, ['/', ['get', 'width'], 8],
+                            8, ['/', ['get', 'width'], 4],
+                            9, ['/', ['get', 'width'], 2],
+                            10, ['get', 'width'],
+                            11, ['*', ['get', 'width'], 2],
+                            12, ['*', ['get', 'width'], 4],
+                            13, ['*', ['get', 'width'], 8],
+                            14, ['*', ['get', 'width'], 16],
+                            15, ['*', ['get', 'width'], 32],
+                            16, ['*', ['get', 'width'], 64],
+                            17, ['*', ['get', 'width'], 128],
+                            18, ['*', ['get', 'width'], 256],
+                            19, ['*', ['get', 'width'], 512],
+                            20, ['*', ['get', 'width'], 1024],
+                            21, ['*', ['get', 'width'], 2048],
+                            22, ['*', ['get', 'width'], 4096],
+                            // 22, ['*', ['get', 'width'], 1],
+                        ],
+                    }
+                });
+
+                map.addLayer({
+                    "id": "cargo-nodes-shadow",
+                    "source": `${cargoObj.type}-nodes`,
+                    "type": "circle",
+                    // "filter": [
+                    //     "all",
+                    //     ["!=", "deadEnd", true],
+                    //     ["!=", "radius", 0]
+                    // ],
+                    "filter": ["!=", "radius", 0],
+                    "paint": {
+                        "circle-color": "#000",
+                        "circle-radius": [
+                            'interpolate', ['linear'], ['zoom'],
+                            1, ['/', ['get', 'radius'], 512],
+                            2, ['/', ['get', 'radius'], 256],
+                            3, ['/', ['get', 'radius'], 128],
+                            4, ['/', ['get', 'radius'], 64],
+                            5, ['/', ['get', 'radius'], 32],
+                            6, ['/', ['get', 'radius'], 16],
+                            7, ['/', ['get', 'radius'], 8],
+                            8, ['/', ['get', 'radius'], 4],
+                            9, ['/', ['get', 'radius'], 2],
+                            10, ['get', 'radius'],
+                            11, ['*', ['get', 'radius'], 2],
+                            12, ['*', ['get', 'radius'], 4],
+                            13, ['*', ['get', 'radius'], 8],
+                            14, ['*', ['get', 'radius'], 16],
+                            15, ['*', ['get', 'radius'], 32],
+                            16, ['*', ['get', 'radius'], 64],
+                            17, ['*', ['get', 'radius'], 128],
+                            18, ['*', ['get', 'radius'], 256],
+                            19, ['*', ['get', 'radius'], 512],
+                            20, ['*', ['get', 'radius'], 1024],
+                            21, ['*', ['get', 'radius'], 2048],
+                            22, ['*', ['get', 'radius'], 4096],
+                        ],
+                        "circle-translate": [
+                            'interpolate', ['linear'], ['zoom'],
+                            3, ["literal", [1, 0]],
+                            10, ["literal", [10, 0]]
+                        ],
+                    }
+                });
+            }
+
+            if (!map.getSource(`${cargoObj.type}-nodes`)) {
+                map.addSource(`${cargoObj.type}-nodes`, { type: "geojson", data: multipleCargoNodesObject[cargoObj.type] });
+            }
+           
             map.addLayer({
                 "id": cargoObj.type,
                 "source": "edges",
@@ -2949,8 +3133,6 @@ function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject) {
             // render junctions nodes layer
             // const cargoRadiusName = `${cargoObj.type}-radius`;
             // const cargoTranslateName = `${cargoObj.type}-translate`;
-
-            map.addSource(`${cargoObj.type}-nodes`, { type: "geojson", data: multipleCargoNodesObject[cargoObj.type] });
 
             map.addLayer({
                 "id": cargoObj.type + "-nodes",
@@ -3044,6 +3226,45 @@ function renderNodes(map, nodes, loadingClassArray) {
             }
         });
 
+        // map.addLayer({
+        //     "id": "cities-bg",
+        //     "source": "nodes",
+        //     "type": "circle",
+        //     "filter": [
+        //         "all",
+        //         ["!=", "name_rus", "junction"],
+        //         [">", "cityRadius", 0]
+        //     ],
+        //     "paint": {
+        //         "circle-color": "#000",
+        //         "circle-radius": [
+        //             'interpolate',
+        //             ['linear'],
+        //             ['zoom'],
+        //             2, ['/', ['get', 'cityRadius'], 4],
+        //             10, ['get', 'cityRadius']
+        //         ],
+        //         "circle-blur": [
+        //             'interpolate',
+        //             ['linear'],
+        //             ['zoom'],
+        //             2, 0,
+        //             10, 1
+        //         ],
+        //         "circle-opacity": 1,
+        //         "circle-translate": [
+        //             'interpolate',
+        //             ['linear'],
+        //             ['zoom'],
+        //             2, ["literal", [2, 2]],
+        //             10, ["literal", [5, 5]]
+        //         ],
+        //         // "circle-radius": ['get', 'cityRadius'],
+        //         // "circle-stroke-color": "#000",
+        //         // "circle-stroke-width": 1
+        //     }
+        // });
+
         // add cities layer
         map.addLayer({
             "id": "cities",
@@ -3057,8 +3278,8 @@ function renderNodes(map, nodes, loadingClassArray) {
             "paint": {
                 "circle-color": "#fff",
                 "circle-radius": [
-                    'interpolate', 
-                    ['linear'], 
+                    'interpolate',
+                    ['linear'],
                     ['zoom'],
                     2, ['/', ['get', 'cityRadius'], 4],
                     10, ['get', 'cityRadius']
@@ -3071,41 +3292,41 @@ function renderNodes(map, nodes, loadingClassArray) {
 
         loadingClassArray.forEach(loadingClass => {
 
-        // add cities labels
-        map.addLayer({
-            "id": `nodes-label-class-${loadingClass}`,
-            "source": "nodes",
-            "type": "symbol",
-            "filter": [
-                "all",
-                ["!=", "name_rus", "junction"],
-                [">", "cityRadius", 0],
-                ["==", "loadingClass", loadingClass]
-            ],
-            "layout": {
-                "text-font": ["Arial Unicode MS Regular"],
-                "text-field": "{name_rus}",
-                "text-size": [
-                    'match',
-                    ['get', 'loadingClass'],
-                    1, 12,
-                    2, 15,
-                    3, 18,
-                    4, 21,
-                    5, 24,
-                    0
+            // add cities labels
+            map.addLayer({
+                "id": `nodes-label-class-${loadingClass}`,
+                "source": "nodes",
+                "type": "symbol",
+                "filter": [
+                    "all",
+                    ["!=", "name_rus", "junction"],
+                    [">", "cityRadius", 0],
+                    ["==", "loadingClass", loadingClass]
                 ],
-                // "text-anchor": 'bottom-left',
-                // "text-justify": 'left',
-                "text-offset": [0, -1]
-            },
-            "paint": {
-                "text-color": "#fff",
-                "text-halo-color": "#000",
-                "text-halo-width": 1,
-                // "text-halo-blur": 2
-            }
-        });
+                "layout": {
+                    "text-font": ["Arial Unicode MS Regular"],
+                    "text-field": "{name_rus}",
+                    "text-size": [
+                        'match',
+                        ['get', 'loadingClass'],
+                        1, 12,
+                        2, 15,
+                        3, 18,
+                        4, 21,
+                        5, 24,
+                        0
+                    ],
+                    // "text-anchor": 'bottom-left',
+                    // "text-justify": 'left',
+                    "text-offset": [0, -1]
+                },
+                "paint": {
+                    "text-color": "#fff",
+                    "text-halo-color": "#000",
+                    "text-halo-width": 1,
+                    // "text-halo-blur": 2
+                }
+            });
         });
     }
 }

@@ -110,3 +110,16 @@ export function changeCargoColor(cargoColorArray, id, color) {
 export function isInRange(num, min, max) {
   return num > min && num <= max;
 }
+
+export function getMaxCargoId(cargoColorArray) {
+  let maxCargoId = 0;
+
+  cargoColorArray.forEach(cargoObj => {
+    const cargoId = cargoObj.id;
+    if (cargoId > maxCargoId) {
+      maxCargoId = cargoId;
+    }
+  });
+
+  return maxCargoId;
+}

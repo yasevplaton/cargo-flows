@@ -1,19 +1,19 @@
 import { collectSameLineEdges } from "./common";
 
-export function fillBackgroundLines(backgroundLines, edges, origLines) {
+export function fillBackgroundLines(backgroundLines, edges, origLines, origLineWidth) {
 
   const bgLinesOneDir = [];
   const bgLinesTwoDir = [];
 
-  fillSingleDirBgLines(edges, origLines, 1, bgLinesOneDir);
-  fillSingleDirBgLines(edges, origLines, -1, bgLinesTwoDir);
+  fillSingleDirBgLines(edges, origLines, 1, bgLinesOneDir, origLineWidth);
+  fillSingleDirBgLines(edges, origLines, -1, bgLinesTwoDir, origLineWidth);
 
   const bgFeatures = [...bgLinesOneDir, ...bgLinesTwoDir];
-  backgroundLines.features.push(bgFeatures);
+  backgroundLines.features.push(...bgFeatures);
 
 }
 
-function fillSingleDirBgLines(edges, origLines, direction, bgLinesArray) {
+function fillSingleDirBgLines(edges, origLines, direction, bgLinesArray, origLineWidth) {
   
   origLines.features.forEach(line => {
 
@@ -24,6 +24,7 @@ function fillSingleDirBgLines(edges, origLines, direction, bgLinesArray) {
     const values = {};
     let src, dest, dir, geom;
     const origLineId = line.properties.lineID;
+    const edgesId = [];
 
     sameLineEdges.forEach(edge => {
       
@@ -35,8 +36,8 @@ function fillSingleDirBgLines(edges, origLines, direction, bgLinesArray) {
         dest = edge.properties.dest;
         dir = edge.properties.dir;
         geom = edge.geometry;
+        edgesId.push(+edge.id);
       }
-
 
     });
 
@@ -46,9 +47,11 @@ function fillSingleDirBgLines(edges, origLines, direction, bgLinesArray) {
         dest: dest,
         dir: dir,
         values: values,
-        totalWidth: totalWidth,
+        totalWidth: totalWidth + (origLineWidth / 2),
         totalVolume: totalVolume,
-        origLineId: origLineId
+        origLineId: origLineId,
+        edgesId: edgesId,
+        offset: totalWidth / 2
       },
       geometry: geom
     };
@@ -56,6 +59,28 @@ function fillSingleDirBgLines(edges, origLines, direction, bgLinesArray) {
     bgLinesArray.push(bgLine);
     
   });
+}
+
+export function addShadowOffset(line, origLineWidth) {
+  const isShadowLine = line.properties.isShadowLine;
+  const curTotalWidth = line.properties.totalWidth;
+
+  if (isShadowLine && (curTotalWidth !== origLineWidth / 2)) {
+    const shadowTotalWidth = curTotalWidth + 30;
+    line.properties.totalWidth = shadowTotalWidth;
+    line.properties.offset = shadowTotalWidth / 2;
+  }
+}
+
+export function isShadowLine(line) {
+  const firstPoint = line.geometry.coordinates[0];
+  const lastPoint = line.geometry.coordinates[line.geometry.coordinates.length - 1];
+  if (lastPoint[0] >= firstPoint[0]) {
+    line.properties.isShadowLine = true;
+  } else {
+    line.properties.isShadowLine = false;
+  }
+
 }
 
 // function to calculate width of the widest side of specific original line
