@@ -11,8 +11,6 @@ import {
     calculateOffset
 } from "./modules/edges";
 
-import { fillOrigLines } from "./modules/orig-lines";
-
 import {
     fillAdjacentLinesAttr,
     addNodeAttr,
@@ -27,7 +25,7 @@ import {
 
 import { renderEdges, renderOrigLines, renderNodes, renderBackgroundLines } from "./modules/render";
 import { createColorTable, createSlider, toggleLayerVisibility, bindColorPickerToCitiesColorBoxes } from "./modules/interface";
-import { fillBackgroundLines, isShadowLine, addShadowOffset } from './modules/bg-lines';
+import { createOrigLines, fillOrigLinesWithData, addWidthAndOffsetAttr } from './modules/orig-lines';
 
 window.onload = () => {
 
@@ -188,7 +186,7 @@ window.onload = () => {
 
             // create a blank object for storage original lines
             const origLines = { "type": 'FeatureCollection', features: [] };
-            const backgroundLines = { "type": 'FeatureCollection', features: [] };
+            // const backgroundLines = { "type": 'FeatureCollection', features: [] };
 
 
             // collect ids of lines
@@ -198,7 +196,7 @@ window.onload = () => {
             fillAdjacentLinesAttr(nodes, edges);
 
             // fill original lines object with data
-            fillOrigLines(linesIDArray, origLines, edges);
+            createOrigLines(linesIDArray, origLines, edges);
 
             // set default values for width of edges
             let minWidthDefault = 20, maxWidthDefault = 100, maxEdgeWidth = 200;
@@ -219,14 +217,9 @@ window.onload = () => {
             // calculate offset for edges
             calculateOffset(edges, origLineWidth);
 
-            fillBackgroundLines(backgroundLines, edges, origLines, origLineWidth);
-
-            backgroundLines.features.forEach(line => {
-                isShadowLine(line);
-                // addShadowOffset(line, origLineWidth);
-            });
-            // add attribute with total width of band to original lines
-            // addWidthAttr(origLines, edges, origLineWidth, cargoTypes);
+            // bind data to original lines
+            fillOrigLinesWithData(origLines, edges);
+            addWidthAndOffsetAttr(origLines, edges);
 
             const nodeTrafficArray = [];
 
@@ -250,8 +243,9 @@ window.onload = () => {
 
             let multipleCargoNodesObject = createMultipleCargoNodesObject(cargoTypes, nodes);
 
+
             // render background lines
-            renderBackgroundLines(map, backgroundLines, origLineWidth);
+            renderBackgroundLines(map, origLines);
             // render edges
             renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject);
             // render original lines
@@ -366,6 +360,7 @@ window.onload = () => {
 
             backgroundLinesCheckbox.addEventListener('click', () => {
                 toggleLayerVisibility(backgroundLinesCheckbox, map, 'background-lines');
+                toggleLayerVisibility(backgroundLinesCheckbox, map, 'cargo-nodes-shadow');
             });
 
             edgesCheckbox.addEventListener('click', () => {
@@ -386,7 +381,7 @@ window.onload = () => {
                 widthArray = getWidthArray(+minWidthInput.value, +maxWidthInput.value);
                 calculateWidth(edges, widthArray, jenks);
                 calculateOffset(edges, origLineWidth);
-                // addWidthAttr(origLines, edges, origLineWidth, cargoTypes);
+                addWidthAndOffsetAttr(origLines, edges);
                 map.setZoom(10);
 
                 nodes.features.forEach(node => {  
@@ -395,7 +390,7 @@ window.onload = () => {
                 });
 
                 multipleCargoNodesObject = createMultipleCargoNodesObject(cargoTypes, nodes);
-                // renderBackgroundLines(map, origLines, origLineWidth);
+                renderBackgroundLines(map, origLines);
                 renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject);
 
                 map.setZoom(currZoom);

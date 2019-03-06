@@ -1,28 +1,28 @@
 import { getMaxCargoId } from "./common";
 
 // function to render background lines
-export function renderBackgroundLines(map, backgroundLines, origLineWidth) {
+export function renderBackgroundLines(map, origLines) {
 
     if (map.getSource('background-lines')) {
-        map.getSource('background-lines').setData(backgroundLines);
+        map.getSource('background-lines').setData(origLines);
 
     } else {
 
-        map.addSource("background-lines", { type: "geojson", data: backgroundLines });
+        map.addSource("background-lines", { type: "geojson", data: origLines });
 
         // add background lines layer
         map.addLayer({
             "id": "background-lines",
             "source": "background-lines",
-            "filter": ["!=", "totalWidth", origLineWidth / 2],
+            "filter": ["!=", "totalWidth", 0],
             "type": "line",
             "paint": {
                 'line-color': "#111111",
                 "line-opacity": 1,
                 // "line-blur": [
                 //     'interpolate', ['linear'], ['zoom'],
-                //     3, 0,
-                //     10, 2
+                //     5, 0,
+                //     10, 5
                 // ],
                 "line-translate": [
                     'interpolate', ['linear'], ['zoom'],
@@ -79,11 +79,7 @@ export function renderBackgroundLines(map, backgroundLines, origLineWidth) {
                     21, ['*', ['get', 'offset'], 2048],
                     22, ['*', ['get', 'offset'], 4096]
                 ],
-                //   "line-blur": 10
             }
-            //   "layout": {
-            //       "line-cap": "round"
-            //   }
         });
     }
 }
@@ -117,11 +113,6 @@ export function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObjec
                     "id": "cargo-nodes-shadow",
                     "source": `${cargoObj.type}-nodes`,
                     "type": "circle",
-                    // "filter": [
-                    //     "all",
-                    //     ["!=", "deadEnd", true],
-                    //     ["!=", "radius", 0]
-                    // ],
                     "filter": ["!=", "radius", 0],
                     "paint": {
                         "circle-color": "#111111",
@@ -154,7 +145,12 @@ export function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObjec
                             'interpolate', ['linear'], ['zoom'],
                             4, ["literal", [0, 0]],
                             10, ["literal", [10, 10]]
-                        ]
+                        ],
+                        // "circle-blur": [
+                        //     'interpolate', ['linear'], ['zoom'],
+                        //     5, 0,
+                        //     10, 0.01
+                        // ]
                     }
                 });
             }
@@ -449,7 +445,7 @@ export function renderOrigLines(map, origLines, origLineWidth) {
         map.addLayer({
             "id": "lines",
             "source": "lines",
-            // "filter": ["!=", "tapeTotalWidth", 0],
+            "filter": ["!=", "totalWidth", 0],
             "type": "line",
             "paint": {
                 'line-color': "#333",

@@ -101,14 +101,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var mapbox_gl__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(mapbox_gl__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _modules_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/common */ "./js/modules/common.js");
 /* harmony import */ var _modules_edges__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/edges */ "./js/modules/edges.js");
-/* harmony import */ var _modules_orig_lines__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/orig-lines */ "./js/modules/orig-lines.js");
-/* harmony import */ var _modules_nodes__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/nodes */ "./js/modules/nodes.js");
-/* harmony import */ var _modules_render__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/render */ "./js/modules/render.js");
-/* harmony import */ var _modules_interface__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./modules/interface */ "./js/modules/interface.js");
-/* harmony import */ var _modules_bg_lines__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./modules/bg-lines */ "./js/modules/bg-lines.js");
+/* harmony import */ var _modules_nodes__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/nodes */ "./js/modules/nodes.js");
+/* harmony import */ var _modules_render__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/render */ "./js/modules/render.js");
+/* harmony import */ var _modules_interface__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/interface */ "./js/modules/interface.js");
+/* harmony import */ var _modules_orig_lines__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./modules/orig-lines */ "./js/modules/orig-lines.js");
 // import js modules
-
-
 
 
 
@@ -280,17 +277,17 @@ window.onload = () => {
 
             // create a blank object for storage original lines
             const origLines = { "type": 'FeatureCollection', features: [] };
-            const backgroundLines = { "type": 'FeatureCollection', features: [] };
+            // const backgroundLines = { "type": 'FeatureCollection', features: [] };
 
 
             // collect ids of lines
             let linesIDArray = Object(_modules_common__WEBPACK_IMPORTED_MODULE_2__["collectLinesIDs"])(edges);
 
             // fill adjacent lines attribute to nodes
-            Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["fillAdjacentLinesAttr"])(nodes, edges);
+            Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["fillAdjacentLinesAttr"])(nodes, edges);
 
             // fill original lines object with data
-            Object(_modules_orig_lines__WEBPACK_IMPORTED_MODULE_4__["fillOrigLines"])(linesIDArray, origLines, edges);
+            Object(_modules_orig_lines__WEBPACK_IMPORTED_MODULE_7__["createOrigLines"])(linesIDArray, origLines, edges);
 
             // set default values for width of edges
             let minWidthDefault = 20, maxWidthDefault = 100, maxEdgeWidth = 200;
@@ -311,57 +308,53 @@ window.onload = () => {
             // calculate offset for edges
             Object(_modules_edges__WEBPACK_IMPORTED_MODULE_3__["calculateOffset"])(edges, origLineWidth);
 
-            Object(_modules_bg_lines__WEBPACK_IMPORTED_MODULE_8__["fillBackgroundLines"])(backgroundLines, edges, origLines, origLineWidth);
-
-            backgroundLines.features.forEach(line => {
-                Object(_modules_bg_lines__WEBPACK_IMPORTED_MODULE_8__["isShadowLine"])(line);
-                // addShadowOffset(line, origLineWidth);
-            });
-            // add attribute with total width of band to original lines
-            // addWidthAttr(origLines, edges, origLineWidth, cargoTypes);
+            // bind data to original lines
+            Object(_modules_orig_lines__WEBPACK_IMPORTED_MODULE_7__["fillOrigLinesWithData"])(origLines, edges);
+            Object(_modules_orig_lines__WEBPACK_IMPORTED_MODULE_7__["addWidthAndOffsetAttr"])(origLines, edges);
 
             const nodeTrafficArray = [];
 
             // calculate node radius
             nodes.features.forEach(node => {
-                Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["bindEdgesInfoToNodes"])(node, edges, map);
-                Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["fillNodeTrafficArray"])(nodeTrafficArray, node);
-                Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["addNodeAttr"])(origLines, node, cargoTypes, map);
+                Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["bindEdgesInfoToNodes"])(node, edges, map);
+                Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["fillNodeTrafficArray"])(nodeTrafficArray, node);
+                Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["addNodeAttr"])(origLines, node, cargoTypes, map);
             });
 
             const nodeJenks = Object(_modules_common__WEBPACK_IMPORTED_MODULE_2__["classifyArray"])(nodeTrafficArray, 5);
 
-            let cityRadiusArray = Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["getCityRadiusArray"])(minDefaultCityRadius, maxDefaultCityRadius);
+            let cityRadiusArray = Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["getCityRadiusArray"])(minDefaultCityRadius, maxDefaultCityRadius);
 
             const loadingClassArray = [1, 2, 3, 4, 5];
 
             nodes.features.forEach(node => {
-                Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["addLoadingClass"])(node, nodeJenks);
-                Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["addCityRadiusAttr"])(node, cityRadiusArray);
+                Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["addLoadingClass"])(node, nodeJenks);
+                Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["addCityRadiusAttr"])(node, cityRadiusArray);
             });
 
-            let multipleCargoNodesObject = Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["createMultipleCargoNodesObject"])(cargoTypes, nodes);
+            let multipleCargoNodesObject = Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["createMultipleCargoNodesObject"])(cargoTypes, nodes);
+
 
             // render background lines
-            Object(_modules_render__WEBPACK_IMPORTED_MODULE_6__["renderBackgroundLines"])(map, backgroundLines, origLineWidth);
+            Object(_modules_render__WEBPACK_IMPORTED_MODULE_5__["renderBackgroundLines"])(map, origLines);
             // render edges
-            Object(_modules_render__WEBPACK_IMPORTED_MODULE_6__["renderEdges"])(map, edges, cargoColorArray, multipleCargoNodesObject);
+            Object(_modules_render__WEBPACK_IMPORTED_MODULE_5__["renderEdges"])(map, edges, cargoColorArray, multipleCargoNodesObject);
             // render original lines
-            Object(_modules_render__WEBPACK_IMPORTED_MODULE_6__["renderOrigLines"])(map, origLines, origLineWidth);
+            Object(_modules_render__WEBPACK_IMPORTED_MODULE_5__["renderOrigLines"])(map, origLines, origLineWidth);
             // render nodes
-            Object(_modules_render__WEBPACK_IMPORTED_MODULE_6__["renderNodes"])(map, nodes, loadingClassArray);
+            Object(_modules_render__WEBPACK_IMPORTED_MODULE_5__["renderNodes"])(map, nodes, loadingClassArray);
 
             // create color table
-            Object(_modules_interface__WEBPACK_IMPORTED_MODULE_7__["createColorTable"])(colorTableBody, cargoColorArray, edges, map);
+            Object(_modules_interface__WEBPACK_IMPORTED_MODULE_6__["createColorTable"])(colorTableBody, cargoColorArray, edges, map);
 
             // create width slider
-            Object(_modules_interface__WEBPACK_IMPORTED_MODULE_7__["createSlider"])(widthSlider, minWidthDefault, maxWidthDefault, maxEdgeWidth);
+            Object(_modules_interface__WEBPACK_IMPORTED_MODULE_6__["createSlider"])(widthSlider, minWidthDefault, maxWidthDefault, maxEdgeWidth);
 
             // create slider for cities radius
-            Object(_modules_interface__WEBPACK_IMPORTED_MODULE_7__["createSlider"])(cityRadiusSlider, minDefaultCityRadius, maxDefaultCityRadius, maxCityRadius);
+            Object(_modules_interface__WEBPACK_IMPORTED_MODULE_6__["createSlider"])(cityRadiusSlider, minDefaultCityRadius, maxDefaultCityRadius, maxCityRadius);
 
             // bind color picker to cities layers
-            Object(_modules_interface__WEBPACK_IMPORTED_MODULE_7__["bindColorPickerToCitiesColorBoxes"])(citiesFillColorBox, citiesStrokeColorBox, map);
+            Object(_modules_interface__WEBPACK_IMPORTED_MODULE_6__["bindColorPickerToCitiesColorBoxes"])(citiesFillColorBox, citiesStrokeColorBox, map);
 
             // initialize render counter
             let startWidthSliderCounter = 0;
@@ -445,30 +438,31 @@ window.onload = () => {
 
             // add click listener to junctions, background lines and edges checkboxes to toggle visibility of layers
             citiesCheckbox.addEventListener('click', () => {
-                Object(_modules_interface__WEBPACK_IMPORTED_MODULE_7__["toggleLayerVisibility"])(citiesCheckbox, map, 'cities');
+                Object(_modules_interface__WEBPACK_IMPORTED_MODULE_6__["toggleLayerVisibility"])(citiesCheckbox, map, 'cities');
                 loadingClassArray.forEach(loadingClass => {
-                    Object(_modules_interface__WEBPACK_IMPORTED_MODULE_7__["toggleLayerVisibility"])(citiesCheckbox, map, `nodes-label-class-${loadingClass}`);
+                    Object(_modules_interface__WEBPACK_IMPORTED_MODULE_6__["toggleLayerVisibility"])(citiesCheckbox, map, `nodes-label-class-${loadingClass}`);
                 });
             });
 
 
             junctionCheckbox.addEventListener('click', () => {
-                Object(_modules_interface__WEBPACK_IMPORTED_MODULE_7__["toggleLayerVisibility"])(junctionCheckbox, map, 'junctions');
+                Object(_modules_interface__WEBPACK_IMPORTED_MODULE_6__["toggleLayerVisibility"])(junctionCheckbox, map, 'junctions');
             });
 
             backgroundLinesCheckbox.addEventListener('click', () => {
-                Object(_modules_interface__WEBPACK_IMPORTED_MODULE_7__["toggleLayerVisibility"])(backgroundLinesCheckbox, map, 'background-lines');
+                Object(_modules_interface__WEBPACK_IMPORTED_MODULE_6__["toggleLayerVisibility"])(backgroundLinesCheckbox, map, 'background-lines');
+                Object(_modules_interface__WEBPACK_IMPORTED_MODULE_6__["toggleLayerVisibility"])(backgroundLinesCheckbox, map, 'cargo-nodes-shadow');
             });
 
             edgesCheckbox.addEventListener('click', () => {
                 cargoTypes.forEach(type => {
-                    Object(_modules_interface__WEBPACK_IMPORTED_MODULE_7__["toggleLayerVisibility"])(edgesCheckbox, map, type);
+                    Object(_modules_interface__WEBPACK_IMPORTED_MODULE_6__["toggleLayerVisibility"])(edgesCheckbox, map, type);
                 });
             });
 
             cargoNodesCheckbox.addEventListener('click', () => {
                 cargoTypes.forEach(type => {
-                    Object(_modules_interface__WEBPACK_IMPORTED_MODULE_7__["toggleLayerVisibility"])(cargoNodesCheckbox, map, `${type}-nodes`);
+                    Object(_modules_interface__WEBPACK_IMPORTED_MODULE_6__["toggleLayerVisibility"])(cargoNodesCheckbox, map, `${type}-nodes`);
                 });
             });
 
@@ -478,30 +472,30 @@ window.onload = () => {
                 widthArray = Object(_modules_edges__WEBPACK_IMPORTED_MODULE_3__["getWidthArray"])(+minWidthInput.value, +maxWidthInput.value);
                 Object(_modules_edges__WEBPACK_IMPORTED_MODULE_3__["calculateWidth"])(edges, widthArray, jenks);
                 Object(_modules_edges__WEBPACK_IMPORTED_MODULE_3__["calculateOffset"])(edges, origLineWidth);
-                // addWidthAttr(origLines, edges, origLineWidth, cargoTypes);
+                Object(_modules_orig_lines__WEBPACK_IMPORTED_MODULE_7__["addWidthAndOffsetAttr"])(origLines, edges);
                 map.setZoom(10);
 
                 nodes.features.forEach(node => {  
-                    Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["bindEdgesInfoToNodes"])(node, edges, map);
-                    Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["addNodeAttr"])(origLines, node, cargoTypes, map);
+                    Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["bindEdgesInfoToNodes"])(node, edges, map);
+                    Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["addNodeAttr"])(origLines, node, cargoTypes, map);
                 });
 
-                multipleCargoNodesObject = Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["createMultipleCargoNodesObject"])(cargoTypes, nodes);
-                // renderBackgroundLines(map, origLines, origLineWidth);
-                Object(_modules_render__WEBPACK_IMPORTED_MODULE_6__["renderEdges"])(map, edges, cargoColorArray, multipleCargoNodesObject);
+                multipleCargoNodesObject = Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["createMultipleCargoNodesObject"])(cargoTypes, nodes);
+                Object(_modules_render__WEBPACK_IMPORTED_MODULE_5__["renderBackgroundLines"])(map, origLines);
+                Object(_modules_render__WEBPACK_IMPORTED_MODULE_5__["renderEdges"])(map, edges, cargoColorArray, multipleCargoNodesObject);
 
                 map.setZoom(currZoom);
             }
 
             // function to update cityRadius
             function updateCityRadiusSliderHandler() {
-                cityRadiusArray = Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["getCityRadiusArray"])(+minCityRadiusInput.value, +maxCityRadiusInput.value);
+                cityRadiusArray = Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["getCityRadiusArray"])(+minCityRadiusInput.value, +maxCityRadiusInput.value);
 
                 nodes.features.forEach(node => {
-                    Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["addCityRadiusAttr"])(node, cityRadiusArray);
+                    Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["addCityRadiusAttr"])(node, cityRadiusArray);
                 });
 
-                Object(_modules_render__WEBPACK_IMPORTED_MODULE_6__["renderNodes"])(map, nodes, loadingClassArray);
+                Object(_modules_render__WEBPACK_IMPORTED_MODULE_5__["renderNodes"])(map, nodes, loadingClassArray);
             }
 
             // center and zoom map to data
@@ -520,161 +514,6 @@ window.onload = () => {
     to10ZoomBtn.addEventListener('click', () => map.setZoom(10));
 };
 
-
-/***/ }),
-
-/***/ "./js/modules/bg-lines.js":
-/*!********************************!*\
-  !*** ./js/modules/bg-lines.js ***!
-  \********************************/
-/*! exports provided: fillBackgroundLines, addShadowOffset, isShadowLine, calculateTotalWidthForDirection, calculateMaxWidth, addWidthAttr */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fillBackgroundLines", function() { return fillBackgroundLines; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addShadowOffset", function() { return addShadowOffset; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isShadowLine", function() { return isShadowLine; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "calculateTotalWidthForDirection", function() { return calculateTotalWidthForDirection; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "calculateMaxWidth", function() { return calculateMaxWidth; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addWidthAttr", function() { return addWidthAttr; });
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./common */ "./js/modules/common.js");
-
-
-function fillBackgroundLines(backgroundLines, edges, origLines, origLineWidth) {
-
-  const bgLinesOneDir = [];
-  const bgLinesTwoDir = [];
-
-  fillSingleDirBgLines(edges, origLines, 1, bgLinesOneDir, origLineWidth);
-  fillSingleDirBgLines(edges, origLines, -1, bgLinesTwoDir, origLineWidth);
-
-  const bgFeatures = [...bgLinesOneDir, ...bgLinesTwoDir];
-  backgroundLines.features.push(...bgFeatures);
-
-}
-
-function fillSingleDirBgLines(edges, origLines, direction, bgLinesArray, origLineWidth) {
-  
-  origLines.features.forEach(line => {
-
-    const sameLineEdges = Object(_common__WEBPACK_IMPORTED_MODULE_0__["collectSameLineEdges"])(edges, line);
-
-    let totalWidth = 0;
-    let totalVolume = 0;
-    const values = {};
-    let src, dest, dir, geom;
-    const origLineId = line.properties.lineID;
-    const edgesId = [];
-
-    sameLineEdges.forEach(edge => {
-      
-      if (edge.properties.dir === direction) {
-        totalWidth += edge.properties.width;
-        totalVolume += edge.properties.value;
-        values[edge.properties.type] = edge.properties.value;
-        src = edge.properties.src;
-        dest = edge.properties.dest;
-        dir = edge.properties.dir;
-        geom = edge.geometry;
-        edgesId.push(+edge.id);
-      }
-
-    });
-
-    const bgLine = {
-      properties: {
-        src: src,
-        dest: dest,
-        dir: dir,
-        values: values,
-        totalWidth: totalWidth + (origLineWidth / 2),
-        totalVolume: totalVolume,
-        origLineId: origLineId,
-        edgesId: edgesId,
-        offset: totalWidth / 2
-      },
-      geometry: geom
-    };
-
-    bgLinesArray.push(bgLine);
-    
-  });
-}
-
-function addShadowOffset(line, origLineWidth) {
-  const isShadowLine = line.properties.isShadowLine;
-  const curTotalWidth = line.properties.totalWidth;
-
-  if (isShadowLine && (curTotalWidth !== origLineWidth / 2)) {
-    const shadowTotalWidth = curTotalWidth + 30;
-    line.properties.totalWidth = shadowTotalWidth;
-    line.properties.offset = shadowTotalWidth / 2;
-  }
-}
-
-function isShadowLine(line) {
-  const firstPoint = line.geometry.coordinates[0];
-  const lastPoint = line.geometry.coordinates[line.geometry.coordinates.length - 1];
-  if (lastPoint[0] >= firstPoint[0]) {
-    line.properties.isShadowLine = true;
-  } else {
-    line.properties.isShadowLine = false;
-  }
-
-}
-
-// function to calculate width of the widest side of specific original line
-function calculateTotalWidthForDirection(edges, line) {
-
-  let sameLineEdges = Object(_common__WEBPACK_IMPORTED_MODULE_0__["collectSameLineEdges"])(edges, line);
-  let totalWidthDirOne = 0;
-  let totalWidthDirTwo = 0;
-
-  sameLineEdges.forEach(e => {
-    if (e.properties.dir === 1) {
-      totalWidthDirOne += e.properties.width;
-    } else if (e.properties.dir === -1) {
-      totalWidthDirTwo += e.properties.width;
-    }
-  });
-
-  return {
-    totalWidthDirOne: totalWidthDirOne,
-    totalWidthDirTwo: totalWidthDirTwo
-  };
-
-}
-
-// function to calculate the maximum width of the adjacent line
-function calculateMaxWidth(origLines, adjacentLines) {
-
-  var widthArray = [];
-
-  adjacentLines.forEach(adjLine => {
-    origLines.features.forEach(line => {
-      if (adjLine === line.properties.lineID) {
-        widthArray.push(line.properties.widestSideWidth);
-      }
-    });
-  });
-
-  var maxWidth = Math.max(...widthArray);
-
-  return maxWidth;
-}
-
-// function to add total width of line to original lines
-function addWidthAttr(origLines, edges, origLineWidth, cargoTypes) {
-
-  origLines.features.forEach(line => {
-    const { totalWidthDirOne, totalWidthDirTwo } = calculateTotalWidthForDirection(edges, line);
-
-    line.properties.totalWidthDirOne = totalWidthDirOne;
-    line.properties.totalWidthDirTwo = totalWidthDirTwo;
-    line.properties.tapeTotalWidth = totalWidthDirOne + totalWidthDirTwo;
-  });
-}
 
 /***/ }),
 
@@ -2781,17 +2620,19 @@ if (!("hypot" in Math)) {  // Polyfill
 /*!**********************************!*\
   !*** ./js/modules/orig-lines.js ***!
   \**********************************/
-/*! exports provided: fillOrigLines */
+/*! exports provided: createOrigLines, fillOrigLinesWithData, addWidthAndOffsetAttr */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fillOrigLines", function() { return fillOrigLines; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createOrigLines", function() { return createOrigLines; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fillOrigLinesWithData", function() { return fillOrigLinesWithData; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addWidthAndOffsetAttr", function() { return addWidthAndOffsetAttr; });
 /* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./common */ "./js/modules/common.js");
 
 
 // function to fill orig lines with attributes
-function fillOrigLines(linesIDArray, origLines, edges) {
+function createOrigLines(linesIDArray, origLines, edges) {
   linesIDArray.forEach(id => {
 
       var origLine = {
@@ -2803,6 +2644,86 @@ function fillOrigLines(linesIDArray, origLines, edges) {
 
       origLines.features.push(origLine);
   });
+}
+
+function fillOrigLinesWithData(origLines, edges) {
+  origLines.features.forEach(line => {
+
+    const sameLineEdges = Object(_common__WEBPACK_IMPORTED_MODULE_0__["collectSameLineEdges"])(edges, line);
+
+    const dataOneDir = {
+      values: {},
+      totalVolume: 0
+    };
+    const dataTwoDir = {
+      values: {},
+      totalVolume: 0
+    };
+
+    sameLineEdges.forEach(edge => {
+
+      const edgeProps = edge.properties;
+      
+      if (edgeProps.dir === 1) {
+        dataOneDir.dir = edgeProps.dir;
+        dataOneDir.src = edgeProps.src;
+        dataOneDir.dest = edgeProps.dest;
+        dataOneDir.values[edgeProps.type] = edgeProps.value;
+        dataOneDir.totalVolume += edgeProps.value;
+      } else {
+        dataTwoDir.dir = edgeProps.dir;
+        dataTwoDir.src = edgeProps.src;
+        dataTwoDir.dest = edgeProps.dest;
+        dataTwoDir.values[edgeProps.type] = edgeProps.value;
+        dataTwoDir.totalVolume += edgeProps.value;
+      }
+
+    });
+
+    line.properties.totalVolume = dataOneDir.totalVolume + dataTwoDir.totalVolume;
+
+    line.properties.dataOneDir = dataOneDir;
+    line.properties.dataTwoDir = dataTwoDir;
+    
+    
+  });
+
+}
+
+function addWidthAndOffsetAttr(origLines, edges) {
+
+  origLines.features.forEach(line => {
+
+    let sameLineEdges = Object(_common__WEBPACK_IMPORTED_MODULE_0__["collectSameLineEdges"])(edges, line);
+    let totalWidthOneDir = 0;
+    let totalWidthTwoDir = 0;
+  
+    sameLineEdges.forEach(e => {
+      if (e.properties.dir === 1) {
+        totalWidthOneDir += e.properties.width;
+      } else {
+        totalWidthTwoDir += e.properties.width;
+      }
+    });
+
+    const totalWidth = totalWidthOneDir + totalWidthTwoDir;
+
+    line.properties.dataOneDir.totalWidth = totalWidthOneDir;
+    line.properties.dataTwoDir.totalWidth = totalWidthTwoDir;
+    line.properties.totalWidth = totalWidth;
+
+    const offset = getOrigLineOffset(totalWidthOneDir, totalWidthTwoDir);
+    line.properties.offset = offset;
+
+  });
+
+}
+
+function getOrigLineOffset(totalWidthOneDir, totalWidthTwoDir) {
+  const offsetValue = totalWidthOneDir - totalWidthTwoDir;
+
+  return offsetValue * (-1) / 2;
+
 }
 
 /***/ }),
@@ -2827,28 +2748,28 @@ __webpack_require__.r(__webpack_exports__);
 
 
 // function to render background lines
-function renderBackgroundLines(map, backgroundLines, origLineWidth) {
+function renderBackgroundLines(map, origLines) {
 
     if (map.getSource('background-lines')) {
-        map.getSource('background-lines').setData(backgroundLines);
+        map.getSource('background-lines').setData(origLines);
 
     } else {
 
-        map.addSource("background-lines", { type: "geojson", data: backgroundLines });
+        map.addSource("background-lines", { type: "geojson", data: origLines });
 
         // add background lines layer
         map.addLayer({
             "id": "background-lines",
             "source": "background-lines",
-            "filter": ["!=", "totalWidth", origLineWidth / 2],
+            "filter": ["!=", "totalWidth", 0],
             "type": "line",
             "paint": {
                 'line-color': "#111111",
                 "line-opacity": 1,
                 // "line-blur": [
                 //     'interpolate', ['linear'], ['zoom'],
-                //     3, 0,
-                //     10, 2
+                //     5, 0,
+                //     10, 5
                 // ],
                 "line-translate": [
                     'interpolate', ['linear'], ['zoom'],
@@ -2905,11 +2826,7 @@ function renderBackgroundLines(map, backgroundLines, origLineWidth) {
                     21, ['*', ['get', 'offset'], 2048],
                     22, ['*', ['get', 'offset'], 4096]
                 ],
-                //   "line-blur": 10
             }
-            //   "layout": {
-            //       "line-cap": "round"
-            //   }
         });
     }
 }
@@ -2943,11 +2860,6 @@ function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject) {
                     "id": "cargo-nodes-shadow",
                     "source": `${cargoObj.type}-nodes`,
                     "type": "circle",
-                    // "filter": [
-                    //     "all",
-                    //     ["!=", "deadEnd", true],
-                    //     ["!=", "radius", 0]
-                    // ],
                     "filter": ["!=", "radius", 0],
                     "paint": {
                         "circle-color": "#111111",
@@ -2980,7 +2892,12 @@ function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject) {
                             'interpolate', ['linear'], ['zoom'],
                             4, ["literal", [0, 0]],
                             10, ["literal", [10, 10]]
-                        ]
+                        ],
+                        // "circle-blur": [
+                        //     'interpolate', ['linear'], ['zoom'],
+                        //     5, 0,
+                        //     10, 0.01
+                        // ]
                     }
                 });
             }
@@ -3275,7 +3192,7 @@ function renderOrigLines(map, origLines, origLineWidth) {
         map.addLayer({
             "id": "lines",
             "source": "lines",
-            // "filter": ["!=", "tapeTotalWidth", 0],
+            "filter": ["!=", "totalWidth", 0],
             "type": "line",
             "paint": {
                 'line-color': "#333",
