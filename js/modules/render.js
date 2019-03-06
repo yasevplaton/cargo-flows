@@ -17,8 +17,18 @@ export function renderBackgroundLines(map, backgroundLines, origLineWidth) {
             "filter": ["!=", "totalWidth", origLineWidth / 2],
             "type": "line",
             "paint": {
-                'line-color': "#000",
-                "line-opacity": 0.5,
+                'line-color': "#111111",
+                "line-opacity": 1,
+                // "line-blur": [
+                //     'interpolate', ['linear'], ['zoom'],
+                //     3, 0,
+                //     10, 2
+                // ],
+                "line-translate": [
+                    'interpolate', ['linear'], ['zoom'],
+                    4, ["literal", [0, 0]],
+                    10, ["literal", [10, 10]]
+                ],
                 'line-width': [
                     'interpolate', ['linear'], ['zoom'],
                     1, ['/', ['get', 'totalWidth'], 512],
@@ -103,86 +113,6 @@ export function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObjec
 
                 map.addSource(`${cargoObj.type}-nodes`, { type: "geojson", data: multipleCargoNodesObject[cargoObj.type] });
 
-
-                map.addLayer({
-                    "id": "edges-shadow",
-                    "source": "edges",
-                    "type": "line",
-                    "filter": [
-                        "all",
-                        ["==", "type", cargoObj.type],
-                        ["!=", "value", 0]
-                    ],
-                    "paint": {
-                        'line-color': "#000",
-                        "line-opacity": 1,
-                        "line-translate": [
-                            'interpolate', ['linear'], ['zoom'],
-                            3, ["literal", [1, 0]],
-                            10, ["literal", [10, 0]]
-                        ],
-                        "line-blur": 1,
-                        // "line-width": [
-                        //     'interpolate', ['linear'], ['zoom'],
-                        //     1, 1,
-                        //     10, 20
-                        // ],
-                        'line-offset': [
-                            'interpolate', ['linear'], ['zoom'],
-                            1, ['/', ['get', 'offset'], 512],
-                            2, ['/', ['get', 'offset'], 256],
-                            3, ['/', ['get', 'offset'], 128],
-                            4, ['/', ['get', 'offset'], 64],
-                            5, ['/', ['get', 'offset'], 32],
-                            6, ['/', ['get', 'offset'], 16],
-                            7, ['/', ['get', 'offset'], 8],
-                            8, ['/', ['get', 'offset'], 4],
-                            9, ['/', ['get', 'offset'], 2],
-                            10, ['get', 'offset'],
-                            11, ['*', ['get', 'offset'], 2],
-                            12, ['*', ['get', 'offset'], 4],
-                            13, ['*', ['get', 'offset'], 8],
-                            14, ['*', ['get', 'offset'], 16],
-                            15, ['*', ['get', 'offset'], 32],
-                            16, ['*', ['get', 'offset'], 64],
-                            17, ['*', ['get', 'offset'], 128],
-                            18, ['*', ['get', 'offset'], 256],
-                            19, ['*', ['get', 'offset'], 512],
-                            20, ['*', ['get', 'offset'], 1024],
-                            21, ['*', ['get', 'offset'], 2048],
-                            22, ['*', ['get', 'offset'], 4096],
-    
-                            // 22, ['*', ['get', 'offset'], 1],
-                        ],
-                        "line-width": [
-                            'interpolate', ['linear'], ['zoom'],
-                            1, ['/', ['get', 'width'], 512],
-                            2, ['/', ['get', 'width'], 256],
-                            3, ['/', ['get', 'width'], 128],
-                            4, ['/', ['get', 'width'], 64],
-                            5, ['/', ['get', 'width'], 32],
-                            6, ['/', ['get', 'width'], 16],
-                            7, ['/', ['get', 'width'], 8],
-                            8, ['/', ['get', 'width'], 4],
-                            9, ['/', ['get', 'width'], 2],
-                            10, ['get', 'width'],
-                            11, ['*', ['get', 'width'], 2],
-                            12, ['*', ['get', 'width'], 4],
-                            13, ['*', ['get', 'width'], 8],
-                            14, ['*', ['get', 'width'], 16],
-                            15, ['*', ['get', 'width'], 32],
-                            16, ['*', ['get', 'width'], 64],
-                            17, ['*', ['get', 'width'], 128],
-                            18, ['*', ['get', 'width'], 256],
-                            19, ['*', ['get', 'width'], 512],
-                            20, ['*', ['get', 'width'], 1024],
-                            21, ['*', ['get', 'width'], 2048],
-                            22, ['*', ['get', 'width'], 4096],
-                            // 22, ['*', ['get', 'width'], 1],
-                        ],
-                    }
-                });
-
                 map.addLayer({
                     "id": "cargo-nodes-shadow",
                     "source": `${cargoObj.type}-nodes`,
@@ -194,7 +124,7 @@ export function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObjec
                     // ],
                     "filter": ["!=", "radius", 0],
                     "paint": {
-                        "circle-color": "#000",
+                        "circle-color": "#111111",
                         "circle-radius": [
                             'interpolate', ['linear'], ['zoom'],
                             1, ['/', ['get', 'radius'], 512],
@@ -222,9 +152,9 @@ export function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObjec
                         ],
                         "circle-translate": [
                             'interpolate', ['linear'], ['zoom'],
-                            3, ["literal", [1, 0]],
-                            10, ["literal", [10, 0]]
-                        ],
+                            4, ["literal", [0, 0]],
+                            10, ["literal", [10, 10]]
+                        ]
                     }
                 });
             }
