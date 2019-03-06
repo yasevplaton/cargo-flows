@@ -326,45 +326,6 @@ export function renderNodes(map, nodes, loadingClassArray) {
             }
         });
 
-        // map.addLayer({
-        //     "id": "cities-bg",
-        //     "source": "nodes",
-        //     "type": "circle",
-        //     "filter": [
-        //         "all",
-        //         ["!=", "name_rus", "junction"],
-        //         [">", "cityRadius", 0]
-        //     ],
-        //     "paint": {
-        //         "circle-color": "#000",
-        //         "circle-radius": [
-        //             'interpolate',
-        //             ['linear'],
-        //             ['zoom'],
-        //             2, ['/', ['get', 'cityRadius'], 4],
-        //             10, ['get', 'cityRadius']
-        //         ],
-        //         "circle-blur": [
-        //             'interpolate',
-        //             ['linear'],
-        //             ['zoom'],
-        //             2, 0,
-        //             10, 1
-        //         ],
-        //         "circle-opacity": 1,
-        //         "circle-translate": [
-        //             'interpolate',
-        //             ['linear'],
-        //             ['zoom'],
-        //             2, ["literal", [2, 2]],
-        //             10, ["literal", [5, 5]]
-        //         ],
-        //         // "circle-radius": ['get', 'cityRadius'],
-        //         // "circle-stroke-color": "#000",
-        //         // "circle-stroke-width": 1
-        //     }
-        // });
-
         // add cities layer
         map.addLayer({
             "id": "cities",
@@ -416,15 +377,20 @@ export function renderNodes(map, nodes, loadingClassArray) {
                         5, 24,
                         0
                     ],
-                    // "text-anchor": 'bottom-left',
-                    // "text-justify": 'left',
-                    "text-offset": [0, -1]
+                    "text-anchor": 'bottom-left',
+                    "text-justify": 'left'
                 },
                 "paint": {
                     "text-color": "#fff",
                     "text-halo-color": "#000",
                     "text-halo-width": 1,
+                    "text-translate": [0, -3]
                     // "text-halo-blur": 2
+                    // "text-translate": [
+                    //     'interpolate', ['linear'], ['zoom'],
+                    //     4, ["literal", [0, 0]],
+                    //     10, ["literal", [10, 10]]
+                    // ],
                 }
             });
         });
