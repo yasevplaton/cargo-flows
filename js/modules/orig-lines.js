@@ -1,4 +1,31 @@
-import { collectSameLineEdges, getLineGeometry } from "./common";
+// function to collect IDs of original lines
+export function collectLinesIDs(edges) {
+
+  var linesIDArray = [];
+
+  edges.features.forEach(e => {
+      var indexLine = linesIDArray.indexOf(e.properties.ID_line);
+
+      if (indexLine === -1) {
+          linesIDArray.push(e.properties.ID_line);
+      }
+  });
+
+  return linesIDArray;
+}
+
+// function to get geometry of line by ID
+export function getLineGeometry(edges, lineID) {
+  var geom = {};
+
+  edges.features.forEach(e => {
+      if (e.properties.ID_line == lineID) {
+          geom = e.geometry;
+      }
+  });
+
+  return geom;
+}
 
 // function to fill orig lines with attributes
 export function createOrigLines(linesIDArray, origLines, edges) {
@@ -13,6 +40,20 @@ export function createOrigLines(linesIDArray, origLines, edges) {
 
       origLines.features.push(origLine);
   });
+}
+
+// function to collect edges that belong to the same original line
+export function collectSameLineEdges(edges, line) {
+
+  var sameLineEdges = [];
+
+  edges.features.forEach(e => {
+      if (e.properties.ID_line === line.properties.lineID) {
+          sameLineEdges.push(e);
+      }
+  })
+
+  return sameLineEdges;
 }
 
 export function fillOrigLinesWithData(origLines, edges) {
@@ -56,41 +97,5 @@ export function fillOrigLinesWithData(origLines, edges) {
     
     
   });
-
-}
-
-export function addWidthAndOffsetAttr(origLines, edges) {
-
-  origLines.features.forEach(line => {
-
-    let sameLineEdges = collectSameLineEdges(edges, line);
-    let totalWidthOneDir = 0;
-    let totalWidthTwoDir = 0;
-  
-    sameLineEdges.forEach(e => {
-      if (e.properties.dir === 1) {
-        totalWidthOneDir += e.properties.width;
-      } else {
-        totalWidthTwoDir += e.properties.width;
-      }
-    });
-
-    const totalWidth = totalWidthOneDir + totalWidthTwoDir;
-
-    line.properties.dataOneDir.totalWidth = totalWidthOneDir;
-    line.properties.dataTwoDir.totalWidth = totalWidthTwoDir;
-    line.properties.totalWidth = totalWidth;
-
-    const offset = getOrigLineOffset(totalWidthOneDir, totalWidthTwoDir);
-    line.properties.offset = offset;
-
-  });
-
-}
-
-function getOrigLineOffset(totalWidthOneDir, totalWidthTwoDir) {
-  const offsetValue = totalWidthOneDir - totalWidthTwoDir;
-
-  return offsetValue * (-1) / 2;
 
 }

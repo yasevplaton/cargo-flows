@@ -53,49 +53,6 @@ export function classifyArray(arr, classNum) {
   return jenks;
 }
 
-// function to collect IDs of original lines
-export function collectLinesIDs(edges) {
-
-  var linesIDArray = [];
-
-  edges.features.forEach(e => {
-      var indexLine = linesIDArray.indexOf(e.properties.ID_line);
-
-      if (indexLine === -1) {
-          linesIDArray.push(e.properties.ID_line);
-      }
-  });
-
-  return linesIDArray;
-}
-
-// function to get geometry of line by ID
-export function getLineGeometry(edges, lineID) {
-  var geom = {};
-
-  edges.features.forEach(e => {
-      if (e.properties.ID_line == lineID) {
-          geom = e.geometry;
-      }
-  });
-
-  return geom;
-}
-
-// function to collect edges that belong to the same original line
-export function collectSameLineEdges(edges, line) {
-
-  var sameLineEdges = [];
-
-  edges.features.forEach(e => {
-      if (e.properties.ID_line === line.properties.lineID) {
-          sameLineEdges.push(e);
-      }
-  })
-
-  return sameLineEdges;
-}
-
 
 // function to change color in array of cargo
 export function changeCargoColor(cargoColorArray, id, color) {

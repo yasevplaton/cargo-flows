@@ -1,7 +1,7 @@
 // import js modules
 import 'bootstrap';
 import mapboxgl from 'mapbox-gl';
-import { getBoundingBox, collectLinesIDs, classifyArray } from "./modules/common";
+import { getBoundingBox, classifyArray } from "./modules/common";
 import {
     getFlowValues,
     getCargoTypes,
@@ -13,19 +13,19 @@ import {
 
 import {
     fillAdjacentLinesAttr,
-    addNodeAttr,
     bindEdgesInfoToNodes,
-    createMultipleCargoNodesObject,
     fillNodeTrafficArray,
     addLoadingClass,
     getCityRadiusArray,
     addCityRadiusAttr
 } from "./modules/nodes";
 
+import { addNodeAttr, createMultipleCargoNodesObject } from "./modules/cargo-nodes";
 
 import { renderEdges, renderOrigLines, renderNodes, renderBackgroundLines } from "./modules/render";
 import { createColorTable, createSlider, toggleLayerVisibility, bindColorPickerToCitiesColorBoxes } from "./modules/interface";
-import { createOrigLines, fillOrigLinesWithData, addWidthAndOffsetAttr } from './modules/orig-lines';
+import { collectLinesIDs, createOrigLines, fillOrigLinesWithData } from './modules/orig-lines';
+import { addWidthAndOffsetAttr } from './modules/bg-lines';
 
 window.onload = () => {
 
@@ -227,7 +227,7 @@ window.onload = () => {
             nodes.features.forEach(node => {
                 bindEdgesInfoToNodes(node, edges, map);
                 fillNodeTrafficArray(nodeTrafficArray, node);
-                addNodeAttr(origLines, node, cargoTypes, map);
+                addNodeAttr(node, cargoTypes, map);
             });
 
             const nodeJenks = classifyArray(nodeTrafficArray, 5);
@@ -265,6 +265,46 @@ window.onload = () => {
             // bind color picker to cities layers
             bindColorPickerToCitiesColorBoxes(citiesFillColorBox, citiesStrokeColorBox, map);
 
+
+            const linePopup = new mapboxgl.Popup({
+                closeButton: false,
+                closeOnClick: false
+            });
+
+            const nodePopup = new mapboxgl.Popup({
+                closeButton: false,
+                closeOnClick: false
+            });
+
+            map.on('mouseenter', 'background-lines', function (e) {
+                // Change the cursor style as a UI indicator.
+                map.getCanvas().style.cursor = 'pointer';
+                console.log(e);
+              
+                const coordinates = e.lngLat;
+                const info = e.features[0].properties.dataOneDir;
+                console.log(JSON.parse(info));
+                
+              
+                // Ensure that if the map is zoomed out such that multiple
+                // copies of the feature are visible, the popup appears
+                // over the copy being pointed to.
+                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                  coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                }
+              
+                // Populate the popup and set its coordinates
+                // based on the feature found.
+                linePopup.setLngLat(coordinates)
+                  .setHTML(info)
+                  .addTo(map);
+              });
+              
+              map.on('mouseleave', 'background-lines', function () {
+                map.getCanvas().style.cursor = '';
+                linePopup.remove();
+              });
+            
             // initialize render counter
             let startWidthSliderCounter = 0;
             let startRadiusSliderCounter = 0;
