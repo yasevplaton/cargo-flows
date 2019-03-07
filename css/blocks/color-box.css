@@ -2,6 +2,7 @@
   display: inline-block;
   width: 20px;
   height: 20px;
+  background: #fff;
 }
 
 .color-box:hover {

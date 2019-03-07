@@ -1,0 +1,11 @@
+.info-window {
+  position: absolute;
+  bottom: 25px;
+  right: 5px;
+  display: flex;
+  background: rgba(41, 41, 41, 0.95);
+  color: rgb(224, 224, 224);
+  font-weight: 300;
+  border-radius: 5px;
+  padding: 10px;
+}

@@ -374,11 +374,11 @@ window.onload = () => {
             map.on('mouseenter', 'background-lines', function (e) {
                 // Change the cursor style as a UI indicator.
                 map.getCanvas().style.cursor = 'pointer';
-                console.log(e);
+                // console.log(e);
               
                 const coordinates = e.lngLat;
                 const info = e.features[0].properties.dataOneDir;
-                console.log(JSON.parse(info));
+                // console.log(JSON.parse(info));
                 
               
                 // Ensure that if the map is zoomed out such that multiple
