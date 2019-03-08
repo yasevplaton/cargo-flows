@@ -1,12 +1,14 @@
+const path = require('path');
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 const webpack = require('webpack');
-const SassPlugin = require('sass-webpack-plugin');
+// const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
 
   mode: "development",
   entry: './js/app.js',
   output: {
+    path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js'
   },
 
@@ -21,13 +23,12 @@ module.exports = {
     new BrowserSyncPlugin({
       host: 'localhost',
       port: 5500,
-      files: ["./css/*.css", "./css/*.scss", "./*.html"],
+      files: ["./css/**/*.scss", "./css/**/*.css", "./*.html"],
       server: { baseDir: ['./'] }
     }),
     new webpack.ProvidePlugin({
       noUiSlider: 'nouislider'
-    }),
-    new SassPlugin('./css/index.scss')
+    })
   ],
 
   optimization: {

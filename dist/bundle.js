@@ -86,6 +86,36 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./css/index.scss":
+/*!************************!*\
+  !*** ./css/index.scss ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../node_modules/css-loader/dist/cjs.js!../node_modules/sass-loader/lib/loader.js!./index.scss */ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/lib/loader.js!./css/index.scss");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+
 /***/ "./js/app.js":
 /*!*******************!*\
   !*** ./js/app.js ***!
@@ -95,19 +125,22 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var bootstrap__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.js");
-/* harmony import */ var bootstrap__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(bootstrap__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var mapbox_gl__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mapbox-gl */ "./node_modules/mapbox-gl/dist/mapbox-gl.js");
-/* harmony import */ var mapbox_gl__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(mapbox_gl__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _modules_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/common */ "./js/modules/common.js");
-/* harmony import */ var _modules_edges__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/edges */ "./js/modules/edges.js");
-/* harmony import */ var _modules_nodes__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/nodes */ "./js/modules/nodes.js");
-/* harmony import */ var _modules_cargo_nodes__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/cargo-nodes */ "./js/modules/cargo-nodes.js");
-/* harmony import */ var _modules_render__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/render */ "./js/modules/render.js");
-/* harmony import */ var _modules_interface__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./modules/interface */ "./js/modules/interface.js");
-/* harmony import */ var _modules_orig_lines__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./modules/orig-lines */ "./js/modules/orig-lines.js");
-/* harmony import */ var _modules_bg_lines__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./modules/bg-lines */ "./js/modules/bg-lines.js");
+/* harmony import */ var _css_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../css/index.scss */ "./css/index.scss");
+/* harmony import */ var _css_index_scss__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_css_index_scss__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var bootstrap__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.js");
+/* harmony import */ var bootstrap__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(bootstrap__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var mapbox_gl__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! mapbox-gl */ "./node_modules/mapbox-gl/dist/mapbox-gl.js");
+/* harmony import */ var mapbox_gl__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(mapbox_gl__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _modules_common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/common */ "./js/modules/common.js");
+/* harmony import */ var _modules_edges__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/edges */ "./js/modules/edges.js");
+/* harmony import */ var _modules_nodes__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/nodes */ "./js/modules/nodes.js");
+/* harmony import */ var _modules_cargo_nodes__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/cargo-nodes */ "./js/modules/cargo-nodes.js");
+/* harmony import */ var _modules_render__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./modules/render */ "./js/modules/render.js");
+/* harmony import */ var _modules_interface__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./modules/interface */ "./js/modules/interface.js");
+/* harmony import */ var _modules_orig_lines__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./modules/orig-lines */ "./js/modules/orig-lines.js");
+/* harmony import */ var _modules_bg_lines__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./modules/bg-lines */ "./js/modules/bg-lines.js");
 // import js modules
+
 
 
 
@@ -125,9 +158,9 @@ __webpack_require__.r(__webpack_exports__);
 window.onload = () => {
 
     // get access to mapbox api
-    mapbox_gl__WEBPACK_IMPORTED_MODULE_1___default.a.accessToken = 'pk.eyJ1IjoieWFzZXZwbGF0b24iLCJhIjoiY2poaTJrc29jMDF0YzM2cDU1ZnM1c2xoMiJ9.FhmWdHG7ar14dQv1Aoqx4A';
+    mapbox_gl__WEBPACK_IMPORTED_MODULE_2___default.a.accessToken = 'pk.eyJ1IjoieWFzZXZwbGF0b24iLCJhIjoiY2poaTJrc29jMDF0YzM2cDU1ZnM1c2xoMiJ9.FhmWdHG7ar14dQv1Aoqx4A';
 
-    const map = new mapbox_gl__WEBPACK_IMPORTED_MODULE_1___default.a.Map({
+    const map = new mapbox_gl__WEBPACK_IMPORTED_MODULE_2___default.a.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/dark-v9', // mapbox tiles location
         // style: 'https://maps.tilehosting.com/styles/darkmatter/style.json?key=9jsySrA6E6EKeAPy7tod', // tiles from tilehosting.com
@@ -265,19 +298,19 @@ window.onload = () => {
             const shadowOffset = 12;
 
             // get bounding box of data to center and zoom map
-            let boundingBox = Object(_modules_common__WEBPACK_IMPORTED_MODULE_2__["getBoundingBox"])(nodes);
+            let boundingBox = Object(_modules_common__WEBPACK_IMPORTED_MODULE_3__["getBoundingBox"])(nodes);
 
             // get flow values
-            let flowValues = Object(_modules_edges__WEBPACK_IMPORTED_MODULE_3__["getFlowValues"])(edges);
+            let flowValues = Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["getFlowValues"])(edges);
 
             // get marks of classes for flow values
-            let jenks = Object(_modules_common__WEBPACK_IMPORTED_MODULE_2__["classifyArray"])(flowValues, 4);
+            let jenks = Object(_modules_common__WEBPACK_IMPORTED_MODULE_3__["classifyArray"])(flowValues, 4);
 
             // get cargo types
-            let cargoTypes = Object(_modules_edges__WEBPACK_IMPORTED_MODULE_3__["getCargoTypes"])(edges);
+            let cargoTypes = Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["getCargoTypes"])(edges);
 
             // get random colors for cargo types
-            let cargoColorArray = Object(_modules_edges__WEBPACK_IMPORTED_MODULE_3__["getRandomCargoColorArray"])(cargoTypes);
+            let cargoColorArray = Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["getRandomCargoColorArray"])(cargoTypes);
 
             // create a blank object for storage original lines
             const origLines = { "type": 'FeatureCollection', features: [] };
@@ -285,13 +318,13 @@ window.onload = () => {
 
 
             // collect ids of lines
-            let linesIDArray = Object(_modules_orig_lines__WEBPACK_IMPORTED_MODULE_8__["collectLinesIDs"])(edges);
+            let linesIDArray = Object(_modules_orig_lines__WEBPACK_IMPORTED_MODULE_9__["collectLinesIDs"])(edges);
 
             // fill adjacent lines attribute to nodes
-            Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["fillAdjacentLinesAttr"])(nodes, edges);
+            Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["fillAdjacentLinesAttr"])(nodes, edges);
 
             // fill original lines object with data
-            Object(_modules_orig_lines__WEBPACK_IMPORTED_MODULE_8__["createOrigLines"])(linesIDArray, origLines, edges);
+            Object(_modules_orig_lines__WEBPACK_IMPORTED_MODULE_9__["createOrigLines"])(linesIDArray, origLines, edges);
 
             // set default values for width of edges
             let minWidthDefault = 20, maxWidthDefault = 100, maxEdgeWidth = 200;
@@ -304,69 +337,69 @@ window.onload = () => {
             maxCityRadiusInput.value = maxDefaultCityRadius;
 
             // get width array
-            let widthArray = Object(_modules_edges__WEBPACK_IMPORTED_MODULE_3__["getWidthArray"])(minWidthDefault, maxWidthDefault);
+            let widthArray = Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["getWidthArray"])(minWidthDefault, maxWidthDefault);
 
             // calculate width for edges
-            Object(_modules_edges__WEBPACK_IMPORTED_MODULE_3__["calculateWidth"])(edges, widthArray, jenks);
+            Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["calculateWidth"])(edges, widthArray, jenks);
 
             // calculate offset for edges
-            Object(_modules_edges__WEBPACK_IMPORTED_MODULE_3__["calculateOffset"])(edges, origLineWidth);
+            Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["calculateOffset"])(edges, origLineWidth);
 
             // bind data to original lines
-            Object(_modules_orig_lines__WEBPACK_IMPORTED_MODULE_8__["fillOrigLinesWithData"])(origLines, edges);
-            Object(_modules_bg_lines__WEBPACK_IMPORTED_MODULE_9__["addWidthAndOffsetAttr"])(origLines, edges);
+            Object(_modules_orig_lines__WEBPACK_IMPORTED_MODULE_9__["fillOrigLinesWithData"])(origLines, edges);
+            Object(_modules_bg_lines__WEBPACK_IMPORTED_MODULE_10__["addWidthAndOffsetAttr"])(origLines, edges);
 
             const nodeTrafficArray = [];
 
             // calculate node radius
             nodes.features.forEach(node => {
-                Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["bindEdgesInfoToNodes"])(node, edges, map);
-                Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["fillNodeTrafficArray"])(nodeTrafficArray, node);
-                Object(_modules_cargo_nodes__WEBPACK_IMPORTED_MODULE_5__["addNodeAttr"])(node, cargoTypes, map);
+                Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["bindEdgesInfoToNodes"])(node, edges, map);
+                Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["fillNodeTrafficArray"])(nodeTrafficArray, node);
+                Object(_modules_cargo_nodes__WEBPACK_IMPORTED_MODULE_6__["addNodeAttr"])(node, cargoTypes, map);
             });
 
-            const nodeJenks = Object(_modules_common__WEBPACK_IMPORTED_MODULE_2__["classifyArray"])(nodeTrafficArray, 5);
+            const nodeJenks = Object(_modules_common__WEBPACK_IMPORTED_MODULE_3__["classifyArray"])(nodeTrafficArray, 5);
 
-            let cityRadiusArray = Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["getCityRadiusArray"])(minDefaultCityRadius, maxDefaultCityRadius);
+            let cityRadiusArray = Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["getCityRadiusArray"])(minDefaultCityRadius, maxDefaultCityRadius);
 
             const loadingClassArray = [1, 2, 3, 4, 5];
 
             nodes.features.forEach(node => {
-                Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["addLoadingClass"])(node, nodeJenks);
-                Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["addCityRadiusAttr"])(node, cityRadiusArray);
+                Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["addLoadingClass"])(node, nodeJenks);
+                Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["addCityRadiusAttr"])(node, cityRadiusArray);
             });
 
-            let multipleCargoNodesObject = Object(_modules_cargo_nodes__WEBPACK_IMPORTED_MODULE_5__["createMultipleCargoNodesObject"])(cargoTypes, nodes);
+            let multipleCargoNodesObject = Object(_modules_cargo_nodes__WEBPACK_IMPORTED_MODULE_6__["createMultipleCargoNodesObject"])(cargoTypes, nodes);
 
 
             // render background lines
-            Object(_modules_render__WEBPACK_IMPORTED_MODULE_6__["renderBackgroundLines"])(map, origLines);
+            Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderBackgroundLines"])(map, origLines);
             // render edges
-            Object(_modules_render__WEBPACK_IMPORTED_MODULE_6__["renderEdges"])(map, edges, cargoColorArray, multipleCargoNodesObject);
+            Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderEdges"])(map, edges, cargoColorArray, multipleCargoNodesObject);
             // render original lines
-            Object(_modules_render__WEBPACK_IMPORTED_MODULE_6__["renderOrigLines"])(map, origLines, origLineWidth);
+            Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderOrigLines"])(map, origLines, origLineWidth);
             // render nodes
-            Object(_modules_render__WEBPACK_IMPORTED_MODULE_6__["renderNodes"])(map, nodes, loadingClassArray);
+            Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderNodes"])(map, nodes, loadingClassArray);
 
             // create color table
-            Object(_modules_interface__WEBPACK_IMPORTED_MODULE_7__["createColorTable"])(colorTableBody, cargoColorArray, edges, map);
+            Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["createColorTable"])(colorTableBody, cargoColorArray, edges, map);
 
             // create width slider
-            Object(_modules_interface__WEBPACK_IMPORTED_MODULE_7__["createSlider"])(widthSlider, minWidthDefault, maxWidthDefault, maxEdgeWidth);
+            Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["createSlider"])(widthSlider, minWidthDefault, maxWidthDefault, maxEdgeWidth);
 
             // create slider for cities radius
-            Object(_modules_interface__WEBPACK_IMPORTED_MODULE_7__["createSlider"])(cityRadiusSlider, minDefaultCityRadius, maxDefaultCityRadius, maxCityRadius);
+            Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["createSlider"])(cityRadiusSlider, minDefaultCityRadius, maxDefaultCityRadius, maxCityRadius);
 
             // bind color picker to cities layers
-            Object(_modules_interface__WEBPACK_IMPORTED_MODULE_7__["bindColorPickerToCitiesColorBoxes"])(citiesFillColorBox, citiesStrokeColorBox, map);
+            Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["bindColorPickerToCitiesColorBoxes"])(citiesFillColorBox, citiesStrokeColorBox, map);
 
 
-            const linePopup = new mapbox_gl__WEBPACK_IMPORTED_MODULE_1___default.a.Popup({
+            const linePopup = new mapbox_gl__WEBPACK_IMPORTED_MODULE_2___default.a.Popup({
                 closeButton: false,
                 closeOnClick: false
             });
 
-            const nodePopup = new mapbox_gl__WEBPACK_IMPORTED_MODULE_1___default.a.Popup({
+            const nodePopup = new mapbox_gl__WEBPACK_IMPORTED_MODULE_2___default.a.Popup({
                 closeButton: false,
                 closeOnClick: false
             });
@@ -482,64 +515,64 @@ window.onload = () => {
 
             // add click listener to junctions, background lines and edges checkboxes to toggle visibility of layers
             citiesCheckbox.addEventListener('click', () => {
-                Object(_modules_interface__WEBPACK_IMPORTED_MODULE_7__["toggleLayerVisibility"])(citiesCheckbox, map, 'cities');
+                Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["toggleLayerVisibility"])(citiesCheckbox, map, 'cities');
                 loadingClassArray.forEach(loadingClass => {
-                    Object(_modules_interface__WEBPACK_IMPORTED_MODULE_7__["toggleLayerVisibility"])(citiesCheckbox, map, `nodes-label-class-${loadingClass}`);
+                    Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["toggleLayerVisibility"])(citiesCheckbox, map, `nodes-label-class-${loadingClass}`);
                 });
             });
 
 
             junctionCheckbox.addEventListener('click', () => {
-                Object(_modules_interface__WEBPACK_IMPORTED_MODULE_7__["toggleLayerVisibility"])(junctionCheckbox, map, 'junctions');
+                Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["toggleLayerVisibility"])(junctionCheckbox, map, 'junctions');
             });
 
             backgroundLinesCheckbox.addEventListener('click', () => {
-                Object(_modules_interface__WEBPACK_IMPORTED_MODULE_7__["toggleLayerVisibility"])(backgroundLinesCheckbox, map, 'background-lines');
-                Object(_modules_interface__WEBPACK_IMPORTED_MODULE_7__["toggleLayerVisibility"])(backgroundLinesCheckbox, map, 'cargo-nodes-shadow');
+                Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["toggleLayerVisibility"])(backgroundLinesCheckbox, map, 'background-lines');
+                Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["toggleLayerVisibility"])(backgroundLinesCheckbox, map, 'cargo-nodes-shadow');
             });
 
             edgesCheckbox.addEventListener('click', () => {
                 cargoTypes.forEach(type => {
-                    Object(_modules_interface__WEBPACK_IMPORTED_MODULE_7__["toggleLayerVisibility"])(edgesCheckbox, map, type);
+                    Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["toggleLayerVisibility"])(edgesCheckbox, map, type);
                 });
             });
 
             cargoNodesCheckbox.addEventListener('click', () => {
                 cargoTypes.forEach(type => {
-                    Object(_modules_interface__WEBPACK_IMPORTED_MODULE_7__["toggleLayerVisibility"])(cargoNodesCheckbox, map, `${type}-nodes`);
+                    Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["toggleLayerVisibility"])(cargoNodesCheckbox, map, `${type}-nodes`);
                 });
             });
 
             // function to update edges width
             function updateWidthSliderHandler() {
                 const currZoom = map.getZoom();
-                widthArray = Object(_modules_edges__WEBPACK_IMPORTED_MODULE_3__["getWidthArray"])(+minWidthInput.value, +maxWidthInput.value);
-                Object(_modules_edges__WEBPACK_IMPORTED_MODULE_3__["calculateWidth"])(edges, widthArray, jenks);
-                Object(_modules_edges__WEBPACK_IMPORTED_MODULE_3__["calculateOffset"])(edges, origLineWidth);
-                Object(_modules_bg_lines__WEBPACK_IMPORTED_MODULE_9__["addWidthAndOffsetAttr"])(origLines, edges);
+                widthArray = Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["getWidthArray"])(+minWidthInput.value, +maxWidthInput.value);
+                Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["calculateWidth"])(edges, widthArray, jenks);
+                Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["calculateOffset"])(edges, origLineWidth);
+                Object(_modules_bg_lines__WEBPACK_IMPORTED_MODULE_10__["addWidthAndOffsetAttr"])(origLines, edges);
                 map.setZoom(10);
 
                 nodes.features.forEach(node => {  
-                    Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["bindEdgesInfoToNodes"])(node, edges, map);
-                    Object(_modules_cargo_nodes__WEBPACK_IMPORTED_MODULE_5__["addNodeAttr"])(origLines, node, cargoTypes, map);
+                    Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["bindEdgesInfoToNodes"])(node, edges, map);
+                    Object(_modules_cargo_nodes__WEBPACK_IMPORTED_MODULE_6__["addNodeAttr"])(origLines, node, cargoTypes, map);
                 });
 
-                multipleCargoNodesObject = Object(_modules_cargo_nodes__WEBPACK_IMPORTED_MODULE_5__["createMultipleCargoNodesObject"])(cargoTypes, nodes);
-                Object(_modules_render__WEBPACK_IMPORTED_MODULE_6__["renderBackgroundLines"])(map, origLines);
-                Object(_modules_render__WEBPACK_IMPORTED_MODULE_6__["renderEdges"])(map, edges, cargoColorArray, multipleCargoNodesObject);
+                multipleCargoNodesObject = Object(_modules_cargo_nodes__WEBPACK_IMPORTED_MODULE_6__["createMultipleCargoNodesObject"])(cargoTypes, nodes);
+                Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderBackgroundLines"])(map, origLines);
+                Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderEdges"])(map, edges, cargoColorArray, multipleCargoNodesObject);
 
                 map.setZoom(currZoom);
             }
 
             // function to update cityRadius
             function updateCityRadiusSliderHandler() {
-                cityRadiusArray = Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["getCityRadiusArray"])(+minCityRadiusInput.value, +maxCityRadiusInput.value);
+                cityRadiusArray = Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["getCityRadiusArray"])(+minCityRadiusInput.value, +maxCityRadiusInput.value);
 
                 nodes.features.forEach(node => {
-                    Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_4__["addCityRadiusAttr"])(node, cityRadiusArray);
+                    Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["addCityRadiusAttr"])(node, cityRadiusArray);
                 });
 
-                Object(_modules_render__WEBPACK_IMPORTED_MODULE_6__["renderNodes"])(map, nodes, loadingClassArray);
+                Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderNodes"])(map, nodes, loadingClassArray);
             }
 
             // center and zoom map to data
@@ -7503,6 +7536,117 @@ function changeCitiesStrokeColor(map, color) {
 })));
 //# sourceMappingURL=bootstrap.js.map
 
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/lib/loader.js!./css/index.scss":
+/*!*******************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/lib/loader.js!./css/index.scss ***!
+  \*******************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
+// Module
+exports.push([module.i, "/* blocks rules */\n.loading-map-panel {\n  position: fixed;\n  z-index: 1;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  color: #fff;\n  text-align: center; }\n\n.map {\n  position: absolute;\n  z-index: -1;\n  width: 100%;\n  height: 100%;\n  padding: 0;\n  margin: 0; }\n\n.greeting-panel__wrapper {\n  position: fixed;\n  z-index: 1;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%); }\n\n.greeting-panel {\n  color: #333;\n  background-color: rgba(255, 255, 255, 0.85);\n  text-align: center;\n  width: 450px;\n  padding: 20px 25px;\n  border-radius: 5px;\n  animation: emersion 0.7s 0.5s both cubic-bezier(0.04, 0.36, 0.1, 1.06); }\n\n.greeting-panel--dark {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0; }\n\n.greeting-panel__text {\n  font-size: 17px;\n  line-height: 1.4em;\n  font-weight: 300; }\n\n.greeting-panel__btns-row {\n  margin-top: 10px; }\n\n@keyframes emersion {\n  0% {\n    opacity: 0;\n    transform: scale(0.8); }\n  100% {\n    opacity: 1;\n    transform: scale(1); } }\n\n.btn--10-zoom-level {\n  margin: 10px;\n  padding: 10px;\n  position: absolute;\n  right: 0;\n  top: 50px;\n  z-index: 1000;\n  background: #ddd;\n  cursor: pointer;\n  transition: .3s; }\n\n.btn--10-zoom-level:hover {\n  background: #ea8585; }\n\n.btn-demo {\n  background: #d2d2d2; }\n\n.handle-data-panel {\n  position: fixed;\n  z-index: 2;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  color: #000000;\n  background: rgba(189, 189, 189, 0.7);\n  border-radius: 5px;\n  padding: 10px;\n  font-size: 17px; }\n\n.handle-data-panel__text {\n  margin-bottom: 0; }\n\n.main-interface-wrapper {\n  z-index: 1;\n  position: absolute;\n  background: rgba(255, 255, 255, 0.95);\n  border-radius: 5px;\n  top: 5px;\n  left: 5px;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  max-height: 95%;\n  max-width: 420px;\n  overflow-y: auto; }\n\n.main-interface-wrapper--dark {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300; }\n\n.edit-nodes__color-text {\n  width: 70%; }\n\n.title__main {\n  color: inherit;\n  text-align: center; }\n\n/* @import \"./blocks/upload-data.scss\"; */\n.step-title {\n  margin: 0;\n  margin-bottom: 5px;\n  font-weight: 600; }\n\n.step-title--dark {\n  font-weight: 400;\n  color: #fff; }\n\n.edit-interface-wrapper .step-title:hover {\n  cursor: pointer; }\n\n.hr--dark {\n  border-top: 1px solid rgba(0, 0, 0, 0.4); }\n\n/* #other-interface-wrapper {\n  z-index: 1;\n  position: absolute;\n  visibility: hidden;\n  background: #ffffff;\n  border-radius: 5px;\n  margin-top: 5px;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  max-height: 1000px;\n  max-width: 400px;\n  right: 5px;\n} */\n.borderless td {\n  border: none; }\n\n.cargo-colors__table {\n  margin-bottom: 0; }\n\n.table thead th {\n  border: none;\n  border-bottom: 1px dotted #1b1b1b; }\n\n.color-box {\n  display: inline-block;\n  width: 20px;\n  height: 20px;\n  background: #fff; }\n\n.color-box:hover {\n  box-shadow: 0 5px 7px rgba(0, 0, 0, 0.12), 0 5px 7px rgba(0, 0, 0, 0.24);\n  cursor: pointer; }\n\n#cities-fill-color-box {\n  background: #fff; }\n\n#cities-stroke-color-box {\n  background: #000; }\n\n.huebee {\n  z-index: 10;\n  top: unset !important;\n  bottom: 370px !important; }\n\n.huebee__container {\n  background: rgba(35, 35, 35, 0.95);\n  left: -180px; }\n\n.huebee__cursor {\n  width: 20px;\n  height: 20px; }\n\n.huebee__cities-color {\n  top: unset !important;\n  bottom: 355px !important; }\n\n/* @import \"./blocks/linear-scale.scss\"; */\n.noUi-target {\n  margin-left: 15px;\n  margin-right: 15px;\n  border: none;\n  box-shadow: none;\n  background: rgba(53, 53, 53, 0.93); }\n\n.noUi-connect {\n  background: #717171; }\n\n.noUi-handle {\n  background: #656565;\n  border: none;\n  box-shadow: none; }\n\n.input-row {\n  margin-top: 20px; }\n\n.input-text {\n  width: 30%;\n  border: 1px solid #616161;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  text-align: center; }\n\n.input-text:focus {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  text-align: center;\n  width: 30%;\n  border: 1px solid #616161; }\n\n.input-col {\n  display: flex;\n  width: 40%; }\n\n.input-col--left {\n  align-items: baseline;\n  float: left; }\n\n.input-col--right {\n  justify-content: flex-end;\n  align-items: baseline;\n  float: right; }\n\n#max-width-input, #max-radius-input {\n  width: 40%; }\n\n.input-label {\n  color: #797979; }\n\n.input-label--prefix {\n  margin-right: 3px; }\n\n.input-label--postfix {\n  margin-left: 2px; }\n\n.form-row {\n  margin-top: 15px; }\n\n.nodes-settings__fill-color {\n  display: flex;\n  align-items: center;\n  margin: 2% 0; }\n\n.nodes-settings__stroke-color {\n  display: flex;\n  align-items: center;\n  margin-bottom: 11px; }\n\n.nodes-settings__text {\n  width: 65%; }\n\n.checkbox {\n  margin-top: 10px; }\n\n/* @import \"./blocks/other-settings.scss\"; */\n/* @import \"./blocks/zoom-interface.scss\"; */\n.current-zoom {\n  margin: 10px;\n  padding: 10px;\n  position: absolute;\n  right: 0;\n  top: 0;\n  z-index: 1000;\n  background: #ddd; }\n\n.info-window {\n  position: absolute;\n  bottom: 25px;\n  right: 5px;\n  display: flex;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300;\n  border-radius: 5px;\n  padding: 10px; }\n", ""]);
+
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/runtime/api.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/css-loader/dist/runtime/api.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/*
+  MIT License http://www.opensource.org/licenses/mit-license.php
+  Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+module.exports = function (useSourceMap) {
+  var list = []; // return the list of modules as css string
+
+  list.toString = function toString() {
+    return this.map(function (item) {
+      var content = cssWithMappingToString(item, useSourceMap);
+
+      if (item[2]) {
+        return '@media ' + item[2] + '{' + content + '}';
+      } else {
+        return content;
+      }
+    }).join('');
+  }; // import a list of modules into the list
+
+
+  list.i = function (modules, mediaQuery) {
+    if (typeof modules === 'string') {
+      modules = [[null, modules, '']];
+    }
+
+    var alreadyImportedModules = {};
+
+    for (var i = 0; i < this.length; i++) {
+      var id = this[i][0];
+
+      if (id != null) {
+        alreadyImportedModules[id] = true;
+      }
+    }
+
+    for (i = 0; i < modules.length; i++) {
+      var item = modules[i]; // skip already imported module
+      // this implementation is not 100% perfect for weird media query combinations
+      // when a module is imported multiple times with different media queries.
+      // I hope this will never occur (Hey this way we have smaller bundles)
+
+      if (item[0] == null || !alreadyImportedModules[item[0]]) {
+        if (mediaQuery && !item[2]) {
+          item[2] = mediaQuery;
+        } else if (mediaQuery) {
+          item[2] = '(' + item[2] + ') and (' + mediaQuery + ')';
+        }
+
+        list.push(item);
+      }
+    }
+  };
+
+  return list;
+};
+
+function cssWithMappingToString(item, useSourceMap) {
+  var content = item[1] || '';
+  var cssMapping = item[3];
+
+  if (!cssMapping) {
+    return content;
+  }
+
+  if (useSourceMap && typeof btoa === 'function') {
+    var sourceMapping = toComment(cssMapping);
+    var sourceURLs = cssMapping.sources.map(function (source) {
+      return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */';
+    });
+    return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
+  }
+
+  return [content].join('\n');
+} // Adapted from convert-source-map (MIT)
+
+
+function toComment(sourceMap) {
+  // eslint-disable-next-line no-undef
+  var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
+  var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
+  return '/*# ' + data + ' */';
+}
 
 /***/ }),
 
@@ -25307,6 +25451,515 @@ Popper.Defaults = Defaults;
 //# sourceMappingURL=popper.js.map
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/lib/addStyles.js":
+/*!****************************************************!*\
+  !*** ./node_modules/style-loader/lib/addStyles.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+
+var stylesInDom = {};
+
+var	memoize = function (fn) {
+	var memo;
+
+	return function () {
+		if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+		return memo;
+	};
+};
+
+var isOldIE = memoize(function () {
+	// Test for IE <= 9 as proposed by Browserhacks
+	// @see http://browserhacks.com/#hack-e71d8692f65334173fee715c222cb805
+	// Tests for existence of standard globals is to allow style-loader
+	// to operate correctly into non-standard environments
+	// @see https://github.com/webpack-contrib/style-loader/issues/177
+	return window && document && document.all && !window.atob;
+});
+
+var getTarget = function (target, parent) {
+  if (parent){
+    return parent.querySelector(target);
+  }
+  return document.querySelector(target);
+};
+
+var getElement = (function (fn) {
+	var memo = {};
+
+	return function(target, parent) {
+                // If passing function in options, then use it for resolve "head" element.
+                // Useful for Shadow Root style i.e
+                // {
+                //   insertInto: function () { return document.querySelector("#foo").shadowRoot }
+                // }
+                if (typeof target === 'function') {
+                        return target();
+                }
+                if (typeof memo[target] === "undefined") {
+			var styleTarget = getTarget.call(this, target, parent);
+			// Special case to return head of iframe instead of iframe itself
+			if (window.HTMLIFrameElement && styleTarget instanceof window.HTMLIFrameElement) {
+				try {
+					// This will throw an exception if access to iframe is blocked
+					// due to cross-origin restrictions
+					styleTarget = styleTarget.contentDocument.head;
+				} catch(e) {
+					styleTarget = null;
+				}
+			}
+			memo[target] = styleTarget;
+		}
+		return memo[target]
+	};
+})();
+
+var singleton = null;
+var	singletonCounter = 0;
+var	stylesInsertedAtTop = [];
+
+var	fixUrls = __webpack_require__(/*! ./urls */ "./node_modules/style-loader/lib/urls.js");
+
+module.exports = function(list, options) {
+	if (typeof DEBUG !== "undefined" && DEBUG) {
+		if (typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+	}
+
+	options = options || {};
+
+	options.attrs = typeof options.attrs === "object" ? options.attrs : {};
+
+	// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+	// tags it will allow on a page
+	if (!options.singleton && typeof options.singleton !== "boolean") options.singleton = isOldIE();
+
+	// By default, add <style> tags to the <head> element
+        if (!options.insertInto) options.insertInto = "head";
+
+	// By default, add <style> tags to the bottom of the target
+	if (!options.insertAt) options.insertAt = "bottom";
+
+	var styles = listToStyles(list, options);
+
+	addStylesToDom(styles, options);
+
+	return function update (newList) {
+		var mayRemove = [];
+
+		for (var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+
+			domStyle.refs--;
+			mayRemove.push(domStyle);
+		}
+
+		if(newList) {
+			var newStyles = listToStyles(newList, options);
+			addStylesToDom(newStyles, options);
+		}
+
+		for (var i = 0; i < mayRemove.length; i++) {
+			var domStyle = mayRemove[i];
+
+			if(domStyle.refs === 0) {
+				for (var j = 0; j < domStyle.parts.length; j++) domStyle.parts[j]();
+
+				delete stylesInDom[domStyle.id];
+			}
+		}
+	};
+};
+
+function addStylesToDom (styles, options) {
+	for (var i = 0; i < styles.length; i++) {
+		var item = styles[i];
+		var domStyle = stylesInDom[item.id];
+
+		if(domStyle) {
+			domStyle.refs++;
+
+			for(var j = 0; j < domStyle.parts.length; j++) {
+				domStyle.parts[j](item.parts[j]);
+			}
+
+			for(; j < item.parts.length; j++) {
+				domStyle.parts.push(addStyle(item.parts[j], options));
+			}
+		} else {
+			var parts = [];
+
+			for(var j = 0; j < item.parts.length; j++) {
+				parts.push(addStyle(item.parts[j], options));
+			}
+
+			stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+		}
+	}
+}
+
+function listToStyles (list, options) {
+	var styles = [];
+	var newStyles = {};
+
+	for (var i = 0; i < list.length; i++) {
+		var item = list[i];
+		var id = options.base ? item[0] + options.base : item[0];
+		var css = item[1];
+		var media = item[2];
+		var sourceMap = item[3];
+		var part = {css: css, media: media, sourceMap: sourceMap};
+
+		if(!newStyles[id]) styles.push(newStyles[id] = {id: id, parts: [part]});
+		else newStyles[id].parts.push(part);
+	}
+
+	return styles;
+}
+
+function insertStyleElement (options, style) {
+	var target = getElement(options.insertInto)
+
+	if (!target) {
+		throw new Error("Couldn't find a style target. This probably means that the value for the 'insertInto' parameter is invalid.");
+	}
+
+	var lastStyleElementInsertedAtTop = stylesInsertedAtTop[stylesInsertedAtTop.length - 1];
+
+	if (options.insertAt === "top") {
+		if (!lastStyleElementInsertedAtTop) {
+			target.insertBefore(style, target.firstChild);
+		} else if (lastStyleElementInsertedAtTop.nextSibling) {
+			target.insertBefore(style, lastStyleElementInsertedAtTop.nextSibling);
+		} else {
+			target.appendChild(style);
+		}
+		stylesInsertedAtTop.push(style);
+	} else if (options.insertAt === "bottom") {
+		target.appendChild(style);
+	} else if (typeof options.insertAt === "object" && options.insertAt.before) {
+		var nextSibling = getElement(options.insertAt.before, target);
+		target.insertBefore(style, nextSibling);
+	} else {
+		throw new Error("[Style Loader]\n\n Invalid value for parameter 'insertAt' ('options.insertAt') found.\n Must be 'top', 'bottom', or Object.\n (https://github.com/webpack-contrib/style-loader#insertat)\n");
+	}
+}
+
+function removeStyleElement (style) {
+	if (style.parentNode === null) return false;
+	style.parentNode.removeChild(style);
+
+	var idx = stylesInsertedAtTop.indexOf(style);
+	if(idx >= 0) {
+		stylesInsertedAtTop.splice(idx, 1);
+	}
+}
+
+function createStyleElement (options) {
+	var style = document.createElement("style");
+
+	if(options.attrs.type === undefined) {
+		options.attrs.type = "text/css";
+	}
+
+	if(options.attrs.nonce === undefined) {
+		var nonce = getNonce();
+		if (nonce) {
+			options.attrs.nonce = nonce;
+		}
+	}
+
+	addAttrs(style, options.attrs);
+	insertStyleElement(options, style);
+
+	return style;
+}
+
+function createLinkElement (options) {
+	var link = document.createElement("link");
+
+	if(options.attrs.type === undefined) {
+		options.attrs.type = "text/css";
+	}
+	options.attrs.rel = "stylesheet";
+
+	addAttrs(link, options.attrs);
+	insertStyleElement(options, link);
+
+	return link;
+}
+
+function addAttrs (el, attrs) {
+	Object.keys(attrs).forEach(function (key) {
+		el.setAttribute(key, attrs[key]);
+	});
+}
+
+function getNonce() {
+	if (false) {}
+
+	return __webpack_require__.nc;
+}
+
+function addStyle (obj, options) {
+	var style, update, remove, result;
+
+	// If a transform function was defined, run it on the css
+	if (options.transform && obj.css) {
+	    result = typeof options.transform === 'function'
+		 ? options.transform(obj.css) 
+		 : options.transform.default(obj.css);
+
+	    if (result) {
+	    	// If transform returns a value, use that instead of the original css.
+	    	// This allows running runtime transformations on the css.
+	    	obj.css = result;
+	    } else {
+	    	// If the transform function returns a falsy value, don't add this css.
+	    	// This allows conditional loading of css
+	    	return function() {
+	    		// noop
+	    	};
+	    }
+	}
+
+	if (options.singleton) {
+		var styleIndex = singletonCounter++;
+
+		style = singleton || (singleton = createStyleElement(options));
+
+		update = applyToSingletonTag.bind(null, style, styleIndex, false);
+		remove = applyToSingletonTag.bind(null, style, styleIndex, true);
+
+	} else if (
+		obj.sourceMap &&
+		typeof URL === "function" &&
+		typeof URL.createObjectURL === "function" &&
+		typeof URL.revokeObjectURL === "function" &&
+		typeof Blob === "function" &&
+		typeof btoa === "function"
+	) {
+		style = createLinkElement(options);
+		update = updateLink.bind(null, style, options);
+		remove = function () {
+			removeStyleElement(style);
+
+			if(style.href) URL.revokeObjectURL(style.href);
+		};
+	} else {
+		style = createStyleElement(options);
+		update = applyToTag.bind(null, style);
+		remove = function () {
+			removeStyleElement(style);
+		};
+	}
+
+	update(obj);
+
+	return function updateStyle (newObj) {
+		if (newObj) {
+			if (
+				newObj.css === obj.css &&
+				newObj.media === obj.media &&
+				newObj.sourceMap === obj.sourceMap
+			) {
+				return;
+			}
+
+			update(obj = newObj);
+		} else {
+			remove();
+		}
+	};
+}
+
+var replaceText = (function () {
+	var textStore = [];
+
+	return function (index, replacement) {
+		textStore[index] = replacement;
+
+		return textStore.filter(Boolean).join('\n');
+	};
+})();
+
+function applyToSingletonTag (style, index, remove, obj) {
+	var css = remove ? "" : obj.css;
+
+	if (style.styleSheet) {
+		style.styleSheet.cssText = replaceText(index, css);
+	} else {
+		var cssNode = document.createTextNode(css);
+		var childNodes = style.childNodes;
+
+		if (childNodes[index]) style.removeChild(childNodes[index]);
+
+		if (childNodes.length) {
+			style.insertBefore(cssNode, childNodes[index]);
+		} else {
+			style.appendChild(cssNode);
+		}
+	}
+}
+
+function applyToTag (style, obj) {
+	var css = obj.css;
+	var media = obj.media;
+
+	if(media) {
+		style.setAttribute("media", media)
+	}
+
+	if(style.styleSheet) {
+		style.styleSheet.cssText = css;
+	} else {
+		while(style.firstChild) {
+			style.removeChild(style.firstChild);
+		}
+
+		style.appendChild(document.createTextNode(css));
+	}
+}
+
+function updateLink (link, options, obj) {
+	var css = obj.css;
+	var sourceMap = obj.sourceMap;
+
+	/*
+		If convertToAbsoluteUrls isn't defined, but sourcemaps are enabled
+		and there is no publicPath defined then lets turn convertToAbsoluteUrls
+		on by default.  Otherwise default to the convertToAbsoluteUrls option
+		directly
+	*/
+	var autoFixUrls = options.convertToAbsoluteUrls === undefined && sourceMap;
+
+	if (options.convertToAbsoluteUrls || autoFixUrls) {
+		css = fixUrls(css);
+	}
+
+	if (sourceMap) {
+		// http://stackoverflow.com/a/26603875
+		css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+	}
+
+	var blob = new Blob([css], { type: "text/css" });
+
+	var oldSrc = link.href;
+
+	link.href = URL.createObjectURL(blob);
+
+	if(oldSrc) URL.revokeObjectURL(oldSrc);
+}
+
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/lib/urls.js":
+/*!***********************************************!*\
+  !*** ./node_modules/style-loader/lib/urls.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+
+/**
+ * When source maps are enabled, `style-loader` uses a link element with a data-uri to
+ * embed the css on the page. This breaks all relative urls because now they are relative to a
+ * bundle instead of the current page.
+ *
+ * One solution is to only use full urls, but that may be impossible.
+ *
+ * Instead, this function "fixes" the relative urls to be absolute according to the current page location.
+ *
+ * A rudimentary test suite is located at `test/fixUrls.js` and can be run via the `npm test` command.
+ *
+ */
+
+module.exports = function (css) {
+  // get current location
+  var location = typeof window !== "undefined" && window.location;
+
+  if (!location) {
+    throw new Error("fixUrls requires window.location");
+  }
+
+	// blank or null?
+	if (!css || typeof css !== "string") {
+	  return css;
+  }
+
+  var baseUrl = location.protocol + "//" + location.host;
+  var currentDir = baseUrl + location.pathname.replace(/\/[^\/]*$/, "/");
+
+	// convert each url(...)
+	/*
+	This regular expression is just a way to recursively match brackets within
+	a string.
+
+	 /url\s*\(  = Match on the word "url" with any whitespace after it and then a parens
+	   (  = Start a capturing group
+	     (?:  = Start a non-capturing group
+	         [^)(]  = Match anything that isn't a parentheses
+	         |  = OR
+	         \(  = Match a start parentheses
+	             (?:  = Start another non-capturing groups
+	                 [^)(]+  = Match anything that isn't a parentheses
+	                 |  = OR
+	                 \(  = Match a start parentheses
+	                     [^)(]*  = Match anything that isn't a parentheses
+	                 \)  = Match a end parentheses
+	             )  = End Group
+              *\) = Match anything and then a close parens
+          )  = Close non-capturing group
+          *  = Match anything
+       )  = Close capturing group
+	 \)  = Match a close parens
+
+	 /gi  = Get all matches, not the first.  Be case insensitive.
+	 */
+	var fixedCss = css.replace(/url\s*\(((?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)\)/gi, function(fullMatch, origUrl) {
+		// strip quotes (if they exist)
+		var unquotedOrigUrl = origUrl
+			.trim()
+			.replace(/^"(.*)"$/, function(o, $1){ return $1; })
+			.replace(/^'(.*)'$/, function(o, $1){ return $1; });
+
+		// already a full url? no change
+		if (/^(#|data:|http:\/\/|https:\/\/|file:\/\/\/|\s*$)/i.test(unquotedOrigUrl)) {
+		  return fullMatch;
+		}
+
+		// convert the url to a full url
+		var newUrl;
+
+		if (unquotedOrigUrl.indexOf("//") === 0) {
+		  	//TODO: should we add protocol?
+			newUrl = unquotedOrigUrl;
+		} else if (unquotedOrigUrl.indexOf("/") === 0) {
+			// path should be relative to the base url
+			newUrl = baseUrl + unquotedOrigUrl; // already starts with '/'
+		} else {
+			// path should be relative to current directory
+			newUrl = currentDir + unquotedOrigUrl.replace(/^\.\//, ""); // Strip leading './'
+		}
+
+		// send back the fixed url(...)
+		return "url(" + JSON.stringify(newUrl) + ")";
+	});
+
+	// send back the fixed css
+	return fixedCss;
+};
+
 
 /***/ }),
 

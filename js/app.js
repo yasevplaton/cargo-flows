@@ -1,4 +1,5 @@
 // import js modules
+import "../css/index.scss";
 import 'bootstrap';
 import mapboxgl from 'mapbox-gl';
 import { getBoundingBox, classifyArray } from "./modules/common";
