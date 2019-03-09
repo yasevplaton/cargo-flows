@@ -27,6 +27,7 @@ import { renderEdges, renderOrigLines, renderNodes, renderBackgroundLines } from
 import { createColorTable, createSlider, toggleLayerVisibility, bindColorPickerToCitiesColorBoxes } from "./modules/interface";
 import { collectLinesIDs, createOrigLines, fillOrigLinesWithData } from './modules/orig-lines';
 import { addWidthAndOffsetAttr } from './modules/bg-lines';
+import { showInfoWindow, hideInfoWindow, getInfoWindowElements } from "./modules/lines-info";
 
 window.onload = () => {
 
@@ -69,6 +70,7 @@ window.onload = () => {
         const backgroundLinesCheckbox = document.getElementById('background-lines-checkbox');
         const edgesCheckbox = document.getElementById('edges-checkbox');
         const cargoNodesCheckbox = document.getElementById('cargo-nodes-checkbox');
+        const infoWindow = document.querySelector('.info-window');
 
         // store server url
         // localhost url for testing
@@ -266,46 +268,28 @@ window.onload = () => {
             // bind color picker to cities layers
             bindColorPickerToCitiesColorBoxes(citiesFillColorBox, citiesStrokeColorBox, map);
 
+            // const linePopup = new mapboxgl.Popup({
+            //     closeButton: false,
+            //     closeOnClick: false
+            // });
 
-            const linePopup = new mapboxgl.Popup({
-                closeButton: false,
-                closeOnClick: false
-            });
+            // const nodePopup = new mapboxgl.Popup({
+            //     closeButton: false,
+            //     closeOnClick: false
+            // });
 
-            const nodePopup = new mapboxgl.Popup({
-                closeButton: false,
-                closeOnClick: false
-            });
+            const infoWindowElements = getInfoWindowElements(infoWindow);
 
-            map.on('mouseenter', 'background-lines', function (e) {
-                // Change the cursor style as a UI indicator.
+            map.on('mouseenter', 'background-lines', e => {
                 map.getCanvas().style.cursor = 'pointer';
-                // console.log(e);
-              
-                const coordinates = e.lngLat;
-                const info = e.features[0].properties.dataOneDir;
-                // console.log(JSON.parse(info));
-                
-              
-                // Ensure that if the map is zoomed out such that multiple
-                // copies of the feature are visible, the popup appears
-                // over the copy being pointed to.
-                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-                  coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-                }
-              
-                // Populate the popup and set its coordinates
-                // based on the feature found.
-                linePopup.setLngLat(coordinates)
-                  .setHTML(info)
-                  .addTo(map);
-              });
-              
-              map.on('mouseleave', 'background-lines', function () {
+                showInfoWindow(e, infoWindow, infoWindowElements);
+            });
+
+            map.on('mouseleave', 'background-lines', () => {
                 map.getCanvas().style.cursor = '';
-                linePopup.remove();
-              });
-            
+                hideInfoWindow(infoWindow, infoWindowElements);
+            });
+
             // initialize render counter
             let startWidthSliderCounter = 0;
             let startRadiusSliderCounter = 0;
@@ -425,7 +409,7 @@ window.onload = () => {
                 addWidthAndOffsetAttr(origLines, edges);
                 map.setZoom(10);
 
-                nodes.features.forEach(node => {  
+                nodes.features.forEach(node => {
                     bindEdgesInfoToNodes(node, edges, map);
                     addNodeAttr(origLines, node, cargoTypes, map);
                 });

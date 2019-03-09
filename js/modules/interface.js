@@ -79,6 +79,15 @@ export function toggleLayerVisibility(layerCheckbox, map, layerId) {
   }
 }
 
+export function toggleLayerOpacity(layerCheckbox, map, layerId) {
+
+  if (layerCheckbox.checked) {
+    map.setLayoutProperty(layerId, 'line-opacity', 1);
+  } else {
+    map.setLayoutProperty(layerId, 'line-opacity', 0);
+  }
+}
+
 export function bindColorPickerToCitiesColorBoxes(fillColorBox, strokeColorBox, map) {
   const fillHueb = new Huebee(fillColorBox, {
     setText: false,

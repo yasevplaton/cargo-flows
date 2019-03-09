@@ -2,10 +2,40 @@
   position: absolute;
   bottom: 25px;
   right: 5px;
-  display: flex;
   background: rgba(41, 41, 41, 0.95);
   color: rgb(224, 224, 224);
   font-weight: 300;
   border-radius: 5px;
   padding: 10px;
+  display: flex;
+}
+
+.info-window__col:first-child {
+  margin-right: 10px;
+  border-right: 1px rgba(191, 191, 191, 0.17) solid;
+  padding-right: 8px;
+}
+
+.info-window__title {
+  font-size: 19px;
+  font-weight: 600;
+}
+
+.info-window__table-col:first-child {
+  padding-right: 8px;
+}
+
+.info-window__table-col--title {
+  font-weight: 600;
+}
+
+.info-window__cargo-item {
+  display: flex;
+  align-items: center;
+}
+
+.info-window__cargo-name-block {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
 }
