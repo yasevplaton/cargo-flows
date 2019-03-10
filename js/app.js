@@ -27,7 +27,7 @@ import { renderEdges, renderOrigLines, renderNodes, renderBackgroundLines } from
 import { createColorTable, createSlider, toggleLayerVisibility, bindColorPickerToCitiesColorBoxes } from "./modules/interface";
 import { collectLinesIDs, createOrigLines, fillOrigLinesWithData } from './modules/orig-lines';
 import { addWidthAndOffsetAttr } from './modules/bg-lines';
-import { showInfoWindow, hideInfoWindow, getInfoWindowElements } from "./modules/lines-info";
+import { showInfoWindow, hideInfoWindow, getInfoWindowElements, createInfoWindowCargoListItems, addCargoListItems, getInfoWindowMarkup } from "./modules/lines-info";
 
 window.onload = () => {
 
@@ -170,7 +170,7 @@ window.onload = () => {
 
             // set original line width
             const origLineWidth = 1;
-            const shadowOffset = 12;
+            // const shadowOffset = 12;
 
             // get bounding box of data to center and zoom map
             let boundingBox = getBoundingBox(nodes);
@@ -189,8 +189,6 @@ window.onload = () => {
 
             // create a blank object for storage original lines
             const origLines = { "type": 'FeatureCollection', features: [] };
-            // const backgroundLines = { "type": 'FeatureCollection', features: [] };
-
 
             // collect ids of lines
             let linesIDArray = collectLinesIDs(edges);
@@ -257,7 +255,7 @@ window.onload = () => {
             renderNodes(map, nodes, loadingClassArray);
 
             // create color table
-            createColorTable(colorTableBody, cargoColorArray, edges, map);
+            createColorTable(colorTableBody, cargoColorArray, map, infoWindow);
 
             // create width slider
             createSlider(widthSlider, minWidthDefault, maxWidthDefault, maxEdgeWidth);
@@ -279,7 +277,12 @@ window.onload = () => {
             // });
 
             const infoWindowElements = getInfoWindowElements(infoWindow);
+            const infoWindowCargoListItems = createInfoWindowCargoListItems(cargoColorArray);
+            addCargoListItems(infoWindowCargoListItems, infoWindowElements);
+            
+            // createInfoWindowCargoListItems(cargoColorArray, infoWindowElements);
 
+            // console.log(infoWindowCargoListItems);
             map.on('mouseenter', 'background-lines', e => {
                 map.getCanvas().style.cursor = 'pointer';
                 showInfoWindow(e, infoWindow, infoWindowElements);
@@ -288,6 +291,7 @@ window.onload = () => {
             map.on('mouseleave', 'background-lines', () => {
                 map.getCanvas().style.cursor = '';
                 hideInfoWindow(infoWindow, infoWindowElements);
+
             });
 
             // initialize render counter
@@ -411,7 +415,7 @@ window.onload = () => {
 
                 nodes.features.forEach(node => {
                     bindEdgesInfoToNodes(node, edges, map);
-                    addNodeAttr(origLines, node, cargoTypes, map);
+                    addNodeAttr(node, cargoTypes, map);
                 });
 
                 multipleCargoNodesObject = createMultipleCargoNodesObject(cargoTypes, nodes);
@@ -440,10 +444,10 @@ window.onload = () => {
         }
 
     });
-    map.on('zoomend', function () {
-        document.getElementById('zoom-level').innerHTML = 'Zoom Level: ' + map.getZoom();
-    });
+    // map.on('zoomend', function () {
+    //     document.getElementById('zoom-level').innerHTML = 'Zoom Level: ' + map.getZoom();
+    // });
 
-    const to10ZoomBtn = document.getElementById('to-10-zoom-level');
-    to10ZoomBtn.addEventListener('click', () => map.setZoom(10));
+    // const to10ZoomBtn = document.getElementById('to-10-zoom-level');
+    // to10ZoomBtn.addEventListener('click', () => map.setZoom(10));
 };

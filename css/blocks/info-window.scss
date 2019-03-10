@@ -7,7 +7,7 @@
   font-weight: 300;
   border-radius: 5px;
   padding: 10px;
-  display: flex;
+  display: none;
 }
 
 .info-window__col:first-child {
@@ -17,8 +17,9 @@
 }
 
 .info-window__title {
-  font-size: 19px;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #fff;
 }
 
 .info-window__table-col:first-child {
@@ -26,7 +27,7 @@
 }
 
 .info-window__table-col--title {
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .info-window__cargo-item {

@@ -1,6 +1,7 @@
 import { changeCargoColor } from "./common";
 import { changeEdgesColor, changeCitiesFillColor, changeCitiesStrokeColor } from "./render";
 import 'nouislider';
+import { changeColorInfoWindowColorBox } from "./lines-info";
 
 const Huebee = require('huebee');
 
@@ -15,7 +16,7 @@ export function createColorBox(cargo) {
 }
 
 // function to bind color picker and change color handler
-export function bindColorPicker(colorBox, cargoColorArray, map) {
+export function bindColorPicker(colorBox, cargoColorArray, map, infoWindow) {
   var hueb = new Huebee(colorBox, {
     setText: false,
     notation: 'hex'
@@ -25,12 +26,13 @@ export function bindColorPicker(colorBox, cargoColorArray, map) {
     let cargoID = +this.anchor.id;
     changeCargoColor(cargoColorArray, cargoID, color);
     changeEdgesColor(map, cargoColorArray);
+    changeColorInfoWindowColorBox(color, cargoID, infoWindow);
   });
 
 }
 
 // function to create color table
-export function createColorTable(tableBody, cargoColorArray, edges, map, nodes) {
+export function createColorTable(tableBody, cargoColorArray, map, infoWindow) {
 
   cargoColorArray.forEach(cargo => {
     let row = document.createElement('tr');
@@ -44,7 +46,7 @@ export function createColorTable(tableBody, cargoColorArray, edges, map, nodes) 
     let colorBox = createColorBox(cargo);
     colColor.appendChild(colorBox);
 
-    bindColorPicker(colorBox, cargoColorArray, map);
+    bindColorPicker(colorBox, cargoColorArray, map, infoWindow);
 
     let cols = [colId, colType, colColor];
 

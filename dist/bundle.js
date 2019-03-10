@@ -298,7 +298,7 @@ window.onload = () => {
 
             // set original line width
             const origLineWidth = 1;
-            const shadowOffset = 12;
+            // const shadowOffset = 12;
 
             // get bounding box of data to center and zoom map
             let boundingBox = Object(_modules_common__WEBPACK_IMPORTED_MODULE_3__["getBoundingBox"])(nodes);
@@ -317,8 +317,6 @@ window.onload = () => {
 
             // create a blank object for storage original lines
             const origLines = { "type": 'FeatureCollection', features: [] };
-            // const backgroundLines = { "type": 'FeatureCollection', features: [] };
-
 
             // collect ids of lines
             let linesIDArray = Object(_modules_orig_lines__WEBPACK_IMPORTED_MODULE_9__["collectLinesIDs"])(edges);
@@ -385,7 +383,7 @@ window.onload = () => {
             Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderNodes"])(map, nodes, loadingClassArray);
 
             // create color table
-            Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["createColorTable"])(colorTableBody, cargoColorArray, edges, map);
+            Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["createColorTable"])(colorTableBody, cargoColorArray, map, infoWindow);
 
             // create width slider
             Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["createSlider"])(widthSlider, minWidthDefault, maxWidthDefault, maxEdgeWidth);
@@ -407,7 +405,12 @@ window.onload = () => {
             // });
 
             const infoWindowElements = Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_11__["getInfoWindowElements"])(infoWindow);
+            const infoWindowCargoListItems = Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_11__["createInfoWindowCargoListItems"])(cargoColorArray);
+            Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_11__["addCargoListItems"])(infoWindowCargoListItems, infoWindowElements);
+            
+            // createInfoWindowCargoListItems(cargoColorArray, infoWindowElements);
 
+            // console.log(infoWindowCargoListItems);
             map.on('mouseenter', 'background-lines', e => {
                 map.getCanvas().style.cursor = 'pointer';
                 Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_11__["showInfoWindow"])(e, infoWindow, infoWindowElements);
@@ -416,6 +419,7 @@ window.onload = () => {
             map.on('mouseleave', 'background-lines', () => {
                 map.getCanvas().style.cursor = '';
                 Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_11__["hideInfoWindow"])(infoWindow, infoWindowElements);
+
             });
 
             // initialize render counter
@@ -539,7 +543,7 @@ window.onload = () => {
 
                 nodes.features.forEach(node => {
                     Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["bindEdgesInfoToNodes"])(node, edges, map);
-                    Object(_modules_cargo_nodes__WEBPACK_IMPORTED_MODULE_6__["addNodeAttr"])(origLines, node, cargoTypes, map);
+                    Object(_modules_cargo_nodes__WEBPACK_IMPORTED_MODULE_6__["addNodeAttr"])(node, cargoTypes, map);
                 });
 
                 multipleCargoNodesObject = Object(_modules_cargo_nodes__WEBPACK_IMPORTED_MODULE_6__["createMultipleCargoNodesObject"])(cargoTypes, nodes);
@@ -568,12 +572,12 @@ window.onload = () => {
         }
 
     });
-    map.on('zoomend', function () {
-        document.getElementById('zoom-level').innerHTML = 'Zoom Level: ' + map.getZoom();
-    });
+    // map.on('zoomend', function () {
+    //     document.getElementById('zoom-level').innerHTML = 'Zoom Level: ' + map.getZoom();
+    // });
 
-    const to10ZoomBtn = document.getElementById('to-10-zoom-level');
-    to10ZoomBtn.addEventListener('click', () => map.setZoom(10));
+    // const to10ZoomBtn = document.getElementById('to-10-zoom-level');
+    // to10ZoomBtn.addEventListener('click', () => map.setZoom(10));
 };
 
 
@@ -2263,6 +2267,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _render__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./render */ "./js/modules/render.js");
 /* harmony import */ var nouislider__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! nouislider */ "./node_modules/nouislider/distribute/nouislider.js");
 /* harmony import */ var nouislider__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(nouislider__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _lines_info__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./lines-info */ "./js/modules/lines-info.js");
+
 
 
 
@@ -2280,7 +2286,7 @@ function createColorBox(cargo) {
 }
 
 // function to bind color picker and change color handler
-function bindColorPicker(colorBox, cargoColorArray, map) {
+function bindColorPicker(colorBox, cargoColorArray, map, infoWindow) {
   var hueb = new Huebee(colorBox, {
     setText: false,
     notation: 'hex'
@@ -2290,12 +2296,13 @@ function bindColorPicker(colorBox, cargoColorArray, map) {
     let cargoID = +this.anchor.id;
     Object(_common__WEBPACK_IMPORTED_MODULE_0__["changeCargoColor"])(cargoColorArray, cargoID, color);
     Object(_render__WEBPACK_IMPORTED_MODULE_1__["changeEdgesColor"])(map, cargoColorArray);
+    Object(_lines_info__WEBPACK_IMPORTED_MODULE_3__["changeColorInfoWindowColorBox"])(color, cargoID, infoWindow);
   });
 
 }
 
 // function to create color table
-function createColorTable(tableBody, cargoColorArray, edges, map, nodes) {
+function createColorTable(tableBody, cargoColorArray, map, infoWindow) {
 
   cargoColorArray.forEach(cargo => {
     let row = document.createElement('tr');
@@ -2309,7 +2316,7 @@ function createColorTable(tableBody, cargoColorArray, edges, map, nodes) {
     let colorBox = createColorBox(cargo);
     colColor.appendChild(colorBox);
 
-    bindColorPicker(colorBox, cargoColorArray, map);
+    bindColorPicker(colorBox, cargoColorArray, map, infoWindow);
 
     let cols = [colId, colType, colColor];
 
@@ -2387,77 +2394,169 @@ function bindColorPickerToCitiesColorBoxes(fillColorBox, strokeColorBox, map) {
 /*!**********************************!*\
   !*** ./js/modules/lines-info.js ***!
   \**********************************/
-/*! exports provided: getInfoWindowElements, showInfoWindow, hideInfoWindow */
+/*! exports provided: getInfoWindowElements, createInfoWindowCargoListItems, addCargoListItems, showInfoWindow, hideInfoWindow, changeColorInfoWindowColorBox */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getInfoWindowElements", function() { return getInfoWindowElements; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createInfoWindowCargoListItems", function() { return createInfoWindowCargoListItems; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addCargoListItems", function() { return addCargoListItems; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "showInfoWindow", function() { return showInfoWindow; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hideInfoWindow", function() { return hideInfoWindow; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "changeColorInfoWindowColorBox", function() { return changeColorInfoWindowColorBox; });
 function getInfoWindowElements(infoWindow) {
+
   const colDirOne = infoWindow.querySelector('#info-window__col-1');
   const sourceColDirOne = colDirOne.querySelector('.info-window__source');
   const destColDirOne = colDirOne.querySelector('.info-window__destination');
   const totalVolumeColDirOne = colDirOne.querySelector('.info-window__total-volume');
-  const cargoListDirONe = colDirOne.querySelector('.info-wondow__cargo-list');
+  const cargoListDirOne = colDirOne.querySelector('.info-window__cargo-list--dir-1');
+
   const colDirTwo = infoWindow.querySelector('#info-window__col-2');
   const sourceColDirTwo = colDirTwo.querySelector('.info-window__source');
   const destColDirTwo = colDirTwo.querySelector('.info-window__destination');
   const totalVolumeColDirTwo = colDirTwo.querySelector('.info-window__total-volume');
+  const cargoListDirTwo = colDirTwo.querySelector('.info-window__cargo-list--dir-2');
 
   return {
+
     dirOne: {
       sourceCol: sourceColDirOne,
       destCol: destColDirOne,
+      cargoList: cargoListDirOne,
       totalVolumeCol: totalVolumeColDirOne
     },
 
     dirTwo: {
       sourceCol: sourceColDirTwo,
       destCol: destColDirTwo,
+      cargoList: cargoListDirTwo,
       totalVolumeCol: totalVolumeColDirTwo
     }
 
   }
 }
 
+function createInfoWindowCargoListItems(cargoColorArray) {
+
+  const cargoListItems = [];
+
+  cargoColorArray.forEach(cargoObj => {
+    const cargoItem = document.createElement('li');
+    cargoItem.classList.add('info-window__cargo-item', `info-window__cargo-item-${cargoObj.id}`, `info-window__cargo-item-${cargoObj.type}`);
+
+    const cargoNameBlock = document.createElement('div');
+    cargoNameBlock.classList.add('info-window__cargo-name-block');
+
+    const cargoColorBox = document.createElement('span');
+    cargoColorBox.classList.add('color-box', 'color-box--info-window');
+    cargoColorBox.style.background = cargoObj.color;
+
+    const cargoName = document.createElement('span');
+    cargoName.classList.add('info-window__cargo-name');
+    cargoName.textContent = cargoObj.type;
+
+    const cargoValue = document.createElement('span');
+    cargoValue.classList.add('info-window__cargo-value');
+    cargoValue.textContent = 0;
+
+    cargoNameBlock.appendChild(cargoColorBox);
+    cargoNameBlock.appendChild(cargoName);
+
+    cargoItem.appendChild(cargoNameBlock);
+    cargoItem.appendChild(cargoValue);
+
+    cargoListItems.push(cargoItem);
+
+  });
+
+  return cargoListItems;
+}
+
+function addCargoListItems(cargoListItems, infoWindowElements) {
+  const cargoListDirOne = infoWindowElements.dirOne.cargoList;
+  const cargoListDirTwo = infoWindowElements.dirTwo.cargoList;
+
+  cargoListItems.forEach(item => {
+    const clone = item.cloneNode(true);
+    cargoListDirOne.appendChild(item);
+    cargoListDirTwo.appendChild(clone);
+  });
+
+
+}
+
+function getInfoWindowMarkup(infoWindow) {
+  return infoWindow.outerHTML;
+}
+
 
 function showInfoWindow(e, infoWindow, infoWindowElements) {
-  // const coordinates = e.lngLat;
+  // const popupPosition = e.lngLat;
+  // console.log(e);
   const infoOneDir = JSON.parse(e.features[0].properties.dataOneDir);
   const infoTwoDir = JSON.parse(e.features[0].properties.dataTwoDir);
-  // console.log(infoOneDir);
-  // console.log(infoTwoDir);
 
   infoWindowElements.dirOne.sourceCol.textContent = infoOneDir.src;
   infoWindowElements.dirOne.destCol.textContent = infoOneDir.dest;
   infoWindowElements.dirOne.totalVolumeCol.textContent = infoOneDir.totalVolume;
+
   infoWindowElements.dirTwo.sourceCol.textContent = infoTwoDir.src;
   infoWindowElements.dirTwo.destCol.textContent = infoTwoDir.dest;
   infoWindowElements.dirTwo.totalVolumeCol.textContent = infoTwoDir.totalVolume;
 
-  infoWindow.style.display = 'flex';
+  const cargoListDirOne = infoWindowElements.dirOne.cargoList;
+  const cargoListDirTwo = infoWindowElements.dirTwo.cargoList;
 
-  // Ensure that if the map is zoomed out such that multiple
-  // copies of the feature are visible, the popup appears
-  // over the copy being pointed to.
-  // while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-  //   coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+  const valuesOneDir = infoOneDir.values;
+  const valuesTwoDir = infoTwoDir.values;
+
+  for (let cargoType in valuesOneDir) {
+    if (valuesOneDir.hasOwnProperty(cargoType)) {
+      const value = valuesOneDir[cargoType];
+      const reqCargoItem = cargoListDirOne.querySelector(`.info-window__cargo-item-${cargoType}`);
+      const reqValueSpan = reqCargoItem.querySelector('.info-window__cargo-value');
+      reqValueSpan.textContent = value;
+    }
+  }
+
+  for (let cargoType in valuesTwoDir) {
+    if (valuesTwoDir.hasOwnProperty(cargoType)) {
+      const value = valuesTwoDir[cargoType];
+      const reqCargoItem = cargoListDirTwo.querySelector(`.info-window__cargo-item-${cargoType}`);
+      const reqValueSpan = reqCargoItem.querySelector('.info-window__cargo-value');
+      reqValueSpan.textContent = value;
+    }
+  }
+
+  infoWindow.style.display = 'inline-flex';
+
+  // while (Math.abs(e.lngLat.lng - popupPosition[0]) > 180) {
+  //   popupPosition[0] += e.lngLat.lng > popupPosition[0] ? 360 : -360;
   // }
 
-  // Populate the popup and set its coordinates
-  // based on the feature found.
-  // linePopup.setLngLat(coordinates)
-  //   .setHTML(info)
+
+  // linePopup.setLngLat(popupPosition)
+  //   .setHTML(getInfoWindowMarkup(infoWindow))
   //   .addTo(map);
+
+
 }
 
-function hideInfoWindow(infoWindow, infoWindowElements) {
+function hideInfoWindow(infoWindow) {
   infoWindow.style.display = 'none';
+  // linePopup.remove();
 }
 
+function changeColorInfoWindowColorBox(color, cargoId, infoWindow) {
+  const reqCargoItems = infoWindow.querySelectorAll(`.info-window__cargo-item-${cargoId}`);
 
+  Array.from(reqCargoItems).forEach(item => {
+    const reqColorBox = item.querySelector('.color-box--info-window');
+    reqColorBox.style.background = color;
+  });
+}
 
 /***/ }),
 
@@ -7621,7 +7720,7 @@ function changeCitiesStrokeColor(map, color) {
 
 exports = module.exports = __webpack_require__(/*! ../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
 // Module
-exports.push([module.i, "/* blocks rules */\n.loading-map-panel {\n  position: fixed;\n  z-index: 1;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  color: #fff;\n  text-align: center; }\n\n.map {\n  position: absolute;\n  z-index: -1;\n  width: 100%;\n  height: 100%;\n  padding: 0;\n  margin: 0; }\n\n.greeting-panel__wrapper {\n  position: fixed;\n  z-index: 1;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%); }\n\n.greeting-panel {\n  color: #333;\n  background-color: rgba(255, 255, 255, 0.85);\n  text-align: center;\n  width: 450px;\n  padding: 20px 25px;\n  border-radius: 5px;\n  animation: emersion 0.7s 0.5s both cubic-bezier(0.04, 0.36, 0.1, 1.06); }\n\n.greeting-panel--dark {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0; }\n\n.greeting-panel__text {\n  font-size: 17px;\n  line-height: 1.4em;\n  font-weight: 300; }\n\n.greeting-panel__btns-row {\n  margin-top: 10px; }\n\n@keyframes emersion {\n  0% {\n    opacity: 0;\n    transform: scale(0.8); }\n  100% {\n    opacity: 1;\n    transform: scale(1); } }\n\n.btn--10-zoom-level {\n  margin: 10px;\n  padding: 10px;\n  position: absolute;\n  right: 0;\n  top: 50px;\n  z-index: 1000;\n  background: #ddd;\n  cursor: pointer;\n  transition: .3s; }\n\n.btn--10-zoom-level:hover {\n  background: #ea8585; }\n\n.btn-demo {\n  background: #d2d2d2; }\n\n.handle-data-panel {\n  position: fixed;\n  z-index: 2;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  color: #000000;\n  background: rgba(189, 189, 189, 0.7);\n  border-radius: 5px;\n  padding: 10px;\n  font-size: 17px; }\n\n.handle-data-panel__text {\n  margin-bottom: 0; }\n\n.main-interface-wrapper {\n  z-index: 1;\n  position: absolute;\n  background: rgba(255, 255, 255, 0.95);\n  border-radius: 5px;\n  top: 5px;\n  left: 5px;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  max-height: 95%;\n  max-width: 420px;\n  overflow-y: auto; }\n\n.main-interface-wrapper--dark {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300; }\n\n.edit-nodes__color-text {\n  width: 70%; }\n\n.title__main {\n  color: inherit;\n  text-align: center; }\n\n/* @import \"./blocks/upload-data.scss\"; */\n.step-title {\n  margin: 0;\n  margin-bottom: 5px;\n  font-weight: 600; }\n\n.step-title--dark {\n  font-weight: 400;\n  color: #fff; }\n\n.edit-interface-wrapper .step-title:hover {\n  cursor: pointer; }\n\n.hr--dark {\n  border-top: 1px solid rgba(0, 0, 0, 0.4); }\n\n/* #other-interface-wrapper {\n  z-index: 1;\n  position: absolute;\n  visibility: hidden;\n  background: #ffffff;\n  border-radius: 5px;\n  margin-top: 5px;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  max-height: 1000px;\n  max-width: 400px;\n  right: 5px;\n} */\n.borderless td {\n  border: none; }\n\n.cargo-colors__table {\n  margin-bottom: 0; }\n\n.table thead th {\n  border: none;\n  border-bottom: 1px dotted #1b1b1b; }\n\n.color-box {\n  display: inline-block;\n  width: 20px;\n  height: 20px;\n  background: #fff; }\n\n.color-box:hover {\n  box-shadow: 0 5px 7px rgba(0, 0, 0, 0.12), 0 5px 7px rgba(0, 0, 0, 0.24);\n  cursor: pointer; }\n\n#cities-fill-color-box {\n  background: #fff; }\n\n#cities-stroke-color-box {\n  background: #000; }\n\n.color-box--info-window {\n  margin-right: 5px; }\n\n.huebee {\n  z-index: 10;\n  top: unset !important;\n  bottom: 370px !important; }\n\n.huebee__container {\n  background: rgba(35, 35, 35, 0.95);\n  left: -180px; }\n\n.huebee__cursor {\n  width: 20px;\n  height: 20px; }\n\n.huebee__cities-color {\n  top: unset !important;\n  bottom: 355px !important; }\n\n/* @import \"./blocks/linear-scale.scss\"; */\n.noUi-target {\n  margin-left: 15px;\n  margin-right: 15px;\n  border: none;\n  box-shadow: none;\n  background: rgba(53, 53, 53, 0.93); }\n\n.noUi-connect {\n  background: #717171; }\n\n.noUi-handle {\n  background: #656565;\n  border: none;\n  box-shadow: none; }\n\n.input-row {\n  margin-top: 20px; }\n\n.input-text {\n  width: 30%;\n  border: 1px solid #616161;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  text-align: center; }\n\n.input-text:focus {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  text-align: center;\n  width: 30%;\n  border: 1px solid #616161; }\n\n.input-col {\n  display: flex;\n  width: 40%; }\n\n.input-col--left {\n  align-items: baseline;\n  float: left; }\n\n.input-col--right {\n  justify-content: flex-end;\n  align-items: baseline;\n  float: right; }\n\n#max-width-input, #max-radius-input {\n  width: 40%; }\n\n.input-label {\n  color: #797979; }\n\n.input-label--prefix {\n  margin-right: 3px; }\n\n.input-label--postfix {\n  margin-left: 2px; }\n\n.form-row {\n  margin-top: 15px; }\n\n.nodes-settings__fill-color {\n  display: flex;\n  align-items: center;\n  margin: 2% 0; }\n\n.nodes-settings__stroke-color {\n  display: flex;\n  align-items: center;\n  margin-bottom: 11px; }\n\n.nodes-settings__text {\n  width: 65%; }\n\n.checkbox {\n  margin-top: 10px; }\n\n/* @import \"./blocks/other-settings.scss\"; */\n/* @import \"./blocks/zoom-interface.scss\"; */\n.current-zoom {\n  margin: 10px;\n  padding: 10px;\n  position: absolute;\n  right: 0;\n  top: 0;\n  z-index: 1000;\n  background: #ddd; }\n\n.info-window {\n  position: absolute;\n  bottom: 25px;\n  right: 5px;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300;\n  border-radius: 5px;\n  padding: 10px;\n  display: flex; }\n\n.info-window__col:first-child {\n  margin-right: 10px;\n  border-right: 1px rgba(191, 191, 191, 0.17) solid;\n  padding-right: 8px; }\n\n.info-window__title {\n  font-size: 19px;\n  font-weight: 600; }\n\n.info-window__table-col:first-child {\n  padding-right: 8px; }\n\n.info-window__table-col--title {\n  font-weight: 600; }\n\n.info-window__cargo-item {\n  display: flex;\n  align-items: center; }\n\n.info-window__cargo-name-block {\n  display: flex;\n  align-items: center;\n  margin-right: 10px; }\n", ""]);
+exports.push([module.i, "/* blocks rules */\n.loading-map-panel {\n  position: fixed;\n  z-index: 1;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  color: #fff;\n  text-align: center; }\n\n.map {\n  position: absolute;\n  z-index: -1;\n  width: 100%;\n  height: 100%;\n  padding: 0;\n  margin: 0; }\n\n.greeting-panel__wrapper {\n  position: fixed;\n  z-index: 1;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%); }\n\n.greeting-panel {\n  color: #333;\n  background-color: rgba(255, 255, 255, 0.85);\n  text-align: center;\n  width: 450px;\n  padding: 20px 25px;\n  border-radius: 5px;\n  animation: emersion 0.7s 0.5s both cubic-bezier(0.04, 0.36, 0.1, 1.06); }\n\n.greeting-panel--dark {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0; }\n\n.greeting-panel__text {\n  font-size: 17px;\n  line-height: 1.4em;\n  font-weight: 300; }\n\n.greeting-panel__btns-row {\n  margin-top: 10px; }\n\n@keyframes emersion {\n  0% {\n    opacity: 0;\n    transform: scale(0.8); }\n  100% {\n    opacity: 1;\n    transform: scale(1); } }\n\n.btn--10-zoom-level {\n  margin: 10px;\n  padding: 10px;\n  position: absolute;\n  right: 0;\n  top: 50px;\n  z-index: 1000;\n  background: #ddd;\n  cursor: pointer;\n  transition: .3s; }\n\n.btn--10-zoom-level:hover {\n  background: #ea8585; }\n\n.btn-demo {\n  background: #d2d2d2; }\n\n.handle-data-panel {\n  position: fixed;\n  z-index: 2;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  color: #000000;\n  background: rgba(189, 189, 189, 0.7);\n  border-radius: 5px;\n  padding: 10px;\n  font-size: 17px; }\n\n.handle-data-panel__text {\n  margin-bottom: 0; }\n\n.main-interface-wrapper {\n  z-index: 1;\n  position: absolute;\n  background: rgba(255, 255, 255, 0.95);\n  border-radius: 5px;\n  top: 5px;\n  left: 5px;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  max-height: 95%;\n  max-width: 420px;\n  overflow-y: auto; }\n\n.main-interface-wrapper--dark {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300; }\n\n.edit-nodes__color-text {\n  width: 70%; }\n\n.title__main {\n  color: inherit;\n  text-align: center; }\n\n/* @import \"./blocks/upload-data.scss\"; */\n.step-title {\n  margin: 0;\n  margin-bottom: 5px;\n  font-weight: 600; }\n\n.step-title--dark {\n  font-weight: 400;\n  color: #fff; }\n\n.edit-interface-wrapper .step-title:hover {\n  cursor: pointer; }\n\n.hr--dark {\n  border-top: 1px solid rgba(0, 0, 0, 0.4); }\n\n/* #other-interface-wrapper {\n  z-index: 1;\n  position: absolute;\n  visibility: hidden;\n  background: #ffffff;\n  border-radius: 5px;\n  margin-top: 5px;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  max-height: 1000px;\n  max-width: 400px;\n  right: 5px;\n} */\n.borderless td {\n  border: none; }\n\n.cargo-colors__table {\n  margin-bottom: 0; }\n\n.table thead th {\n  border: none;\n  border-bottom: 1px dotted #1b1b1b; }\n\n.color-box {\n  display: inline-block;\n  width: 20px;\n  height: 20px;\n  background: #fff; }\n\n.color-box:hover {\n  box-shadow: 0 5px 7px rgba(0, 0, 0, 0.12), 0 5px 7px rgba(0, 0, 0, 0.24);\n  cursor: pointer; }\n\n#cities-fill-color-box {\n  background: #fff; }\n\n#cities-stroke-color-box {\n  background: #000; }\n\n.color-box--info-window {\n  margin-right: 5px; }\n  .color-box--info-window:hover {\n    box-shadow: none;\n    cursor: initial; }\n\n.huebee {\n  z-index: 10;\n  top: unset !important;\n  bottom: 370px !important; }\n\n.huebee__container {\n  background: rgba(35, 35, 35, 0.95);\n  left: -180px; }\n\n.huebee__cursor {\n  width: 20px;\n  height: 20px; }\n\n.huebee__cities-color {\n  top: unset !important;\n  bottom: 355px !important; }\n\n/* @import \"./blocks/linear-scale.scss\"; */\n.noUi-target {\n  margin-left: 15px;\n  margin-right: 15px;\n  border: none;\n  box-shadow: none;\n  background: rgba(53, 53, 53, 0.93); }\n\n.noUi-connect {\n  background: #717171; }\n\n.noUi-handle {\n  background: #656565;\n  border: none;\n  box-shadow: none; }\n\n.input-row {\n  margin-top: 20px; }\n\n.input-text {\n  width: 30%;\n  border: 1px solid #616161;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  text-align: center; }\n\n.input-text:focus {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  text-align: center;\n  width: 30%;\n  border: 1px solid #616161; }\n\n.input-col {\n  display: flex;\n  width: 40%; }\n\n.input-col--left {\n  align-items: baseline;\n  float: left; }\n\n.input-col--right {\n  justify-content: flex-end;\n  align-items: baseline;\n  float: right; }\n\n#max-width-input, #max-radius-input {\n  width: 40%; }\n\n.input-label {\n  color: #797979; }\n\n.input-label--prefix {\n  margin-right: 3px; }\n\n.input-label--postfix {\n  margin-left: 2px; }\n\n.form-row {\n  margin-top: 15px; }\n\n.nodes-settings__fill-color {\n  display: flex;\n  align-items: center;\n  margin: 2% 0; }\n\n.nodes-settings__stroke-color {\n  display: flex;\n  align-items: center;\n  margin-bottom: 11px; }\n\n.nodes-settings__text {\n  width: 65%; }\n\n.checkbox {\n  margin-top: 10px; }\n\n/* @import \"./blocks/other-settings.scss\"; */\n/* @import \"./blocks/zoom-interface.scss\"; */\n.current-zoom {\n  margin: 10px;\n  padding: 10px;\n  position: absolute;\n  right: 0;\n  top: 0;\n  z-index: 1000;\n  background: #ddd; }\n\n.info-window {\n  position: absolute;\n  bottom: 25px;\n  right: 5px;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300;\n  border-radius: 5px;\n  padding: 10px;\n  display: none; }\n\n.info-window__col:first-child {\n  margin-right: 10px;\n  border-right: 1px rgba(191, 191, 191, 0.17) solid;\n  padding-right: 8px; }\n\n.info-window__title {\n  font-size: 1rem;\n  font-weight: 400;\n  color: #fff; }\n\n.info-window__table-col:first-child {\n  padding-right: 8px; }\n\n.info-window__table-col--title {\n  font-weight: 400; }\n\n.info-window__cargo-item {\n  display: flex;\n  align-items: center; }\n\n.info-window__cargo-name-block {\n  display: flex;\n  align-items: center;\n  margin-right: 10px; }\n", ""]);
 
 
 
