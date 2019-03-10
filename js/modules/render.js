@@ -81,6 +81,84 @@ export function renderBackgroundLines(map, origLines) {
                 ],
             }
         });
+
+        const widthAdd = 30;
+
+        // add background lines hover layer
+        map.addLayer({
+            "id": "background-lines-hover",
+            "source": "background-lines",
+            "filter": [
+                "all",
+                ["!=", "totalWidth", 0],
+                ["==", "lineID", ""]
+            ],
+            "type": "line",
+            "paint": {
+                'line-color': "#ffff00",
+                "line-opacity": 1,
+                "line-blur": [
+                    'interpolate', ['linear'], ['zoom'],
+                    2, 0,
+                    10, 10
+                ],
+                "line-translate": [
+                    'interpolate', ['linear'], ['zoom'],
+                    4, ["literal", [0, 0]],
+                    10, ["literal", [10, 10]]
+                ],
+                'line-width': [
+                    'interpolate', ['linear'], ['zoom'],
+                    1, ['/', ['+', ['get', 'totalWidth'], widthAdd], 512],
+                    2, ['/', ['+', ['get', 'totalWidth'], widthAdd], 256],
+                    3, ['/', ['+', ['get', 'totalWidth'], widthAdd], 128],
+                    4, ['/', ['+', ['get', 'totalWidth'], widthAdd], 64],
+                    5, ['/', ['+', ['get', 'totalWidth'], widthAdd], 32],
+                    6, ['/', ['+', ['get', 'totalWidth'], widthAdd], 16],
+                    7, ['/', ['+', ['get', 'totalWidth'], widthAdd], 8],
+                    8, ['/', ['+', ['get', 'totalWidth'], widthAdd], 4],
+                    9, ['/', ['+', ['get', 'totalWidth'], widthAdd], 2],
+                    10, ['+', ['get', 'totalWidth'], widthAdd],
+                    11, ['*', ['+', ['get', 'totalWidth'], widthAdd], 2],
+                    12, ['*', ['+', ['get', 'totalWidth'], widthAdd], 4],
+                    13, ['*', ['+', ['get', 'totalWidth'], widthAdd], 8],
+                    14, ['*', ['+', ['get', 'totalWidth'], widthAdd], 16],
+                    15, ['*', ['+', ['get', 'totalWidth'], widthAdd], 32],
+                    16, ['*', ['+', ['get', 'totalWidth'], widthAdd], 64],
+                    17, ['*', ['+', ['get', 'totalWidth'], widthAdd], 128],
+                    18, ['*', ['+', ['get', 'totalWidth'], widthAdd], 256],
+                    19, ['*', ['+', ['get', 'totalWidth'], widthAdd], 512],
+                    20, ['*', ['+', ['get', 'totalWidth'], widthAdd], 1024],
+                    21, ['*', ['+', ['get', 'totalWidth'], widthAdd], 2048],
+                    22, ['*', ['+', ['get', 'totalWidth'], widthAdd], 4096]
+                ],
+                'line-offset': [
+                    'interpolate', ['linear'], ['zoom'],
+                    1, ['/', ['get', 'offset'], 512],
+                    2, ['/', ['get', 'offset'], 256],
+                    3, ['/', ['get', 'offset'], 128],
+                    4, ['/', ['get', 'offset'], 64],
+                    5, ['/', ['get', 'offset'], 32],
+                    6, ['/', ['get', 'offset'], 16],
+                    7, ['/', ['get', 'offset'], 8],
+                    8, ['/', ['get', 'offset'], 4],
+                    9, ['/', ['get', 'offset'], 2],
+                    10, ['get', 'offset'],
+                    11, ['*', ['get', 'offset'], 2],
+                    12, ['*', ['get', 'offset'], 4],
+                    13, ['*', ['get', 'offset'], 8],
+                    14, ['*', ['get', 'offset'], 16],
+                    15, ['*', ['get', 'offset'], 32],
+                    16, ['*', ['get', 'offset'], 64],
+                    17, ['*', ['get', 'offset'], 128],
+                    18, ['*', ['get', 'offset'], 256],
+                    19, ['*', ['get', 'offset'], 512],
+                    20, ['*', ['get', 'offset'], 1024],
+                    21, ['*', ['get', 'offset'], 2048],
+                    22, ['*', ['get', 'offset'], 4096]
+                ],
+            }
+        });
     }
 }
 
@@ -158,7 +236,7 @@ export function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObjec
             if (!map.getSource(`${cargoObj.type}-nodes`)) {
                 map.addSource(`${cargoObj.type}-nodes`, { type: "geojson", data: multipleCargoNodesObject[cargoObj.type] });
             }
-           
+
             map.addLayer({
                 "id": cargoObj.type,
                 "source": "edges",

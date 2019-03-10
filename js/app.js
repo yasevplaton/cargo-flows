@@ -279,18 +279,15 @@ window.onload = () => {
             const infoWindowElements = getInfoWindowElements(infoWindow);
             const infoWindowCargoListItems = createInfoWindowCargoListItems(cargoColorArray);
             addCargoListItems(infoWindowCargoListItems, infoWindowElements);
-            
-            // createInfoWindowCargoListItems(cargoColorArray, infoWindowElements);
 
-            // console.log(infoWindowCargoListItems);
             map.on('mouseenter', 'background-lines', e => {
                 map.getCanvas().style.cursor = 'pointer';
-                showInfoWindow(e, infoWindow, infoWindowElements);
+                showInfoWindow(e, infoWindow, infoWindowElements, map);
             });
 
             map.on('mouseleave', 'background-lines', () => {
                 map.getCanvas().style.cursor = '';
-                hideInfoWindow(infoWindow, infoWindowElements);
+                hideInfoWindow(infoWindow, map);
 
             });
 

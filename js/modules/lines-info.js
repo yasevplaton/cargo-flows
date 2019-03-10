@@ -85,9 +85,17 @@ function getInfoWindowMarkup(infoWindow) {
 }
 
 
-export function showInfoWindow(e, infoWindow, infoWindowElements) {
+export function showInfoWindow(e, infoWindow, infoWindowElements, map) {
   // const popupPosition = e.lngLat;
-  // console.log(e);
+
+  const lineID = e.features[0].properties.lineID;
+
+  map.setFilter('background-lines-hover', [
+    "all",
+    ["!=", "totalWidth", 0],
+    ["==", "lineID", lineID]
+  ]);
+
   const infoOneDir = JSON.parse(e.features[0].properties.dataOneDir);
   const infoTwoDir = JSON.parse(e.features[0].properties.dataTwoDir);
 
@@ -137,8 +145,15 @@ export function showInfoWindow(e, infoWindow, infoWindowElements) {
 
 }
 
-export function hideInfoWindow(infoWindow) {
+export function hideInfoWindow(infoWindow, map) {
+
   infoWindow.style.display = 'none';
+
+  map.setFilter('background-lines-hover', [
+    "all",
+    ["!=", "totalWidth", 0],
+    ["==", "lineID", ""]
+  ]);
   // linePopup.remove();
 }
 
