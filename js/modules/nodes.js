@@ -2,12 +2,21 @@ import { interpolateRound } from 'd3-interpolate';
 import { isInRange } from "./common";
 
 // function to bind information about edges to node
-export function bindEdgesInfoToNodes(node, edges, map) {
+export function bindEdgesInfoToNodes(node, edges, map, cargoTypes) {
     let nodeID = node.properties.OBJECTID;
     let inEdges = [];
     let outEdges = [];
+    const inCargos = {};
+    const outCargos = {};
     let filledAdjacentLines = [];
     let nodeTraffic = 0;
+    let outTotal = 0;
+    let inTotal = 0;
+    
+    cargoTypes.forEach(type => {
+        inCargos[type] = 0;
+        outCargos[type] = 0;
+    });
 
     edges.features.forEach(e => {
         let edgesProps = e.properties;
@@ -29,6 +38,10 @@ export function bindEdgesInfoToNodes(node, edges, map) {
                     'secondPoint': map.project(edgeGeom[1])
                 });
 
+                outCargos[edgesProps.type] = outCargos[edgesProps.type] + edgesProps.value;
+
+                outTotal += edgesProps.value;
+
                 if (!filledAdjacentLines.includes(edgesProps.ID_line)) {
                     filledAdjacentLines.push(edgesProps.ID_line);
                 }
@@ -47,6 +60,10 @@ export function bindEdgesInfoToNodes(node, edges, map) {
                     'beforeLastPoint': map.project(edgeGeom[numOfPoints - 2])
                 });
 
+                inCargos[edgesProps.type] = inCargos[edgesProps.type] + edgesProps.value;
+                
+                inTotal += edgesProps.value;
+
                 if (!filledAdjacentLines.includes(edgesProps.ID_line)) {
                     filledAdjacentLines.push(edgesProps.ID_line);
                 }
@@ -58,7 +75,11 @@ export function bindEdgesInfoToNodes(node, edges, map) {
 
     node.properties.filledAdjacentLines = filledAdjacentLines;
     node.properties.inEdges = inEdges;
+    node.properties.inTotal = inTotal;
+    node.properties.inCargos = inCargos;
     node.properties.outEdges = outEdges;
+    node.properties.outTotal = outTotal;
+    node.properties.outCargos = outCargos;
     node.properties.nodeTraffic = nodeTraffic;
 }
 

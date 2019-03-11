@@ -27,7 +27,8 @@ import { renderEdges, renderOrigLines, renderNodes, renderBackgroundLines } from
 import { createColorTable, createSlider, toggleLayerVisibility, bindColorPickerToCitiesColorBoxes } from "./modules/interface";
 import { collectLinesIDs, createOrigLines, fillOrigLinesWithData } from './modules/orig-lines';
 import { addWidthAndOffsetAttr } from './modules/bg-lines';
-import { showInfoWindow, hideInfoWindow, getInfoWindowElements, createInfoWindowCargoListItems, addCargoListItems, getInfoWindowMarkup } from "./modules/lines-info";
+import { showLineInfoWindow, hideLineInfoWindow, getInfoWindowElements, createInfoWindowCargoListItems, addCargoListItems, getInfoWindowMarkup } from "./modules/lines-info";
+import { showNodeInfoWindow, hideNodeInfoWindow } from "./modules/nodes-info";
 
 window.onload = () => {
 
@@ -226,7 +227,7 @@ window.onload = () => {
 
             // calculate node radius
             nodes.features.forEach(node => {
-                bindEdgesInfoToNodes(node, edges, map);
+                bindEdgesInfoToNodes(node, edges, map, cargoTypes);
                 fillNodeTrafficArray(nodeTrafficArray, node);
                 addNodeAttr(node, cargoTypes, map);
             });
@@ -282,12 +283,23 @@ window.onload = () => {
 
             map.on('mouseenter', 'background-lines', e => {
                 map.getCanvas().style.cursor = 'pointer';
-                showInfoWindow(e, infoWindow, infoWindowElements, map);
+                showLineInfoWindow(e, infoWindow, infoWindowElements, map);
             });
 
             map.on('mouseleave', 'background-lines', () => {
                 map.getCanvas().style.cursor = '';
-                hideInfoWindow(infoWindow, map);
+                hideLineInfoWindow(infoWindow, map);
+
+            });
+
+            map.on('mouseenter', 'cities', e => {
+                map.getCanvas().style.cursor = 'pointer';
+                showNodeInfoWindow(e, infoWindow, infoWindowElements, map);
+            });
+
+            map.on('mouseleave', 'cities', () => {
+                map.getCanvas().style.cursor = '';
+                hideNodeInfoWindow(infoWindow, map);
 
             });
 
@@ -411,7 +423,7 @@ window.onload = () => {
                 map.setZoom(10);
 
                 nodes.features.forEach(node => {
-                    bindEdgesInfoToNodes(node, edges, map);
+                    bindEdgesInfoToNodes(node, edges, map, cargoTypes);
                     addNodeAttr(node, cargoTypes, map);
                 });
 
@@ -441,10 +453,10 @@ window.onload = () => {
         }
 
     });
-    // map.on('zoomend', function () {
-    //     document.getElementById('zoom-level').innerHTML = 'Zoom Level: ' + map.getZoom();
-    // });
+    map.on('zoomend', function () {
+        document.getElementById('zoom-level').innerHTML = 'Zoom Level: ' + map.getZoom();
+    });
 
-    // const to10ZoomBtn = document.getElementById('to-10-zoom-level');
-    // to10ZoomBtn.addEventListener('click', () => map.setZoom(10));
+    const to10ZoomBtn = document.getElementById('to-10-zoom-level');
+    to10ZoomBtn.addEventListener('click', () => map.setZoom(10));
 };

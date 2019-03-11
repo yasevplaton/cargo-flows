@@ -140,7 +140,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_orig_lines__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./modules/orig-lines */ "./js/modules/orig-lines.js");
 /* harmony import */ var _modules_bg_lines__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./modules/bg-lines */ "./js/modules/bg-lines.js");
 /* harmony import */ var _modules_lines_info__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./modules/lines-info */ "./js/modules/lines-info.js");
+/* harmony import */ var _modules_nodes_info__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./modules/nodes-info */ "./js/modules/nodes-info.js");
 // import js modules
+
 
 
 
@@ -354,7 +356,7 @@ window.onload = () => {
 
             // calculate node radius
             nodes.features.forEach(node => {
-                Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["bindEdgesInfoToNodes"])(node, edges, map);
+                Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["bindEdgesInfoToNodes"])(node, edges, map, cargoTypes);
                 Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["fillNodeTrafficArray"])(nodeTrafficArray, node);
                 Object(_modules_cargo_nodes__WEBPACK_IMPORTED_MODULE_6__["addNodeAttr"])(node, cargoTypes, map);
             });
@@ -410,12 +412,23 @@ window.onload = () => {
 
             map.on('mouseenter', 'background-lines', e => {
                 map.getCanvas().style.cursor = 'pointer';
-                Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_11__["showInfoWindow"])(e, infoWindow, infoWindowElements, map);
+                Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_11__["showLineInfoWindow"])(e, infoWindow, infoWindowElements, map);
             });
 
             map.on('mouseleave', 'background-lines', () => {
                 map.getCanvas().style.cursor = '';
-                Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_11__["hideInfoWindow"])(infoWindow, map);
+                Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_11__["hideLineInfoWindow"])(infoWindow, map);
+
+            });
+
+            map.on('mouseenter', 'cities', e => {
+                map.getCanvas().style.cursor = 'pointer';
+                Object(_modules_nodes_info__WEBPACK_IMPORTED_MODULE_12__["showNodeInfoWindow"])(e, infoWindow, infoWindowElements, map);
+            });
+
+            map.on('mouseleave', 'cities', () => {
+                map.getCanvas().style.cursor = '';
+                Object(_modules_nodes_info__WEBPACK_IMPORTED_MODULE_12__["hideNodeInfoWindow"])(infoWindow, map);
 
             });
 
@@ -539,7 +552,7 @@ window.onload = () => {
                 map.setZoom(10);
 
                 nodes.features.forEach(node => {
-                    Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["bindEdgesInfoToNodes"])(node, edges, map);
+                    Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["bindEdgesInfoToNodes"])(node, edges, map, cargoTypes);
                     Object(_modules_cargo_nodes__WEBPACK_IMPORTED_MODULE_6__["addNodeAttr"])(node, cargoTypes, map);
                 });
 
@@ -569,12 +582,12 @@ window.onload = () => {
         }
 
     });
-    // map.on('zoomend', function () {
-    //     document.getElementById('zoom-level').innerHTML = 'Zoom Level: ' + map.getZoom();
-    // });
+    map.on('zoomend', function () {
+        document.getElementById('zoom-level').innerHTML = 'Zoom Level: ' + map.getZoom();
+    });
 
-    // const to10ZoomBtn = document.getElementById('to-10-zoom-level');
-    // to10ZoomBtn.addEventListener('click', () => map.setZoom(10));
+    const to10ZoomBtn = document.getElementById('to-10-zoom-level');
+    to10ZoomBtn.addEventListener('click', () => map.setZoom(10));
 };
 
 
@@ -2391,7 +2404,7 @@ function bindColorPickerToCitiesColorBoxes(fillColorBox, strokeColorBox, map) {
 /*!**********************************!*\
   !*** ./js/modules/lines-info.js ***!
   \**********************************/
-/*! exports provided: getInfoWindowElements, createInfoWindowCargoListItems, addCargoListItems, showInfoWindow, hideInfoWindow, changeColorInfoWindowColorBox */
+/*! exports provided: getInfoWindowElements, createInfoWindowCargoListItems, addCargoListItems, showLineInfoWindow, hideLineInfoWindow, changeColorInfoWindowColorBox */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2399,26 +2412,36 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getInfoWindowElements", function() { return getInfoWindowElements; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createInfoWindowCargoListItems", function() { return createInfoWindowCargoListItems; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addCargoListItems", function() { return addCargoListItems; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "showInfoWindow", function() { return showInfoWindow; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hideInfoWindow", function() { return hideInfoWindow; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "showLineInfoWindow", function() { return showLineInfoWindow; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hideLineInfoWindow", function() { return hideLineInfoWindow; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "changeColorInfoWindowColorBox", function() { return changeColorInfoWindowColorBox; });
 function getInfoWindowElements(infoWindow) {
 
+  const sourceRows = infoWindow.querySelectorAll('.info-window__table-row--source');
+  const destRows = infoWindow.querySelectorAll('.info-window__table-row--destination');
+
   const colDirOne = infoWindow.querySelector('#info-window__col-1');
+  const titleDirOne = colDirOne.querySelector('.info-window__title');
   const sourceColDirOne = colDirOne.querySelector('.info-window__source');
   const destColDirOne = colDirOne.querySelector('.info-window__destination');
   const totalVolumeColDirOne = colDirOne.querySelector('.info-window__total-volume');
   const cargoListDirOne = colDirOne.querySelector('.info-window__cargo-list--dir-1');
 
   const colDirTwo = infoWindow.querySelector('#info-window__col-2');
+  const titleDirTwo = colDirTwo.querySelector('.info-window__title');
   const sourceColDirTwo = colDirTwo.querySelector('.info-window__source');
   const destColDirTwo = colDirTwo.querySelector('.info-window__destination');
   const totalVolumeColDirTwo = colDirTwo.querySelector('.info-window__total-volume');
   const cargoListDirTwo = colDirTwo.querySelector('.info-window__cargo-list--dir-2');
 
+
   return {
 
+    sourceRows: sourceRows,
+    destRows: destRows,
+
     dirOne: {
+      title: titleDirOne,
       sourceCol: sourceColDirOne,
       destCol: destColDirOne,
       cargoList: cargoListDirOne,
@@ -2426,6 +2449,7 @@ function getInfoWindowElements(infoWindow) {
     },
 
     dirTwo: {
+      title: titleDirTwo,
       sourceCol: sourceColDirTwo,
       destCol: destColDirTwo,
       cargoList: cargoListDirTwo,
@@ -2489,7 +2513,7 @@ function getInfoWindowMarkup(infoWindow) {
 }
 
 
-function showInfoWindow(e, infoWindow, infoWindowElements, map) {
+function showLineInfoWindow(e, infoWindow, infoWindowElements, map) {
   // const popupPosition = e.lngLat;
 
   const lineID = e.features[0].properties.lineID;
@@ -2500,16 +2524,33 @@ function showInfoWindow(e, infoWindow, infoWindowElements, map) {
     ["==", "lineID", lineID]
   ]);
 
+  let totalOneDir = 0;
+  let totalTwoDir = 0;
+  const denominator = 100000;
+  const factor = 100;
+
+  infoWindowElements.dirOne.title.textContent = 'Прямо';
+  infoWindowElements.dirTwo.title.textContent = 'Обратно';
+
+  const sourceRows = infoWindowElements.sourceRows;
+  const destRows = infoWindowElements.destRows;
+
+  const rowsToHide = [sourceRows, destRows];
+
+  for (let rows of rowsToHide) {
+    Array.from(rows).forEach(row => {
+      row.style.display = 'table-row';
+    });
+  }
+
   const infoOneDir = JSON.parse(e.features[0].properties.dataOneDir);
   const infoTwoDir = JSON.parse(e.features[0].properties.dataTwoDir);
 
   infoWindowElements.dirOne.sourceCol.textContent = infoOneDir.src;
   infoWindowElements.dirOne.destCol.textContent = infoOneDir.dest;
-  infoWindowElements.dirOne.totalVolumeCol.textContent = infoOneDir.totalVolume;
 
   infoWindowElements.dirTwo.sourceCol.textContent = infoTwoDir.src;
   infoWindowElements.dirTwo.destCol.textContent = infoTwoDir.dest;
-  infoWindowElements.dirTwo.totalVolumeCol.textContent = infoTwoDir.totalVolume;
 
   const cargoListDirOne = infoWindowElements.dirOne.cargoList;
   const cargoListDirTwo = infoWindowElements.dirTwo.cargoList;
@@ -2519,21 +2560,28 @@ function showInfoWindow(e, infoWindow, infoWindowElements, map) {
 
   for (let cargoType in valuesOneDir) {
     if (valuesOneDir.hasOwnProperty(cargoType)) {
-      const value = valuesOneDir[cargoType];
+      let value = valuesOneDir[cargoType] / denominator;
       const reqCargoItem = cargoListDirOne.querySelector(`.info-window__cargo-item-${cargoType}`);
       const reqValueSpan = reqCargoItem.querySelector('.info-window__cargo-value');
+      value = Math.ceil(value) * factor;
       reqValueSpan.textContent = value;
+      totalOneDir += value;
     }
   }
 
   for (let cargoType in valuesTwoDir) {
     if (valuesTwoDir.hasOwnProperty(cargoType)) {
-      const value = valuesTwoDir[cargoType];
+      let value = valuesTwoDir[cargoType] / denominator;
       const reqCargoItem = cargoListDirTwo.querySelector(`.info-window__cargo-item-${cargoType}`);
       const reqValueSpan = reqCargoItem.querySelector('.info-window__cargo-value');
+      value = Math.ceil(value) * factor;
       reqValueSpan.textContent = value;
+      totalTwoDir += value;
     }
   }
+
+  infoWindowElements.dirOne.totalVolumeCol.textContent = totalOneDir;
+  infoWindowElements.dirTwo.totalVolumeCol.textContent = totalTwoDir;
 
   infoWindow.style.display = 'inline-flex';
 
@@ -2549,7 +2597,7 @@ function showInfoWindow(e, infoWindow, infoWindowElements, map) {
 
 }
 
-function hideInfoWindow(infoWindow, map) {
+function hideLineInfoWindow(infoWindow, map) {
 
   infoWindow.style.display = 'none';
 
@@ -2712,6 +2760,110 @@ if (!("hypot" in Math)) {  // Polyfill
 
 /***/ }),
 
+/***/ "./js/modules/nodes-info.js":
+/*!**********************************!*\
+  !*** ./js/modules/nodes-info.js ***!
+  \**********************************/
+/*! exports provided: showNodeInfoWindow, hideNodeInfoWindow */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "showNodeInfoWindow", function() { return showNodeInfoWindow; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hideNodeInfoWindow", function() { return hideNodeInfoWindow; });
+function showNodeInfoWindow(e, infoWindow, infoWindowElements, map) {
+  // const popupPosition = e.lngLat;
+  // console.log(e);
+  
+  const nodeProps = e.features[0].properties;
+
+  const sourceRows = infoWindowElements.sourceRows;
+  const destRows = infoWindowElements.destRows;
+
+  const rowsToHide = [sourceRows, destRows];
+  for (let rows of rowsToHide) {
+    Array.from(rows).forEach(row => {
+      row.style.display = 'none';
+    });
+  }
+
+  infoWindowElements.dirOne.title.textContent = 'Вход';
+  infoWindowElements.dirTwo.title.textContent = 'Выход';
+
+
+
+  // const lineID = e.features[0].properties.lineID;
+
+  // map.setFilter('background-lines-hover', [
+  //   "all",
+  //   ["!=", "totalWidth", 0],
+  //   ["==", "lineID", lineID]
+  // ]);
+
+  const denominator = 100000;
+  const factor = 100;
+
+  const inCargos = JSON.parse(nodeProps.inCargos);
+  const outCargos= JSON.parse(nodeProps.outCargos);
+  let inTotal = 0;
+  let outTotal = 0;
+
+  const cargoListDirOne = infoWindowElements.dirOne.cargoList;
+  const cargoListDirTwo = infoWindowElements.dirTwo.cargoList;
+
+  for (let cargoType in inCargos) {
+    if (inCargos.hasOwnProperty(cargoType)) {
+      let value = inCargos[cargoType] / denominator;
+      const reqCargoItem = cargoListDirOne.querySelector(`.info-window__cargo-item-${cargoType}`);
+      const reqValueSpan = reqCargoItem.querySelector('.info-window__cargo-value');
+      value = Math.ceil(value) * factor
+      reqValueSpan.textContent = value;
+      inTotal += value;
+    }
+  }
+
+  for (let cargoType in outCargos) {
+    if (outCargos.hasOwnProperty(cargoType)) {
+      let value = outCargos[cargoType] / denominator;
+      const reqCargoItem = cargoListDirTwo.querySelector(`.info-window__cargo-item-${cargoType}`);
+      const reqValueSpan = reqCargoItem.querySelector('.info-window__cargo-value');
+      value = Math.ceil(value) * factor
+      reqValueSpan.textContent = value;
+      outTotal += value;
+    }
+  }
+
+  infoWindowElements.dirOne.totalVolumeCol.textContent = inTotal;
+  infoWindowElements.dirTwo.totalVolumeCol.textContent = outTotal;
+
+  infoWindow.style.display = 'inline-flex';
+
+  // while (Math.abs(e.lngLat.lng - popupPosition[0]) > 180) {
+  //   popupPosition[0] += e.lngLat.lng > popupPosition[0] ? 360 : -360;
+  // }
+
+
+  // linePopup.setLngLat(popupPosition)
+  //   .setHTML(getInfoWindowMarkup(infoWindow))
+  //   .addTo(map);
+
+
+}
+
+function hideNodeInfoWindow(infoWindow, map) {
+
+  infoWindow.style.display = 'none';
+
+  // map.setFilter('background-lines-hover', [
+  //   "all",
+  //   ["!=", "totalWidth", 0],
+  //   ["==", "lineID", ""]
+  // ]);
+  // linePopup.remove();
+}
+
+/***/ }),
+
 /***/ "./js/modules/nodes.js":
 /*!*****************************!*\
   !*** ./js/modules/nodes.js ***!
@@ -2734,12 +2886,21 @@ __webpack_require__.r(__webpack_exports__);
 
 
 // function to bind information about edges to node
-function bindEdgesInfoToNodes(node, edges, map) {
+function bindEdgesInfoToNodes(node, edges, map, cargoTypes) {
     let nodeID = node.properties.OBJECTID;
     let inEdges = [];
     let outEdges = [];
+    const inCargos = {};
+    const outCargos = {};
     let filledAdjacentLines = [];
     let nodeTraffic = 0;
+    let outTotal = 0;
+    let inTotal = 0;
+    
+    cargoTypes.forEach(type => {
+        inCargos[type] = 0;
+        outCargos[type] = 0;
+    });
 
     edges.features.forEach(e => {
         let edgesProps = e.properties;
@@ -2761,6 +2922,10 @@ function bindEdgesInfoToNodes(node, edges, map) {
                     'secondPoint': map.project(edgeGeom[1])
                 });
 
+                outCargos[edgesProps.type] = outCargos[edgesProps.type] + edgesProps.value;
+
+                outTotal += edgesProps.value;
+
                 if (!filledAdjacentLines.includes(edgesProps.ID_line)) {
                     filledAdjacentLines.push(edgesProps.ID_line);
                 }
@@ -2779,6 +2944,10 @@ function bindEdgesInfoToNodes(node, edges, map) {
                     'beforeLastPoint': map.project(edgeGeom[numOfPoints - 2])
                 });
 
+                inCargos[edgesProps.type] = inCargos[edgesProps.type] + edgesProps.value;
+                
+                inTotal += edgesProps.value;
+
                 if (!filledAdjacentLines.includes(edgesProps.ID_line)) {
                     filledAdjacentLines.push(edgesProps.ID_line);
                 }
@@ -2790,7 +2959,11 @@ function bindEdgesInfoToNodes(node, edges, map) {
 
     node.properties.filledAdjacentLines = filledAdjacentLines;
     node.properties.inEdges = inEdges;
+    node.properties.inTotal = inTotal;
+    node.properties.inCargos = inCargos;
     node.properties.outEdges = outEdges;
+    node.properties.outTotal = outTotal;
+    node.properties.outCargos = outCargos;
     node.properties.nodeTraffic = nodeTraffic;
 }
 

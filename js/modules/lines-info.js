@@ -1,20 +1,30 @@
 export function getInfoWindowElements(infoWindow) {
 
+  const sourceRows = infoWindow.querySelectorAll('.info-window__table-row--source');
+  const destRows = infoWindow.querySelectorAll('.info-window__table-row--destination');
+
   const colDirOne = infoWindow.querySelector('#info-window__col-1');
+  const titleDirOne = colDirOne.querySelector('.info-window__title');
   const sourceColDirOne = colDirOne.querySelector('.info-window__source');
   const destColDirOne = colDirOne.querySelector('.info-window__destination');
   const totalVolumeColDirOne = colDirOne.querySelector('.info-window__total-volume');
   const cargoListDirOne = colDirOne.querySelector('.info-window__cargo-list--dir-1');
 
   const colDirTwo = infoWindow.querySelector('#info-window__col-2');
+  const titleDirTwo = colDirTwo.querySelector('.info-window__title');
   const sourceColDirTwo = colDirTwo.querySelector('.info-window__source');
   const destColDirTwo = colDirTwo.querySelector('.info-window__destination');
   const totalVolumeColDirTwo = colDirTwo.querySelector('.info-window__total-volume');
   const cargoListDirTwo = colDirTwo.querySelector('.info-window__cargo-list--dir-2');
 
+
   return {
 
+    sourceRows: sourceRows,
+    destRows: destRows,
+
     dirOne: {
+      title: titleDirOne,
       sourceCol: sourceColDirOne,
       destCol: destColDirOne,
       cargoList: cargoListDirOne,
@@ -22,6 +32,7 @@ export function getInfoWindowElements(infoWindow) {
     },
 
     dirTwo: {
+      title: titleDirTwo,
       sourceCol: sourceColDirTwo,
       destCol: destColDirTwo,
       cargoList: cargoListDirTwo,
@@ -85,7 +96,7 @@ function getInfoWindowMarkup(infoWindow) {
 }
 
 
-export function showInfoWindow(e, infoWindow, infoWindowElements, map) {
+export function showLineInfoWindow(e, infoWindow, infoWindowElements, map) {
   // const popupPosition = e.lngLat;
 
   const lineID = e.features[0].properties.lineID;
@@ -96,16 +107,33 @@ export function showInfoWindow(e, infoWindow, infoWindowElements, map) {
     ["==", "lineID", lineID]
   ]);
 
+  let totalOneDir = 0;
+  let totalTwoDir = 0;
+  const denominator = 100000;
+  const factor = 100;
+
+  infoWindowElements.dirOne.title.textContent = 'Прямо';
+  infoWindowElements.dirTwo.title.textContent = 'Обратно';
+
+  const sourceRows = infoWindowElements.sourceRows;
+  const destRows = infoWindowElements.destRows;
+
+  const rowsToHide = [sourceRows, destRows];
+
+  for (let rows of rowsToHide) {
+    Array.from(rows).forEach(row => {
+      row.style.display = 'table-row';
+    });
+  }
+
   const infoOneDir = JSON.parse(e.features[0].properties.dataOneDir);
   const infoTwoDir = JSON.parse(e.features[0].properties.dataTwoDir);
 
   infoWindowElements.dirOne.sourceCol.textContent = infoOneDir.src;
   infoWindowElements.dirOne.destCol.textContent = infoOneDir.dest;
-  infoWindowElements.dirOne.totalVolumeCol.textContent = infoOneDir.totalVolume;
 
   infoWindowElements.dirTwo.sourceCol.textContent = infoTwoDir.src;
   infoWindowElements.dirTwo.destCol.textContent = infoTwoDir.dest;
-  infoWindowElements.dirTwo.totalVolumeCol.textContent = infoTwoDir.totalVolume;
 
   const cargoListDirOne = infoWindowElements.dirOne.cargoList;
   const cargoListDirTwo = infoWindowElements.dirTwo.cargoList;
@@ -115,21 +143,28 @@ export function showInfoWindow(e, infoWindow, infoWindowElements, map) {
 
   for (let cargoType in valuesOneDir) {
     if (valuesOneDir.hasOwnProperty(cargoType)) {
-      const value = valuesOneDir[cargoType];
+      let value = valuesOneDir[cargoType] / denominator;
       const reqCargoItem = cargoListDirOne.querySelector(`.info-window__cargo-item-${cargoType}`);
       const reqValueSpan = reqCargoItem.querySelector('.info-window__cargo-value');
+      value = Math.ceil(value) * factor;
       reqValueSpan.textContent = value;
+      totalOneDir += value;
     }
   }
 
   for (let cargoType in valuesTwoDir) {
     if (valuesTwoDir.hasOwnProperty(cargoType)) {
-      const value = valuesTwoDir[cargoType];
+      let value = valuesTwoDir[cargoType] / denominator;
       const reqCargoItem = cargoListDirTwo.querySelector(`.info-window__cargo-item-${cargoType}`);
       const reqValueSpan = reqCargoItem.querySelector('.info-window__cargo-value');
+      value = Math.ceil(value) * factor;
       reqValueSpan.textContent = value;
+      totalTwoDir += value;
     }
   }
+
+  infoWindowElements.dirOne.totalVolumeCol.textContent = totalOneDir;
+  infoWindowElements.dirTwo.totalVolumeCol.textContent = totalTwoDir;
 
   infoWindow.style.display = 'inline-flex';
 
@@ -145,7 +180,7 @@ export function showInfoWindow(e, infoWindow, infoWindowElements, map) {
 
 }
 
-export function hideInfoWindow(infoWindow, map) {
+export function hideLineInfoWindow(infoWindow, map) {
 
   infoWindow.style.display = 'none';
 
