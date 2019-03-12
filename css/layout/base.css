@@ -33,3 +33,7 @@ ul {
 .hidden {
   display: none;
 }
+
+.info-window {
+  display: none;
+}

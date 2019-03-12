@@ -139,8 +139,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_interface__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./modules/interface */ "./js/modules/interface.js");
 /* harmony import */ var _modules_orig_lines__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./modules/orig-lines */ "./js/modules/orig-lines.js");
 /* harmony import */ var _modules_bg_lines__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./modules/bg-lines */ "./js/modules/bg-lines.js");
-/* harmony import */ var _modules_lines_info__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./modules/lines-info */ "./js/modules/lines-info.js");
-/* harmony import */ var _modules_nodes_info__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./modules/nodes-info */ "./js/modules/nodes-info.js");
+/* harmony import */ var _modules_info_window__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./modules/info-window */ "./js/modules/info-window.js");
+/* harmony import */ var _modules_lines_info__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./modules/lines-info */ "./js/modules/lines-info.js");
 // import js modules
 
 
@@ -158,6 +158,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+// import { showNodeInfoWindow, hideNodeInfoWindow } from "./modules/nodes-info";
 
 window.onload = () => {
 
@@ -406,31 +407,29 @@ window.onload = () => {
             //     closeOnClick: false
             // });
 
-            const infoWindowElements = Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_11__["getInfoWindowElements"])(infoWindow);
-            const infoWindowCargoListItems = Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_11__["createInfoWindowCargoListItems"])(cargoColorArray);
-            Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_11__["addCargoListItems"])(infoWindowCargoListItems, infoWindowElements);
+            const infoWindowElements = Object(_modules_info_window__WEBPACK_IMPORTED_MODULE_11__["getInfoWindowElements"])(infoWindow);
+            Object(_modules_info_window__WEBPACK_IMPORTED_MODULE_11__["addCargoList"])(infoWindowElements, cargoColorArray);
 
             map.on('mouseenter', 'background-lines', e => {
                 map.getCanvas().style.cursor = 'pointer';
-                Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_11__["showLineInfoWindow"])(e, infoWindow, infoWindowElements, map);
+                Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_12__["showLineInfoWindow"])(e, infoWindow, infoWindowElements, map);
             });
 
             map.on('mouseleave', 'background-lines', () => {
                 map.getCanvas().style.cursor = '';
-                Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_11__["hideLineInfoWindow"])(infoWindow, map);
-
+                Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_12__["hideLineInfoWindow"])(infoWindow, map);
             });
 
-            map.on('mouseenter', 'cities', e => {
-                map.getCanvas().style.cursor = 'pointer';
-                Object(_modules_nodes_info__WEBPACK_IMPORTED_MODULE_12__["showNodeInfoWindow"])(e, infoWindow, infoWindowElements, map);
-            });
+            // map.on('mouseenter', 'cities', e => {
+            //     map.getCanvas().style.cursor = 'pointer';
+            //     showNodeInfoWindow(e, infoWindow, infoWindowElements, map);
+            // });
 
-            map.on('mouseleave', 'cities', () => {
-                map.getCanvas().style.cursor = '';
-                Object(_modules_nodes_info__WEBPACK_IMPORTED_MODULE_12__["hideNodeInfoWindow"])(infoWindow, map);
+            // map.on('mouseleave', 'cities', () => {
+            //     map.getCanvas().style.cursor = '';
+            //     hideNodeInfoWindow(infoWindow, map);
 
-            });
+            // });
 
             // initialize render counter
             let startWidthSliderCounter = 0;
@@ -2257,6 +2256,101 @@ return geostats;
 
 /***/ }),
 
+/***/ "./js/modules/info-window.js":
+/*!***********************************!*\
+  !*** ./js/modules/info-window.js ***!
+  \***********************************/
+/*! exports provided: getInfoWindowElements, addCargoList, changeColorInfoWindowColorBox, getInfoWindowMarkup */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getInfoWindowElements", function() { return getInfoWindowElements; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addCargoList", function() { return addCargoList; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "changeColorInfoWindowColorBox", function() { return changeColorInfoWindowColorBox; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getInfoWindowMarkup", function() { return getInfoWindowMarkup; });
+function getInfoWindowElements(infoWindow) {
+
+  const tableHeading = infoWindow.querySelector('.info-window__table-heading');
+  const tableBody = infoWindow.querySelector('.info-window__table-body');
+  const titleDirOne = tableHeading.querySelector('.info-window__col--dir-1');
+  const titleDirTwo = tableHeading.querySelector('.info-window__col--dir-2');
+  const totalVolumeRow = tableBody.querySelector('.info-window__row--total');
+  const totalVolumeDirOne = totalVolumeRow.querySelector('.info-window__col--dir-1');
+  const totalVolumeDirTwo = totalVolumeRow.querySelector('.info-window__col--dir-2');
+
+  console.log(titleDirOne, titleDirTwo);
+
+  return {
+
+    tableHeading: tableHeading,
+    tableBody: tableBody,
+    totalVolumeRow: totalVolumeRow,
+
+    dirOne: {
+      title: titleDirOne,
+      totalVolume: totalVolumeDirOne
+    },
+
+    dirTwo: {
+      title: titleDirTwo,
+      totalVolume: totalVolumeDirTwo
+    }
+
+  }
+}
+
+function addCargoList(infoWindowElements, cargoColorArray) {
+
+  const tableBody = infoWindowElements.tableBody;
+  const totalVolumeRow = infoWindowElements.totalVolumeRow;
+
+  cargoColorArray.forEach(cargoObj => {
+
+    const cargoRow = document.createElement('tr');
+    cargoRow.classList.add('info-window__row', `info-window__row--${cargoObj.id}`, `info-window__row--${cargoObj.type}`);
+
+    const cargoColorBoxCol = document.createElement('td');
+    cargoColorBoxCol.classList.add('info-window__col', 'info-window__col--cargo-color');
+    
+    const cargoColorBox = document.createElement('span');
+    cargoColorBox.classList.add('color-box', 'color-box--info-window');
+    cargoColorBox.style.background = cargoObj.color;
+    cargoColorBoxCol.appendChild(cargoColorBox);
+
+    const cargoTypeCol = document.createElement('td');
+    cargoTypeCol.classList.add('info-window__col', 'info-window__col--cargo-name');
+    cargoTypeCol.textContent = cargoObj.type;
+  
+    const cargoDirOneCol = document.createElement('td');
+    cargoDirOneCol.classList.add('info-window__col', 'info-window__col--dir-1');
+    
+    const cargoDirTwoCol = document.createElement('td');
+    cargoDirTwoCol.classList.add('info-window__col', 'info-window__col--dir-2');
+
+    const cargoCols = [cargoColorBoxCol, cargoTypeCol, cargoDirOneCol, cargoDirTwoCol];
+
+    cargoCols.forEach(col => {
+      cargoRow.appendChild(col);
+    });
+
+    tableBody.insertBefore(cargoRow, totalVolumeRow);
+
+  });
+}
+
+function changeColorInfoWindowColorBox(color, cargoId, infoWindow) {
+  const reqCargoRow = infoWindow.querySelector(`.info-window__row--${cargoId}`);
+  const reqColorBox = reqCargoRow.querySelector('.color-box--info-window');
+  reqColorBox.style.background = color;
+}
+
+function getInfoWindowMarkup(infoWindow) {
+  return infoWindow.outerHTML;
+}
+
+/***/ }),
+
 /***/ "./js/modules/interface.js":
 /*!*********************************!*\
   !*** ./js/modules/interface.js ***!
@@ -2277,7 +2371,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _render__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./render */ "./js/modules/render.js");
 /* harmony import */ var nouislider__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! nouislider */ "./node_modules/nouislider/distribute/nouislider.js");
 /* harmony import */ var nouislider__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(nouislider__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _lines_info__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./lines-info */ "./js/modules/lines-info.js");
+/* harmony import */ var _info_window__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./info-window */ "./js/modules/info-window.js");
 
 
 
@@ -2306,7 +2400,7 @@ function bindColorPicker(colorBox, cargoColorArray, map, infoWindow) {
     let cargoID = +this.anchor.id;
     Object(_common__WEBPACK_IMPORTED_MODULE_0__["changeCargoColor"])(cargoColorArray, cargoID, color);
     Object(_render__WEBPACK_IMPORTED_MODULE_1__["changeEdgesColor"])(map, cargoColorArray);
-    Object(_lines_info__WEBPACK_IMPORTED_MODULE_3__["changeColorInfoWindowColorBox"])(color, cargoID, infoWindow);
+    Object(_info_window__WEBPACK_IMPORTED_MODULE_3__["changeColorInfoWindowColorBox"])(color, cargoID, infoWindow);
   });
 
 }
@@ -2404,119 +2498,21 @@ function bindColorPickerToCitiesColorBoxes(fillColorBox, strokeColorBox, map) {
 /*!**********************************!*\
   !*** ./js/modules/lines-info.js ***!
   \**********************************/
-/*! exports provided: getInfoWindowElements, createInfoWindowCargoListItems, addCargoListItems, showLineInfoWindow, hideLineInfoWindow, changeColorInfoWindowColorBox */
+/*! exports provided: showLineInfoWindow, hideLineInfoWindow */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getInfoWindowElements", function() { return getInfoWindowElements; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createInfoWindowCargoListItems", function() { return createInfoWindowCargoListItems; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addCargoListItems", function() { return addCargoListItems; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "showLineInfoWindow", function() { return showLineInfoWindow; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hideLineInfoWindow", function() { return hideLineInfoWindow; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "changeColorInfoWindowColorBox", function() { return changeColorInfoWindowColorBox; });
-function getInfoWindowElements(infoWindow) {
 
-  const sourceRows = infoWindow.querySelectorAll('.info-window__table-row--source');
-  const destRows = infoWindow.querySelectorAll('.info-window__table-row--destination');
-
-  const colDirOne = infoWindow.querySelector('#info-window__col-1');
-  const titleDirOne = colDirOne.querySelector('.info-window__title');
-  const sourceColDirOne = colDirOne.querySelector('.info-window__source');
-  const destColDirOne = colDirOne.querySelector('.info-window__destination');
-  const totalVolumeColDirOne = colDirOne.querySelector('.info-window__total-volume');
-  const cargoListDirOne = colDirOne.querySelector('.info-window__cargo-list--dir-1');
-
-  const colDirTwo = infoWindow.querySelector('#info-window__col-2');
-  const titleDirTwo = colDirTwo.querySelector('.info-window__title');
-  const sourceColDirTwo = colDirTwo.querySelector('.info-window__source');
-  const destColDirTwo = colDirTwo.querySelector('.info-window__destination');
-  const totalVolumeColDirTwo = colDirTwo.querySelector('.info-window__total-volume');
-  const cargoListDirTwo = colDirTwo.querySelector('.info-window__cargo-list--dir-2');
-
-
-  return {
-
-    sourceRows: sourceRows,
-    destRows: destRows,
-
-    dirOne: {
-      title: titleDirOne,
-      sourceCol: sourceColDirOne,
-      destCol: destColDirOne,
-      cargoList: cargoListDirOne,
-      totalVolumeCol: totalVolumeColDirOne
-    },
-
-    dirTwo: {
-      title: titleDirTwo,
-      sourceCol: sourceColDirTwo,
-      destCol: destColDirTwo,
-      cargoList: cargoListDirTwo,
-      totalVolumeCol: totalVolumeColDirTwo
-    }
-
-  }
-}
-
-function createInfoWindowCargoListItems(cargoColorArray) {
-
-  const cargoListItems = [];
-
-  cargoColorArray.forEach(cargoObj => {
-    const cargoItem = document.createElement('li');
-    cargoItem.classList.add('info-window__cargo-item', `info-window__cargo-item-${cargoObj.id}`, `info-window__cargo-item-${cargoObj.type}`);
-
-    const cargoNameBlock = document.createElement('div');
-    cargoNameBlock.classList.add('info-window__cargo-name-block');
-
-    const cargoColorBox = document.createElement('span');
-    cargoColorBox.classList.add('color-box', 'color-box--info-window');
-    cargoColorBox.style.background = cargoObj.color;
-
-    const cargoName = document.createElement('span');
-    cargoName.classList.add('info-window__cargo-name');
-    cargoName.textContent = cargoObj.type;
-
-    const cargoValue = document.createElement('span');
-    cargoValue.classList.add('info-window__cargo-value');
-    cargoValue.textContent = 0;
-
-    cargoNameBlock.appendChild(cargoColorBox);
-    cargoNameBlock.appendChild(cargoName);
-
-    cargoItem.appendChild(cargoNameBlock);
-    cargoItem.appendChild(cargoValue);
-
-    cargoListItems.push(cargoItem);
-
-  });
-
-  return cargoListItems;
-}
-
-function addCargoListItems(cargoListItems, infoWindowElements) {
-  const cargoListDirOne = infoWindowElements.dirOne.cargoList;
-  const cargoListDirTwo = infoWindowElements.dirTwo.cargoList;
-
-  cargoListItems.forEach(item => {
-    const clone = item.cloneNode(true);
-    cargoListDirOne.appendChild(item);
-    cargoListDirTwo.appendChild(clone);
-  });
-
-
-}
-
-function getInfoWindowMarkup(infoWindow) {
-  return infoWindow.outerHTML;
-}
 
 
 function showLineInfoWindow(e, infoWindow, infoWindowElements, map) {
   // const popupPosition = e.lngLat;
 
   const lineID = e.features[0].properties.lineID;
+  const tableBody = infoWindowElements.tableBody;
 
   map.setFilter('background-lines-hover', [
     "all",
@@ -2524,36 +2520,17 @@ function showLineInfoWindow(e, infoWindow, infoWindowElements, map) {
     ["==", "lineID", lineID]
   ]);
 
+
   let totalOneDir = 0;
   let totalTwoDir = 0;
-  const denominator = 100000;
-  const factor = 100;
+  const denominator = 10000;
+  const factor = 10;
 
   infoWindowElements.dirOne.title.textContent = 'Прямо';
   infoWindowElements.dirTwo.title.textContent = 'Обратно';
 
-  const sourceRows = infoWindowElements.sourceRows;
-  const destRows = infoWindowElements.destRows;
-
-  const rowsToHide = [sourceRows, destRows];
-
-  for (let rows of rowsToHide) {
-    Array.from(rows).forEach(row => {
-      row.style.display = 'table-row';
-    });
-  }
-
   const infoOneDir = JSON.parse(e.features[0].properties.dataOneDir);
   const infoTwoDir = JSON.parse(e.features[0].properties.dataTwoDir);
-
-  infoWindowElements.dirOne.sourceCol.textContent = infoOneDir.src;
-  infoWindowElements.dirOne.destCol.textContent = infoOneDir.dest;
-
-  infoWindowElements.dirTwo.sourceCol.textContent = infoTwoDir.src;
-  infoWindowElements.dirTwo.destCol.textContent = infoTwoDir.dest;
-
-  const cargoListDirOne = infoWindowElements.dirOne.cargoList;
-  const cargoListDirTwo = infoWindowElements.dirTwo.cargoList;
 
   const valuesOneDir = infoOneDir.values;
   const valuesTwoDir = infoTwoDir.values;
@@ -2561,10 +2538,10 @@ function showLineInfoWindow(e, infoWindow, infoWindowElements, map) {
   for (let cargoType in valuesOneDir) {
     if (valuesOneDir.hasOwnProperty(cargoType)) {
       let value = valuesOneDir[cargoType] / denominator;
-      const reqCargoItem = cargoListDirOne.querySelector(`.info-window__cargo-item-${cargoType}`);
-      const reqValueSpan = reqCargoItem.querySelector('.info-window__cargo-value');
+      const reqCargoRow = tableBody.querySelector(`.info-window__row--${cargoType}`);
+      const reqCargoValueCol = reqCargoRow.querySelector('.info-window__col--dir-1');
       value = Math.ceil(value) * factor;
-      reqValueSpan.textContent = value;
+      reqCargoValueCol.textContent = value;
       totalOneDir += value;
     }
   }
@@ -2572,18 +2549,18 @@ function showLineInfoWindow(e, infoWindow, infoWindowElements, map) {
   for (let cargoType in valuesTwoDir) {
     if (valuesTwoDir.hasOwnProperty(cargoType)) {
       let value = valuesTwoDir[cargoType] / denominator;
-      const reqCargoItem = cargoListDirTwo.querySelector(`.info-window__cargo-item-${cargoType}`);
-      const reqValueSpan = reqCargoItem.querySelector('.info-window__cargo-value');
+      const reqCargoRow = tableBody.querySelector(`.info-window__row--${cargoType}`);
+      const reqCargoValueCol = reqCargoRow.querySelector('.info-window__col--dir-2');
       value = Math.ceil(value) * factor;
-      reqValueSpan.textContent = value;
+      reqCargoValueCol.textContent = value;
       totalTwoDir += value;
     }
   }
 
-  infoWindowElements.dirOne.totalVolumeCol.textContent = totalOneDir;
-  infoWindowElements.dirTwo.totalVolumeCol.textContent = totalTwoDir;
+  infoWindowElements.dirOne.totalVolume.textContent = totalOneDir;
+  infoWindowElements.dirTwo.totalVolume.textContent = totalTwoDir;
 
-  infoWindow.style.display = 'inline-flex';
+  infoWindow.style.display = 'block';
 
   // while (Math.abs(e.lngLat.lng - popupPosition[0]) > 180) {
   //   popupPosition[0] += e.lngLat.lng > popupPosition[0] ? 360 : -360;
@@ -2593,7 +2570,6 @@ function showLineInfoWindow(e, infoWindow, infoWindowElements, map) {
   // linePopup.setLngLat(popupPosition)
   //   .setHTML(getInfoWindowMarkup(infoWindow))
   //   .addTo(map);
-
 
 }
 
@@ -2607,15 +2583,6 @@ function hideLineInfoWindow(infoWindow, map) {
     ["==", "lineID", ""]
   ]);
   // linePopup.remove();
-}
-
-function changeColorInfoWindowColorBox(color, cargoId, infoWindow) {
-  const reqCargoItems = infoWindow.querySelectorAll(`.info-window__cargo-item-${cargoId}`);
-
-  Array.from(reqCargoItems).forEach(item => {
-    const reqColorBox = item.querySelector('.color-box--info-window');
-    reqColorBox.style.background = color;
-  });
 }
 
 /***/ }),
@@ -2756,110 +2723,6 @@ if (!("hypot" in Math)) {  // Polyfill
   Math.hypot = function (x, y) {
       return Math.sqrt(x * x + y * y);
   };
-}
-
-/***/ }),
-
-/***/ "./js/modules/nodes-info.js":
-/*!**********************************!*\
-  !*** ./js/modules/nodes-info.js ***!
-  \**********************************/
-/*! exports provided: showNodeInfoWindow, hideNodeInfoWindow */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "showNodeInfoWindow", function() { return showNodeInfoWindow; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hideNodeInfoWindow", function() { return hideNodeInfoWindow; });
-function showNodeInfoWindow(e, infoWindow, infoWindowElements, map) {
-  // const popupPosition = e.lngLat;
-  // console.log(e);
-  
-  const nodeProps = e.features[0].properties;
-
-  const sourceRows = infoWindowElements.sourceRows;
-  const destRows = infoWindowElements.destRows;
-
-  const rowsToHide = [sourceRows, destRows];
-  for (let rows of rowsToHide) {
-    Array.from(rows).forEach(row => {
-      row.style.display = 'none';
-    });
-  }
-
-  infoWindowElements.dirOne.title.textContent = 'Вход';
-  infoWindowElements.dirTwo.title.textContent = 'Выход';
-
-
-
-  // const lineID = e.features[0].properties.lineID;
-
-  // map.setFilter('background-lines-hover', [
-  //   "all",
-  //   ["!=", "totalWidth", 0],
-  //   ["==", "lineID", lineID]
-  // ]);
-
-  const denominator = 100000;
-  const factor = 100;
-
-  const inCargos = JSON.parse(nodeProps.inCargos);
-  const outCargos= JSON.parse(nodeProps.outCargos);
-  let inTotal = 0;
-  let outTotal = 0;
-
-  const cargoListDirOne = infoWindowElements.dirOne.cargoList;
-  const cargoListDirTwo = infoWindowElements.dirTwo.cargoList;
-
-  for (let cargoType in inCargos) {
-    if (inCargos.hasOwnProperty(cargoType)) {
-      let value = inCargos[cargoType] / denominator;
-      const reqCargoItem = cargoListDirOne.querySelector(`.info-window__cargo-item-${cargoType}`);
-      const reqValueSpan = reqCargoItem.querySelector('.info-window__cargo-value');
-      value = Math.ceil(value) * factor
-      reqValueSpan.textContent = value;
-      inTotal += value;
-    }
-  }
-
-  for (let cargoType in outCargos) {
-    if (outCargos.hasOwnProperty(cargoType)) {
-      let value = outCargos[cargoType] / denominator;
-      const reqCargoItem = cargoListDirTwo.querySelector(`.info-window__cargo-item-${cargoType}`);
-      const reqValueSpan = reqCargoItem.querySelector('.info-window__cargo-value');
-      value = Math.ceil(value) * factor
-      reqValueSpan.textContent = value;
-      outTotal += value;
-    }
-  }
-
-  infoWindowElements.dirOne.totalVolumeCol.textContent = inTotal;
-  infoWindowElements.dirTwo.totalVolumeCol.textContent = outTotal;
-
-  infoWindow.style.display = 'inline-flex';
-
-  // while (Math.abs(e.lngLat.lng - popupPosition[0]) > 180) {
-  //   popupPosition[0] += e.lngLat.lng > popupPosition[0] ? 360 : -360;
-  // }
-
-
-  // linePopup.setLngLat(popupPosition)
-  //   .setHTML(getInfoWindowMarkup(infoWindow))
-  //   .addTo(map);
-
-
-}
-
-function hideNodeInfoWindow(infoWindow, map) {
-
-  infoWindow.style.display = 'none';
-
-  // map.setFilter('background-lines-hover', [
-  //   "all",
-  //   ["!=", "totalWidth", 0],
-  //   ["==", "lineID", ""]
-  // ]);
-  // linePopup.remove();
 }
 
 /***/ }),
@@ -7983,7 +7846,7 @@ function changeCitiesStrokeColor(map, color) {
 
 exports = module.exports = __webpack_require__(/*! ../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
 // Module
-exports.push([module.i, "/* blocks rules */\n.loading-map-panel {\n  position: fixed;\n  z-index: 1;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  color: #fff;\n  text-align: center; }\n\n.map {\n  position: absolute;\n  z-index: -1;\n  width: 100%;\n  height: 100%;\n  padding: 0;\n  margin: 0; }\n\n.greeting-panel__wrapper {\n  position: fixed;\n  z-index: 1;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%); }\n\n.greeting-panel {\n  color: #333;\n  background-color: rgba(255, 255, 255, 0.85);\n  text-align: center;\n  width: 450px;\n  padding: 20px 25px;\n  border-radius: 5px;\n  animation: emersion 0.7s 0.5s both cubic-bezier(0.04, 0.36, 0.1, 1.06); }\n\n.greeting-panel--dark {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0; }\n\n.greeting-panel__text {\n  font-size: 17px;\n  line-height: 1.4em;\n  font-weight: 300; }\n\n.greeting-panel__btns-row {\n  margin-top: 10px; }\n\n@keyframes emersion {\n  0% {\n    opacity: 0;\n    transform: scale(0.8); }\n  100% {\n    opacity: 1;\n    transform: scale(1); } }\n\n.btn--10-zoom-level {\n  margin: 10px;\n  padding: 10px;\n  position: absolute;\n  right: 0;\n  top: 50px;\n  z-index: 1000;\n  background: #ddd;\n  cursor: pointer;\n  transition: .3s; }\n\n.btn--10-zoom-level:hover {\n  background: #ea8585; }\n\n.btn-demo {\n  background: #d2d2d2; }\n\n.handle-data-panel {\n  position: fixed;\n  z-index: 2;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  color: #000000;\n  background: rgba(189, 189, 189, 0.7);\n  border-radius: 5px;\n  padding: 10px;\n  font-size: 17px; }\n\n.handle-data-panel__text {\n  margin-bottom: 0; }\n\n.main-interface-wrapper {\n  z-index: 1;\n  position: absolute;\n  background: rgba(255, 255, 255, 0.95);\n  border-radius: 5px;\n  top: 5px;\n  left: 5px;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  max-height: 95%;\n  max-width: 420px;\n  overflow-y: auto; }\n\n.main-interface-wrapper--dark {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300; }\n\n.edit-nodes__color-text {\n  width: 70%; }\n\n.title__main {\n  color: inherit;\n  text-align: center; }\n\n/* @import \"./blocks/upload-data.scss\"; */\n.step-title {\n  margin: 0;\n  margin-bottom: 5px;\n  font-weight: 600; }\n\n.step-title--dark {\n  font-weight: 400;\n  color: #fff; }\n\n.edit-interface-wrapper .step-title:hover {\n  cursor: pointer; }\n\n.hr--dark {\n  border-top: 1px solid rgba(0, 0, 0, 0.4); }\n\n/* #other-interface-wrapper {\n  z-index: 1;\n  position: absolute;\n  visibility: hidden;\n  background: #ffffff;\n  border-radius: 5px;\n  margin-top: 5px;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  max-height: 1000px;\n  max-width: 400px;\n  right: 5px;\n} */\n.borderless td {\n  border: none; }\n\n.cargo-colors__table {\n  margin-bottom: 0; }\n\n.table thead th {\n  border: none;\n  border-bottom: 1px dotted #1b1b1b; }\n\n.color-box {\n  display: inline-block;\n  width: 20px;\n  height: 20px;\n  background: #fff; }\n\n.color-box:hover {\n  box-shadow: 0 5px 7px rgba(0, 0, 0, 0.12), 0 5px 7px rgba(0, 0, 0, 0.24);\n  cursor: pointer; }\n\n#cities-fill-color-box {\n  background: #fff; }\n\n#cities-stroke-color-box {\n  background: #000; }\n\n.color-box--info-window {\n  margin-right: 5px; }\n  .color-box--info-window:hover {\n    box-shadow: none;\n    cursor: initial; }\n\n.huebee {\n  z-index: 10;\n  top: unset !important;\n  bottom: 370px !important; }\n\n.huebee__container {\n  background: rgba(35, 35, 35, 0.95);\n  left: -180px; }\n\n.huebee__cursor {\n  width: 20px;\n  height: 20px; }\n\n.huebee__cities-color {\n  top: unset !important;\n  bottom: 355px !important; }\n\n/* @import \"./blocks/linear-scale.scss\"; */\n.noUi-target {\n  margin-left: 15px;\n  margin-right: 15px;\n  border: none;\n  box-shadow: none;\n  background: rgba(53, 53, 53, 0.93); }\n\n.noUi-connect {\n  background: #717171; }\n\n.noUi-handle {\n  background: #656565;\n  border: none;\n  box-shadow: none; }\n\n.input-row {\n  margin-top: 20px; }\n\n.input-text {\n  width: 30%;\n  border: 1px solid #616161;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  text-align: center; }\n\n.input-text:focus {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  text-align: center;\n  width: 30%;\n  border: 1px solid #616161; }\n\n.input-col {\n  display: flex;\n  width: 40%; }\n\n.input-col--left {\n  align-items: baseline;\n  float: left; }\n\n.input-col--right {\n  justify-content: flex-end;\n  align-items: baseline;\n  float: right; }\n\n#max-width-input, #max-radius-input {\n  width: 40%; }\n\n.input-label {\n  color: #797979; }\n\n.input-label--prefix {\n  margin-right: 3px; }\n\n.input-label--postfix {\n  margin-left: 2px; }\n\n.form-row {\n  margin-top: 15px; }\n\n.nodes-settings__fill-color {\n  display: flex;\n  align-items: center;\n  margin: 2% 0; }\n\n.nodes-settings__stroke-color {\n  display: flex;\n  align-items: center;\n  margin-bottom: 11px; }\n\n.nodes-settings__text {\n  width: 65%; }\n\n.checkbox {\n  margin-top: 10px; }\n\n/* @import \"./blocks/other-settings.scss\"; */\n/* @import \"./blocks/zoom-interface.scss\"; */\n.current-zoom {\n  margin: 10px;\n  padding: 10px;\n  position: absolute;\n  right: 0;\n  top: 0;\n  z-index: 1000;\n  background: #ddd; }\n\n.info-window {\n  position: absolute;\n  bottom: 25px;\n  right: 5px;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300;\n  border-radius: 5px;\n  padding: 10px;\n  display: none; }\n\n.info-window__col:first-child {\n  margin-right: 10px;\n  border-right: 1px rgba(191, 191, 191, 0.17) solid;\n  padding-right: 8px; }\n\n.info-window__title {\n  font-size: 1rem;\n  font-weight: 400;\n  color: #fff; }\n\n.info-window__table-col:first-child {\n  padding-right: 8px; }\n\n.info-window__table-col--title {\n  font-weight: 400; }\n\n.info-window__cargo-item {\n  display: flex;\n  align-items: center; }\n\n.info-window__cargo-name-block {\n  display: flex;\n  align-items: center;\n  margin-right: 10px; }\n", ""]);
+exports.push([module.i, "/* blocks rules */\n.loading-map-panel {\n  position: fixed;\n  z-index: 1;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  color: #fff;\n  text-align: center; }\n\n.map {\n  position: absolute;\n  z-index: -1;\n  width: 100%;\n  height: 100%;\n  padding: 0;\n  margin: 0; }\n\n.greeting-panel__wrapper {\n  position: fixed;\n  z-index: 1;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%); }\n\n.greeting-panel {\n  color: #333;\n  background-color: rgba(255, 255, 255, 0.85);\n  text-align: center;\n  width: 450px;\n  padding: 20px 25px;\n  border-radius: 5px;\n  animation: emersion 0.7s 0.5s both cubic-bezier(0.04, 0.36, 0.1, 1.06); }\n\n.greeting-panel--dark {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0; }\n\n.greeting-panel__text {\n  font-size: 17px;\n  line-height: 1.4em;\n  font-weight: 300; }\n\n.greeting-panel__btns-row {\n  margin-top: 10px; }\n\n@keyframes emersion {\n  0% {\n    opacity: 0;\n    transform: scale(0.8); }\n  100% {\n    opacity: 1;\n    transform: scale(1); } }\n\n.btn--10-zoom-level {\n  margin: 10px;\n  padding: 10px;\n  position: absolute;\n  right: 0;\n  top: 50px;\n  z-index: 1000;\n  background: #ddd;\n  cursor: pointer;\n  transition: .3s; }\n\n.btn--10-zoom-level:hover {\n  background: #ea8585; }\n\n.btn-demo {\n  background: #d2d2d2; }\n\n.handle-data-panel {\n  position: fixed;\n  z-index: 2;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  color: #000000;\n  background: rgba(189, 189, 189, 0.7);\n  border-radius: 5px;\n  padding: 10px;\n  font-size: 17px; }\n\n.handle-data-panel__text {\n  margin-bottom: 0; }\n\n.main-interface-wrapper {\n  z-index: 1;\n  position: absolute;\n  background: rgba(255, 255, 255, 0.95);\n  border-radius: 5px;\n  top: 5px;\n  left: 5px;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  max-height: 95%;\n  max-width: 420px;\n  overflow-y: auto; }\n\n.main-interface-wrapper--dark {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300; }\n\n.edit-nodes__color-text {\n  width: 70%; }\n\n.title__main {\n  color: inherit;\n  text-align: center; }\n\n/* @import \"./blocks/upload-data.scss\"; */\n.step-title {\n  margin: 0;\n  margin-bottom: 5px;\n  font-weight: 600; }\n\n.step-title--dark {\n  font-weight: 400;\n  color: #fff; }\n\n.edit-interface-wrapper .step-title:hover {\n  cursor: pointer; }\n\n.hr--dark {\n  border-top: 1px solid rgba(0, 0, 0, 0.4); }\n\n/* #other-interface-wrapper {\n  z-index: 1;\n  position: absolute;\n  visibility: hidden;\n  background: #ffffff;\n  border-radius: 5px;\n  margin-top: 5px;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  max-height: 1000px;\n  max-width: 400px;\n  right: 5px;\n} */\n.borderless td {\n  border: none; }\n\n.cargo-colors__table {\n  margin-bottom: 0; }\n\n.table thead th {\n  border: none;\n  border-bottom: 1px dotted #1b1b1b; }\n\n.color-box {\n  display: inline-block;\n  width: 20px;\n  height: 20px;\n  background: #fff; }\n\n.color-box:hover {\n  box-shadow: 0 5px 7px rgba(0, 0, 0, 0.12), 0 5px 7px rgba(0, 0, 0, 0.24);\n  cursor: pointer; }\n\n#cities-fill-color-box {\n  background: #fff; }\n\n#cities-stroke-color-box {\n  background: #000; }\n\n.color-box--info-window {\n  margin-right: 5px; }\n  .color-box--info-window:hover {\n    box-shadow: none;\n    cursor: initial; }\n\n.huebee {\n  z-index: 10;\n  top: unset !important;\n  bottom: 370px !important; }\n\n.huebee__container {\n  background: rgba(35, 35, 35, 0.95);\n  left: -180px; }\n\n.huebee__cursor {\n  width: 20px;\n  height: 20px; }\n\n.huebee__cities-color {\n  top: unset !important;\n  bottom: 355px !important; }\n\n/* @import \"./blocks/linear-scale.scss\"; */\n.noUi-target {\n  margin-left: 15px;\n  margin-right: 15px;\n  border: none;\n  box-shadow: none;\n  background: rgba(53, 53, 53, 0.93); }\n\n.noUi-connect {\n  background: #717171; }\n\n.noUi-handle {\n  background: #656565;\n  border: none;\n  box-shadow: none; }\n\n.input-row {\n  margin-top: 20px; }\n\n.input-text {\n  width: 30%;\n  border: 1px solid #616161;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  text-align: center; }\n\n.input-text:focus {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  text-align: center;\n  width: 30%;\n  border: 1px solid #616161; }\n\n.input-col {\n  display: flex;\n  width: 40%; }\n\n.input-col--left {\n  align-items: baseline;\n  float: left; }\n\n.input-col--right {\n  justify-content: flex-end;\n  align-items: baseline;\n  float: right; }\n\n#max-width-input, #max-radius-input {\n  width: 40%; }\n\n.input-label {\n  color: #797979; }\n\n.input-label--prefix {\n  margin-right: 3px; }\n\n.input-label--postfix {\n  margin-left: 2px; }\n\n.form-row {\n  margin-top: 15px; }\n\n.nodes-settings__fill-color {\n  display: flex;\n  align-items: center;\n  margin: 2% 0; }\n\n.nodes-settings__stroke-color {\n  display: flex;\n  align-items: center;\n  margin-bottom: 11px; }\n\n.nodes-settings__text {\n  width: 65%; }\n\n.checkbox {\n  margin-top: 10px; }\n\n/* @import \"./blocks/other-settings.scss\"; */\n/* @import \"./blocks/zoom-interface.scss\"; */\n.current-zoom {\n  margin: 10px;\n  padding: 10px;\n  position: absolute;\n  right: 0;\n  top: 0;\n  z-index: 1000;\n  background: #ddd; }\n\n.info-window {\n  position: absolute;\n  bottom: 25px;\n  right: 5px;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300;\n  border-radius: 5px;\n  padding: 10px;\n  display: none; }\n\n.info-window__table {\n  margin-bottom: 0; }\n\n.info-window__row--total {\n  font-weight: 400; }\n\n.table th {\n  font-weight: 400; }\n\n.info-window .table td, .info-window .table th {\n  padding: 3px; }\n", ""]);
 
 
 

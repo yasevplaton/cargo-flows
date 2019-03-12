@@ -221,78 +221,29 @@
             <button type="button" id="to-10-zoom-level" class="btn btn--10-zoom-level">To Zoom level 10</button>
         </div>
         <div class="info-window">
-            <div class="info-window__col" id="info-window__col-1">
-                <h3 class="info-window__title">Прямо</h3>
-                <div class="info-window__content">
-                    <table class="info-window__table">
-                        <tbody id="info-window__table-body" class="info-window__table-body">
-                            <tr class="info-window__table-row info-window__table-row--source">
-                                <td class="info-window__table-col info-window__table-col--title">
-                                    Источник
-                                </td>
-                                <td class="info-window__table-col info-window__source">
-                                </td>
-                            </tr>
-                            <tr class="info-window__table-row info-window__table-row--destination">
-                                <td class="info-window__table-col info-window__table-col--title">
-                                    Назначение
-                                </td>
-                                <td class="info-window__table-col info-window__destination">
-                                </td>
-                            </tr>
-                            <tr class="info-window__table-row info-window__table-row--cargo-values">
-                                <td class="info-window__table-col" colspan="2">
-                                    <ul class="info-window__cargo-list info-window__cargo-list--dir-1">
-                                    </ul>
-                                </td>
-                            </tr>
-                            <tr class="info-window__table-row info-window__table-row--total">
-                                <td class="info-window__table-col info-window__table-col--title">
-                                    Суммарно
-                                </td>
-                                <td class="info-window__table-col info-window__total-volume">
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="info-window__col" id="info-window__col-2">
-                <h3 class="info-window__title">Обратно</h3>
-                <div class="info-window__content">
-                    <table class="info-window__table">
-                        <tbody id="info-window__table-body" class="info-window__table-body">
-                            <tr class="info-window__table-row info-window__table-row--source">
-                                <td class="info-window__table-col info-window__table-col--title">
-                                    Источник
-                                </td>
-                                <td class="info-window__table-col info-window__source">
-                                </td>
-                            </tr>
-                            <tr class="info-window__table-row info-window__table-row--destination">
-                                <td class="info-window__table-col info-window__table-col--title">
-                                    Назначение
-                                </td>
-                                <td class="info-window__table-col info-window__destination">
-                                </td>
-                            </tr>
-                            <tr class="info-window__table-row info-window__table-row--cargo-values">
-                                <td class="info-window__table-col" colspan="2">
-                                    <ul class="info-window__cargo-list info-window__cargo-list--dir-2">
-                                    </ul>
-                                </td>
-                            </tr>
-                            <tr class="info-window__table-row info-window__table-row--total">
-                                <td class="info-window__table-col info-window__table-col--title">
-                                    Суммарно
-                                </td>
-                                <td class="info-window__table-col info-window__total-volume">
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <table class="table borderless info-window__table">
+                <thead class="info-window__table-heading">
+                    <tr class="info-window__row info-window__row--heading">
+                        <th class="info-window__col info-window__col--heading info-window__col--cargo-color"></th>
+                        <th class="info-window__col info-window__col--heading info-window__col--cargo-name"></th>
+                        <th class="info-window__col info-window__col--heading info-window__col--dir-1">Прямо</th>
+                        <th class="info-window__col info-window__col--heading info-window__col--dir-2">Обратно</th>
+                    </tr>
+                </thead>
+                <tbody id="info-window__table-body" class="info-window__table-body">
+                    <tr class="info-window__row info-window__row--total">
+                        <td class="info-window__col info-window__col--total-title" colspan="2">
+                            Суммарно
+                        </td>
+                        <td class="info-window__col info-window__col--dir-1">
+                            23354
+                        </td>
+                        <td class="info-window__col info-window__col--dir-2">
+                            232334
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 
         </div>
 

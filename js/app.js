@@ -27,8 +27,9 @@ import { renderEdges, renderOrigLines, renderNodes, renderBackgroundLines } from
 import { createColorTable, createSlider, toggleLayerVisibility, bindColorPickerToCitiesColorBoxes } from "./modules/interface";
 import { collectLinesIDs, createOrigLines, fillOrigLinesWithData } from './modules/orig-lines';
 import { addWidthAndOffsetAttr } from './modules/bg-lines';
-import { showLineInfoWindow, hideLineInfoWindow, getInfoWindowElements, createInfoWindowCargoListItems, addCargoListItems, getInfoWindowMarkup } from "./modules/lines-info";
-import { showNodeInfoWindow, hideNodeInfoWindow } from "./modules/nodes-info";
+import { getInfoWindowElements, addCargoList } from "./modules/info-window";
+import { showLineInfoWindow, hideLineInfoWindow } from "./modules/lines-info";
+// import { showNodeInfoWindow, hideNodeInfoWindow } from "./modules/nodes-info";
 
 window.onload = () => {
 
@@ -278,8 +279,7 @@ window.onload = () => {
             // });
 
             const infoWindowElements = getInfoWindowElements(infoWindow);
-            const infoWindowCargoListItems = createInfoWindowCargoListItems(cargoColorArray);
-            addCargoListItems(infoWindowCargoListItems, infoWindowElements);
+            addCargoList(infoWindowElements, cargoColorArray);
 
             map.on('mouseenter', 'background-lines', e => {
                 map.getCanvas().style.cursor = 'pointer';
@@ -289,19 +289,18 @@ window.onload = () => {
             map.on('mouseleave', 'background-lines', () => {
                 map.getCanvas().style.cursor = '';
                 hideLineInfoWindow(infoWindow, map);
-
             });
 
-            map.on('mouseenter', 'cities', e => {
-                map.getCanvas().style.cursor = 'pointer';
-                showNodeInfoWindow(e, infoWindow, infoWindowElements, map);
-            });
+            // map.on('mouseenter', 'cities', e => {
+            //     map.getCanvas().style.cursor = 'pointer';
+            //     showNodeInfoWindow(e, infoWindow, infoWindowElements, map);
+            // });
 
-            map.on('mouseleave', 'cities', () => {
-                map.getCanvas().style.cursor = '';
-                hideNodeInfoWindow(infoWindow, map);
+            // map.on('mouseleave', 'cities', () => {
+            //     map.getCanvas().style.cursor = '';
+            //     hideNodeInfoWindow(infoWindow, map);
 
-            });
+            // });
 
             // initialize render counter
             let startWidthSliderCounter = 0;

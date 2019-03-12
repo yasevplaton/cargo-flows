@@ -1,7 +1,7 @@
 import { changeCargoColor } from "./common";
 import { changeEdgesColor, changeCitiesFillColor, changeCitiesStrokeColor } from "./render";
 import 'nouislider';
-import { changeColorInfoWindowColorBox } from "./lines-info";
+import { changeColorInfoWindowColorBox } from "./info-window";
 
 const Huebee = require('huebee');
 
