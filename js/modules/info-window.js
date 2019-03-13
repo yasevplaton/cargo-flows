@@ -8,8 +8,6 @@ export function getInfoWindowElements(infoWindow) {
   const totalVolumeDirOne = totalVolumeRow.querySelector('.info-window__col--dir-1');
   const totalVolumeDirTwo = totalVolumeRow.querySelector('.info-window__col--dir-2');
 
-  console.log(titleDirOne, titleDirTwo);
-
   return {
 
     tableHeading: tableHeading,

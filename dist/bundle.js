@@ -141,6 +141,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_bg_lines__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./modules/bg-lines */ "./js/modules/bg-lines.js");
 /* harmony import */ var _modules_info_window__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./modules/info-window */ "./js/modules/info-window.js");
 /* harmony import */ var _modules_lines_info__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./modules/lines-info */ "./js/modules/lines-info.js");
+/* harmony import */ var _modules_nodes_info__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./modules/nodes-info */ "./js/modules/nodes-info.js");
 // import js modules
 
 
@@ -158,7 +159,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-// import { showNodeInfoWindow, hideNodeInfoWindow } from "./modules/nodes-info";
+
 
 window.onload = () => {
 
@@ -420,16 +421,15 @@ window.onload = () => {
                 Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_12__["hideLineInfoWindow"])(infoWindow, map);
             });
 
-            // map.on('mouseenter', 'cities', e => {
-            //     map.getCanvas().style.cursor = 'pointer';
-            //     showNodeInfoWindow(e, infoWindow, infoWindowElements, map);
-            // });
+            map.on('mouseenter', 'cities', e => {
+                map.getCanvas().style.cursor = 'pointer';
+                Object(_modules_nodes_info__WEBPACK_IMPORTED_MODULE_13__["showNodeInfoWindow"])(e, infoWindow, infoWindowElements, map);
+            });
 
-            // map.on('mouseleave', 'cities', () => {
-            //     map.getCanvas().style.cursor = '';
-            //     hideNodeInfoWindow(infoWindow, map);
-
-            // });
+            map.on('mouseleave', 'cities', () => {
+                map.getCanvas().style.cursor = '';
+                Object(_modules_nodes_info__WEBPACK_IMPORTED_MODULE_13__["hideNodeInfoWindow"])(infoWindow, map);
+            });
 
             // initialize render counter
             let startWidthSliderCounter = 0;
@@ -2279,8 +2279,6 @@ function getInfoWindowElements(infoWindow) {
   const totalVolumeDirOne = totalVolumeRow.querySelector('.info-window__col--dir-1');
   const totalVolumeDirTwo = totalVolumeRow.querySelector('.info-window__col--dir-2');
 
-  console.log(titleDirOne, titleDirTwo);
-
   return {
 
     tableHeading: tableHeading,
@@ -2723,6 +2721,81 @@ if (!("hypot" in Math)) {  // Polyfill
   Math.hypot = function (x, y) {
       return Math.sqrt(x * x + y * y);
   };
+}
+
+/***/ }),
+
+/***/ "./js/modules/nodes-info.js":
+/*!**********************************!*\
+  !*** ./js/modules/nodes-info.js ***!
+  \**********************************/
+/*! exports provided: showNodeInfoWindow, hideNodeInfoWindow */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "showNodeInfoWindow", function() { return showNodeInfoWindow; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hideNodeInfoWindow", function() { return hideNodeInfoWindow; });
+function showNodeInfoWindow(e, infoWindow, infoWindowElements, map) {
+  // const popupPosition = e.lngLat;
+  
+  const nodeProps = e.features[0].properties;
+  const tableBody = infoWindowElements.tableBody;
+
+  infoWindowElements.dirOne.title.textContent = 'Вход';
+  infoWindowElements.dirTwo.title.textContent = 'Выход';
+
+  let inTotal = 0;
+  let outTotal = 0;
+  const denominator = 10000;
+  const factor = 10;
+
+  const inCargos = JSON.parse(nodeProps.inCargos);
+  const outCargos= JSON.parse(nodeProps.outCargos);
+
+  for (let cargoType in inCargos) {
+    if (inCargos.hasOwnProperty(cargoType)) {
+      let value = inCargos[cargoType] / denominator;
+      const reqCargoRow = tableBody.querySelector(`.info-window__row--${cargoType}`);
+      const reqCargoValueCol = reqCargoRow.querySelector('.info-window__col--dir-1');
+      value = Math.ceil(value) * factor;
+      reqCargoValueCol.textContent = value;
+      inTotal += value;
+    }
+  }
+
+  for (let cargoType in outCargos) {
+    if (outCargos.hasOwnProperty(cargoType)) {
+      let value = outCargos[cargoType] / denominator;
+      const reqCargoRow = tableBody.querySelector(`.info-window__row--${cargoType}`);
+      const reqCargoValueCol = reqCargoRow.querySelector('.info-window__col--dir-2');
+      value = Math.ceil(value) * factor;
+      reqCargoValueCol.textContent = value;
+      outTotal += value;
+    }
+  }
+
+  infoWindowElements.dirOne.totalVolume.textContent = inTotal;
+  infoWindowElements.dirTwo.totalVolume.textContent = outTotal;
+
+  infoWindow.style.display = 'block';
+
+  // while (Math.abs(e.lngLat.lng - popupPosition[0]) > 180) {
+  //   popupPosition[0] += e.lngLat.lng > popupPosition[0] ? 360 : -360;
+  // }
+
+
+  // linePopup.setLngLat(popupPosition)
+  //   .setHTML(getInfoWindowMarkup(infoWindow))
+  //   .addTo(map);
+
+
+}
+
+function hideNodeInfoWindow(infoWindow, map) {
+
+  infoWindow.style.display = 'none';
+  // linePopup.remove();
 }
 
 /***/ }),

@@ -29,7 +29,7 @@ import { collectLinesIDs, createOrigLines, fillOrigLinesWithData } from './modul
 import { addWidthAndOffsetAttr } from './modules/bg-lines';
 import { getInfoWindowElements, addCargoList } from "./modules/info-window";
 import { showLineInfoWindow, hideLineInfoWindow } from "./modules/lines-info";
-// import { showNodeInfoWindow, hideNodeInfoWindow } from "./modules/nodes-info";
+import { showNodeInfoWindow, hideNodeInfoWindow } from "./modules/nodes-info";
 
 window.onload = () => {
 
@@ -291,16 +291,15 @@ window.onload = () => {
                 hideLineInfoWindow(infoWindow, map);
             });
 
-            // map.on('mouseenter', 'cities', e => {
-            //     map.getCanvas().style.cursor = 'pointer';
-            //     showNodeInfoWindow(e, infoWindow, infoWindowElements, map);
-            // });
+            map.on('mouseenter', 'cities', e => {
+                map.getCanvas().style.cursor = 'pointer';
+                showNodeInfoWindow(e, infoWindow, infoWindowElements, map);
+            });
 
-            // map.on('mouseleave', 'cities', () => {
-            //     map.getCanvas().style.cursor = '';
-            //     hideNodeInfoWindow(infoWindow, map);
-
-            // });
+            map.on('mouseleave', 'cities', () => {
+                map.getCanvas().style.cursor = '';
+                hideNodeInfoWindow(infoWindow, map);
+            });
 
             // initialize render counter
             let startWidthSliderCounter = 0;

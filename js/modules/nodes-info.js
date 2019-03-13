@@ -1,50 +1,27 @@
 export function showNodeInfoWindow(e, infoWindow, infoWindowElements, map) {
   // const popupPosition = e.lngLat;
-  // console.log(e);
   
   const nodeProps = e.features[0].properties;
-
-  const sourceRows = infoWindowElements.sourceRows;
-  const destRows = infoWindowElements.destRows;
-
-  const rowsToHide = [sourceRows, destRows];
-  for (let rows of rowsToHide) {
-    Array.from(rows).forEach(row => {
-      row.style.display = 'none';
-    });
-  }
+  const tableBody = infoWindowElements.tableBody;
 
   infoWindowElements.dirOne.title.textContent = 'Вход';
   infoWindowElements.dirTwo.title.textContent = 'Выход';
 
-
-
-  // const lineID = e.features[0].properties.lineID;
-
-  // map.setFilter('background-lines-hover', [
-  //   "all",
-  //   ["!=", "totalWidth", 0],
-  //   ["==", "lineID", lineID]
-  // ]);
-
-  const denominator = 100000;
-  const factor = 100;
+  let inTotal = 0;
+  let outTotal = 0;
+  const denominator = 10000;
+  const factor = 10;
 
   const inCargos = JSON.parse(nodeProps.inCargos);
   const outCargos= JSON.parse(nodeProps.outCargos);
-  let inTotal = 0;
-  let outTotal = 0;
-
-  const cargoListDirOne = infoWindowElements.dirOne.cargoList;
-  const cargoListDirTwo = infoWindowElements.dirTwo.cargoList;
 
   for (let cargoType in inCargos) {
     if (inCargos.hasOwnProperty(cargoType)) {
       let value = inCargos[cargoType] / denominator;
-      const reqCargoItem = cargoListDirOne.querySelector(`.info-window__cargo-item-${cargoType}`);
-      const reqValueSpan = reqCargoItem.querySelector('.info-window__cargo-value');
-      value = Math.ceil(value) * factor
-      reqValueSpan.textContent = value;
+      const reqCargoRow = tableBody.querySelector(`.info-window__row--${cargoType}`);
+      const reqCargoValueCol = reqCargoRow.querySelector('.info-window__col--dir-1');
+      value = Math.ceil(value) * factor;
+      reqCargoValueCol.textContent = value;
       inTotal += value;
     }
   }
@@ -52,18 +29,18 @@ export function showNodeInfoWindow(e, infoWindow, infoWindowElements, map) {
   for (let cargoType in outCargos) {
     if (outCargos.hasOwnProperty(cargoType)) {
       let value = outCargos[cargoType] / denominator;
-      const reqCargoItem = cargoListDirTwo.querySelector(`.info-window__cargo-item-${cargoType}`);
-      const reqValueSpan = reqCargoItem.querySelector('.info-window__cargo-value');
-      value = Math.ceil(value) * factor
-      reqValueSpan.textContent = value;
+      const reqCargoRow = tableBody.querySelector(`.info-window__row--${cargoType}`);
+      const reqCargoValueCol = reqCargoRow.querySelector('.info-window__col--dir-2');
+      value = Math.ceil(value) * factor;
+      reqCargoValueCol.textContent = value;
       outTotal += value;
     }
   }
 
-  infoWindowElements.dirOne.totalVolumeCol.textContent = inTotal;
-  infoWindowElements.dirTwo.totalVolumeCol.textContent = outTotal;
+  infoWindowElements.dirOne.totalVolume.textContent = inTotal;
+  infoWindowElements.dirTwo.totalVolume.textContent = outTotal;
 
-  infoWindow.style.display = 'inline-flex';
+  infoWindow.style.display = 'block';
 
   // while (Math.abs(e.lngLat.lng - popupPosition[0]) > 180) {
   //   popupPosition[0] += e.lngLat.lng > popupPosition[0] ? 360 : -360;
@@ -80,11 +57,5 @@ export function showNodeInfoWindow(e, infoWindow, infoWindowElements, map) {
 export function hideNodeInfoWindow(infoWindow, map) {
 
   infoWindow.style.display = 'none';
-
-  // map.setFilter('background-lines-hover', [
-  //   "all",
-  //   ["!=", "totalWidth", 0],
-  //   ["==", "lineID", ""]
-  // ]);
   // linePopup.remove();
 }
