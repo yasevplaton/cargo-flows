@@ -1,8 +1,5 @@
 # Web application to create beautiful cargo flow maps
-  made by Platon Yasev
-  Lomonosov MSU
-  Faculty of Geography
-  Department of Cartography and Geoinformatics
+made by Platon Yasev, Lomonosov MSU, Faculty of Geography, Department of Cartography and Geoinformatics
 
 > Перед установкой зависимостей и запуском проекта убедитесь, что у вас установлена [последняя версия Node.js & NPM](https://nodejs.org/en/download/current/), а также 
 [последняя версия Yarn](https://yarnpkg.com/ru/docs/install)
