@@ -1,17 +1,11 @@
 
 
 
-export function showLineInfoWindow(e, infoWindow, infoWindowElements, map) {
-  // const popupPosition = e.lngLat;
+export function showLineInfoWindow(e, infoWindow, infoWindowElements) {
+  // console.log(e.features);
 
   const lineID = e.features[0].properties.lineID;
   const tableBody = infoWindowElements.tableBody;
-
-  map.setFilter('background-lines-hover', [
-    "all",
-    ["!=", "totalWidth", 0],
-    ["==", "lineID", lineID]
-  ]);
 
 
   let totalOneDir = 0;
@@ -66,14 +60,6 @@ export function showLineInfoWindow(e, infoWindow, infoWindowElements, map) {
 
 }
 
-export function hideLineInfoWindow(infoWindow, map) {
-
+export function hideLineInfoWindow(infoWindow) {
   infoWindow.style.display = 'none';
-
-  map.setFilter('background-lines-hover', [
-    "all",
-    ["!=", "totalWidth", 0],
-    ["==", "lineID", ""]
-  ]);
-  // linePopup.remove();
 }

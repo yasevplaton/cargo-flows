@@ -1,6 +1,6 @@
-export function showNodeInfoWindow(e, infoWindow, infoWindowElements, map) {
-  // const popupPosition = e.lngLat;
-  
+export function showNodeInfoWindow(e, infoWindow, infoWindowElements) {
+  // console.log(e.features);
+
   const nodeProps = e.features[0].properties;
   const tableBody = infoWindowElements.tableBody;
 
@@ -13,7 +13,7 @@ export function showNodeInfoWindow(e, infoWindow, infoWindowElements, map) {
   const factor = 10;
 
   const inCargos = JSON.parse(nodeProps.inCargos);
-  const outCargos= JSON.parse(nodeProps.outCargos);
+  const outCargos = JSON.parse(nodeProps.outCargos);
 
   for (let cargoType in inCargos) {
     if (inCargos.hasOwnProperty(cargoType)) {
@@ -54,8 +54,7 @@ export function showNodeInfoWindow(e, infoWindow, infoWindowElements, map) {
 
 }
 
-export function hideNodeInfoWindow(infoWindow, map) {
+export function hideNodeInfoWindow(infoWindow) {
 
   infoWindow.style.display = 'none';
-  // linePopup.remove();
 }

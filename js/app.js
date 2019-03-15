@@ -281,24 +281,68 @@ window.onload = () => {
             const infoWindowElements = getInfoWindowElements(infoWindow);
             addCargoList(infoWindowElements, cargoColorArray);
 
-            map.on('mouseenter', 'background-lines', e => {
+
+            let hoveredLineId = null;
+            let hoveredCityId = null;
+
+            map.on('mousemove', 'lines-hover', e => {
                 map.getCanvas().style.cursor = 'pointer';
-                showLineInfoWindow(e, infoWindow, infoWindowElements, map);
+
+                if (e.features.length > 0) {
+                    if (hoveredLineId) {
+                        map.setFeatureState({ source: 'background-lines', id: hoveredLineId }, { hover: false });
+                    }
+
+                    hoveredLineId = e.features[0].id;
+
+                    map.setFeatureState({ source: 'background-lines', id: hoveredLineId }, { hover: true });
+                }
+
+                showLineInfoWindow(e, infoWindow, infoWindowElements);
             });
 
-            map.on('mouseleave', 'background-lines', () => {
+            map.on('mouseleave', 'lines-hover', () => {
                 map.getCanvas().style.cursor = '';
-                hideLineInfoWindow(infoWindow, map);
+
+                if (hoveredLineId) {
+                    map.setFeatureState({ source: 'background-lines', id: hoveredLineId }, { hover: false });
+                }
+
+                hoveredLineId = null;
+
+                hideLineInfoWindow(infoWindow);
             });
 
-            map.on('mouseenter', 'cities', e => {
+            map.on('mousemove', 'cities-hover', e => {
                 map.getCanvas().style.cursor = 'pointer';
-                showNodeInfoWindow(e, infoWindow, infoWindowElements, map);
+
+                if (hoveredLineId) {
+                    map.setFeatureState({ source: 'background-lines', id: hoveredLineId }, { hover: false });
+                }
+
+                if (e.features.length > 0) {
+                    if (hoveredCityId) {
+                        map.setFeatureState({ source: 'nodes', id: hoveredCityId }, { hover: false });
+                    }
+
+                    hoveredCityId = e.features[0].id;
+
+                    map.setFeatureState({ source: 'nodes', id: hoveredCityId }, { hover: true });
+                }
+
+                showNodeInfoWindow(e, infoWindow, infoWindowElements);
             });
 
-            map.on('mouseleave', 'cities', () => {
+            map.on('mouseleave', 'cities-hover', () => {
                 map.getCanvas().style.cursor = '';
-                hideNodeInfoWindow(infoWindow, map);
+
+                if (hoveredCityId) {
+                    map.setFeatureState({ source: 'nodes', id: hoveredCityId }, { hover: false });
+                }
+
+                hoveredCityId = null;
+
+                hideNodeInfoWindow(infoWindow);
             });
 
             // initialize render counter

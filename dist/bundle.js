@@ -411,24 +411,68 @@ window.onload = () => {
             const infoWindowElements = Object(_modules_info_window__WEBPACK_IMPORTED_MODULE_11__["getInfoWindowElements"])(infoWindow);
             Object(_modules_info_window__WEBPACK_IMPORTED_MODULE_11__["addCargoList"])(infoWindowElements, cargoColorArray);
 
-            map.on('mouseenter', 'background-lines', e => {
+
+            let hoveredLineId = null;
+            let hoveredCityId = null;
+
+            map.on('mousemove', 'lines-hover', e => {
                 map.getCanvas().style.cursor = 'pointer';
-                Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_12__["showLineInfoWindow"])(e, infoWindow, infoWindowElements, map);
+
+                if (e.features.length > 0) {
+                    if (hoveredLineId) {
+                        map.setFeatureState({ source: 'background-lines', id: hoveredLineId }, { hover: false });
+                    }
+
+                    hoveredLineId = e.features[0].id;
+
+                    map.setFeatureState({ source: 'background-lines', id: hoveredLineId }, { hover: true });
+                }
+
+                Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_12__["showLineInfoWindow"])(e, infoWindow, infoWindowElements);
             });
 
-            map.on('mouseleave', 'background-lines', () => {
+            map.on('mouseleave', 'lines-hover', () => {
                 map.getCanvas().style.cursor = '';
-                Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_12__["hideLineInfoWindow"])(infoWindow, map);
+
+                if (hoveredLineId) {
+                    map.setFeatureState({ source: 'background-lines', id: hoveredLineId }, { hover: false });
+                }
+
+                hoveredLineId = null;
+
+                Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_12__["hideLineInfoWindow"])(infoWindow);
             });
 
-            map.on('mouseenter', 'cities', e => {
+            map.on('mousemove', 'cities-hover', e => {
                 map.getCanvas().style.cursor = 'pointer';
-                Object(_modules_nodes_info__WEBPACK_IMPORTED_MODULE_13__["showNodeInfoWindow"])(e, infoWindow, infoWindowElements, map);
+
+                if (hoveredLineId) {
+                    map.setFeatureState({ source: 'background-lines', id: hoveredLineId }, { hover: false });
+                }
+
+                if (e.features.length > 0) {
+                    if (hoveredCityId) {
+                        map.setFeatureState({ source: 'nodes', id: hoveredCityId }, { hover: false });
+                    }
+
+                    hoveredCityId = e.features[0].id;
+
+                    map.setFeatureState({ source: 'nodes', id: hoveredCityId }, { hover: true });
+                }
+
+                Object(_modules_nodes_info__WEBPACK_IMPORTED_MODULE_13__["showNodeInfoWindow"])(e, infoWindow, infoWindowElements);
             });
 
-            map.on('mouseleave', 'cities', () => {
+            map.on('mouseleave', 'cities-hover', () => {
                 map.getCanvas().style.cursor = '';
-                Object(_modules_nodes_info__WEBPACK_IMPORTED_MODULE_13__["hideNodeInfoWindow"])(infoWindow, map);
+
+                if (hoveredCityId) {
+                    map.setFeatureState({ source: 'nodes', id: hoveredCityId }, { hover: false });
+                }
+
+                hoveredCityId = null;
+
+                Object(_modules_nodes_info__WEBPACK_IMPORTED_MODULE_13__["hideNodeInfoWindow"])(infoWindow);
             });
 
             // initialize render counter
@@ -2506,17 +2550,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function showLineInfoWindow(e, infoWindow, infoWindowElements, map) {
-  // const popupPosition = e.lngLat;
+function showLineInfoWindow(e, infoWindow, infoWindowElements) {
+  // console.log(e.features);
 
   const lineID = e.features[0].properties.lineID;
   const tableBody = infoWindowElements.tableBody;
-
-  map.setFilter('background-lines-hover', [
-    "all",
-    ["!=", "totalWidth", 0],
-    ["==", "lineID", lineID]
-  ]);
 
 
   let totalOneDir = 0;
@@ -2571,16 +2609,8 @@ function showLineInfoWindow(e, infoWindow, infoWindowElements, map) {
 
 }
 
-function hideLineInfoWindow(infoWindow, map) {
-
+function hideLineInfoWindow(infoWindow) {
   infoWindow.style.display = 'none';
-
-  map.setFilter('background-lines-hover', [
-    "all",
-    ["!=", "totalWidth", 0],
-    ["==", "lineID", ""]
-  ]);
-  // linePopup.remove();
 }
 
 /***/ }),
@@ -2736,9 +2766,9 @@ if (!("hypot" in Math)) {  // Polyfill
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "showNodeInfoWindow", function() { return showNodeInfoWindow; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hideNodeInfoWindow", function() { return hideNodeInfoWindow; });
-function showNodeInfoWindow(e, infoWindow, infoWindowElements, map) {
-  // const popupPosition = e.lngLat;
-  
+function showNodeInfoWindow(e, infoWindow, infoWindowElements) {
+  // console.log(e.features);
+
   const nodeProps = e.features[0].properties;
   const tableBody = infoWindowElements.tableBody;
 
@@ -2751,7 +2781,7 @@ function showNodeInfoWindow(e, infoWindow, infoWindowElements, map) {
   const factor = 10;
 
   const inCargos = JSON.parse(nodeProps.inCargos);
-  const outCargos= JSON.parse(nodeProps.outCargos);
+  const outCargos = JSON.parse(nodeProps.outCargos);
 
   for (let cargoType in inCargos) {
     if (inCargos.hasOwnProperty(cargoType)) {
@@ -2792,10 +2822,9 @@ function showNodeInfoWindow(e, infoWindow, infoWindowElements, map) {
 
 }
 
-function hideNodeInfoWindow(infoWindow, map) {
+function hideNodeInfoWindow(infoWindow) {
 
   infoWindow.style.display = 'none';
-  // linePopup.remove();
 }
 
 /***/ }),
@@ -2823,12 +2852,12 @@ __webpack_require__.r(__webpack_exports__);
 
 // function to bind information about edges to node
 function bindEdgesInfoToNodes(node, edges, map, cargoTypes) {
-    let nodeID = node.properties.OBJECTID;
-    let inEdges = [];
-    let outEdges = [];
+    const nodeID = node.properties.OBJECTID;
+    const inEdges = [];
+    const outEdges = [];
     const inCargos = {};
     const outCargos = {};
-    let filledAdjacentLines = [];
+    const filledAdjacentLines = [];
     let nodeTraffic = 0;
     let outTotal = 0;
     let inTotal = 0;
@@ -2892,7 +2921,8 @@ function bindEdgesInfoToNodes(node, edges, map, cargoTypes) {
         }
 
     });
-
+    
+    node.id = nodeID;
     node.properties.filledAdjacentLines = filledAdjacentLines;
     node.properties.inEdges = inEdges;
     node.properties.inTotal = inTotal;
@@ -3047,6 +3077,7 @@ function createOrigLines(linesIDArray, origLines, edges) {
   linesIDArray.forEach(id => {
 
       var origLine = {
+          id: id,
           properties: {
               lineID: id
           },
@@ -3121,16 +3152,16 @@ function fillOrigLinesWithData(origLines, edges) {
 /*!******************************!*\
   !*** ./js/modules/render.js ***!
   \******************************/
-/*! exports provided: renderBackgroundLines, renderEdges, changeEdgesColor, renderNodes, renderOrigLines, changeCitiesFillColor, changeCitiesStrokeColor */
+/*! exports provided: renderBackgroundLines, renderEdges, renderNodes, renderOrigLines, changeEdgesColor, changeCitiesFillColor, changeCitiesStrokeColor */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "renderBackgroundLines", function() { return renderBackgroundLines; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "renderEdges", function() { return renderEdges; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "changeEdgesColor", function() { return changeEdgesColor; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "renderNodes", function() { return renderNodes; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "renderOrigLines", function() { return renderOrigLines; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "changeEdgesColor", function() { return changeEdgesColor; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "changeCitiesFillColor", function() { return changeCitiesFillColor; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "changeCitiesStrokeColor", function() { return changeCitiesStrokeColor; });
 /* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./common */ "./js/modules/common.js");
@@ -3218,83 +3249,6 @@ function renderBackgroundLines(map, origLines) {
             }
         });
 
-        const widthAdd = 30;
-
-        // add background lines hover layer
-        map.addLayer({
-            "id": "background-lines-hover",
-            "source": "background-lines",
-            "filter": [
-                "all",
-                ["!=", "totalWidth", 0],
-                ["==", "lineID", ""]
-            ],
-            "type": "line",
-            "paint": {
-                'line-color': "#ffff00",
-                "line-opacity": 1,
-                "line-blur": [
-                    'interpolate', ['linear'], ['zoom'],
-                    2, 0,
-                    10, 10
-                ],
-                "line-translate": [
-                    'interpolate', ['linear'], ['zoom'],
-                    4, ["literal", [0, 0]],
-                    10, ["literal", [10, 10]]
-                ],
-                'line-width': [
-                    'interpolate', ['linear'], ['zoom'],
-                    1, ['/', ['+', ['get', 'totalWidth'], widthAdd], 512],
-                    2, ['/', ['+', ['get', 'totalWidth'], widthAdd], 256],
-                    3, ['/', ['+', ['get', 'totalWidth'], widthAdd], 128],
-                    4, ['/', ['+', ['get', 'totalWidth'], widthAdd], 64],
-                    5, ['/', ['+', ['get', 'totalWidth'], widthAdd], 32],
-                    6, ['/', ['+', ['get', 'totalWidth'], widthAdd], 16],
-                    7, ['/', ['+', ['get', 'totalWidth'], widthAdd], 8],
-                    8, ['/', ['+', ['get', 'totalWidth'], widthAdd], 4],
-                    9, ['/', ['+', ['get', 'totalWidth'], widthAdd], 2],
-                    10, ['+', ['get', 'totalWidth'], widthAdd],
-                    11, ['*', ['+', ['get', 'totalWidth'], widthAdd], 2],
-                    12, ['*', ['+', ['get', 'totalWidth'], widthAdd], 4],
-                    13, ['*', ['+', ['get', 'totalWidth'], widthAdd], 8],
-                    14, ['*', ['+', ['get', 'totalWidth'], widthAdd], 16],
-                    15, ['*', ['+', ['get', 'totalWidth'], widthAdd], 32],
-                    16, ['*', ['+', ['get', 'totalWidth'], widthAdd], 64],
-                    17, ['*', ['+', ['get', 'totalWidth'], widthAdd], 128],
-                    18, ['*', ['+', ['get', 'totalWidth'], widthAdd], 256],
-                    19, ['*', ['+', ['get', 'totalWidth'], widthAdd], 512],
-                    20, ['*', ['+', ['get', 'totalWidth'], widthAdd], 1024],
-                    21, ['*', ['+', ['get', 'totalWidth'], widthAdd], 2048],
-                    22, ['*', ['+', ['get', 'totalWidth'], widthAdd], 4096]
-                ],
-                'line-offset': [
-                    'interpolate', ['linear'], ['zoom'],
-                    1, ['/', ['get', 'offset'], 512],
-                    2, ['/', ['get', 'offset'], 256],
-                    3, ['/', ['get', 'offset'], 128],
-                    4, ['/', ['get', 'offset'], 64],
-                    5, ['/', ['get', 'offset'], 32],
-                    6, ['/', ['get', 'offset'], 16],
-                    7, ['/', ['get', 'offset'], 8],
-                    8, ['/', ['get', 'offset'], 4],
-                    9, ['/', ['get', 'offset'], 2],
-                    10, ['get', 'offset'],
-                    11, ['*', ['get', 'offset'], 2],
-                    12, ['*', ['get', 'offset'], 4],
-                    13, ['*', ['get', 'offset'], 8],
-                    14, ['*', ['get', 'offset'], 16],
-                    15, ['*', ['get', 'offset'], 32],
-                    16, ['*', ['get', 'offset'], 64],
-                    17, ['*', ['get', 'offset'], 128],
-                    18, ['*', ['get', 'offset'], 256],
-                    19, ['*', ['get', 'offset'], 512],
-                    20, ['*', ['get', 'offset'], 1024],
-                    21, ['*', ['get', 'offset'], 2048],
-                    22, ['*', ['get', 'offset'], 4096]
-                ],
-            }
-        });
     }
 }
 
@@ -3445,8 +3399,6 @@ function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject) {
 
 
             // render junctions nodes layer
-            // const cargoRadiusName = `${cargoObj.type}-radius`;
-            // const cargoTranslateName = `${cargoObj.type}-translate`;
 
             map.addLayer({
                 "id": cargoObj.type + "-nodes",
@@ -3489,19 +3441,76 @@ function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject) {
             });
 
         });
+
+        // add lines hover layer
+        map.addLayer({
+            "id": "lines-hover",
+            "source": "background-lines",
+            "filter": [
+                "all",
+                ["!=", "totalWidth", 0]
+            ],
+            "type": "line",
+            "paint": {
+                'line-color': "#fff",
+                "line-opacity": ["case",
+                    ["boolean", ["feature-state", "hover"], false],
+                    1,
+                    0
+                ],
+                'line-width': [
+                    'interpolate', ['linear'], ['zoom'],
+                    1, ['/', ['get', 'totalWidth'], 512],
+                    2, ['/', ['get', 'totalWidth'], 256],
+                    3, ['/', ['get', 'totalWidth'], 128],
+                    4, ['/', ['get', 'totalWidth'], 64],
+                    5, ['/', ['get', 'totalWidth'], 32],
+                    6, ['/', ['get', 'totalWidth'], 16],
+                    7, ['/', ['get', 'totalWidth'], 8],
+                    8, ['/', ['get', 'totalWidth'], 4],
+                    9, ['/', ['get', 'totalWidth'], 2],
+                    10, ['get', 'totalWidth'],
+                    11, ['*', ['get', 'totalWidth'], 2],
+                    12, ['*', ['get', 'totalWidth'], 4],
+                    13, ['*', ['get', 'totalWidth'], 8],
+                    14, ['*', ['get', 'totalWidth'], 16],
+                    15, ['*', ['get', 'totalWidth'], 32],
+                    16, ['*', ['get', 'totalWidth'], 64],
+                    17, ['*', ['get', 'totalWidth'], 128],
+                    18, ['*', ['get', 'totalWidth'], 256],
+                    19, ['*', ['get', 'totalWidth'], 512],
+                    20, ['*', ['get', 'totalWidth'], 1024],
+                    21, ['*', ['get', 'totalWidth'], 2048],
+                    22, ['*', ['get', 'totalWidth'], 4096]
+                ],
+                'line-offset': [
+                    'interpolate', ['linear'], ['zoom'],
+                    1, ['/', ['get', 'offset'], 512],
+                    2, ['/', ['get', 'offset'], 256],
+                    3, ['/', ['get', 'offset'], 128],
+                    4, ['/', ['get', 'offset'], 64],
+                    5, ['/', ['get', 'offset'], 32],
+                    6, ['/', ['get', 'offset'], 16],
+                    7, ['/', ['get', 'offset'], 8],
+                    8, ['/', ['get', 'offset'], 4],
+                    9, ['/', ['get', 'offset'], 2],
+                    10, ['get', 'offset'],
+                    11, ['*', ['get', 'offset'], 2],
+                    12, ['*', ['get', 'offset'], 4],
+                    13, ['*', ['get', 'offset'], 8],
+                    14, ['*', ['get', 'offset'], 16],
+                    15, ['*', ['get', 'offset'], 32],
+                    16, ['*', ['get', 'offset'], 64],
+                    17, ['*', ['get', 'offset'], 128],
+                    18, ['*', ['get', 'offset'], 256],
+                    19, ['*', ['get', 'offset'], 512],
+                    20, ['*', ['get', 'offset'], 1024],
+                    21, ['*', ['get', 'offset'], 2048],
+                    22, ['*', ['get', 'offset'], 4096]
+                ],
+            }
+        });
     }
-}
-
-// function to change colors of edges
-function changeEdgesColor(map, cargoColorArray) {
-    let reverseCargoArray = cargoColorArray.slice().reverse();
-
-    reverseCargoArray.forEach(cargoObj => {
-        map.setPaintProperty(cargoObj.type, 'line-color', cargoObj.color);
-        let layerNodeID = cargoObj.type + "-nodes";
-        map.setPaintProperty(layerNodeID, 'circle-color', cargoObj.color);
-    })
-
 }
 
 // function to render nodes
@@ -3562,6 +3571,34 @@ function renderNodes(map, nodes, loadingClassArray) {
                 // "circle-radius": ['get', 'cityRadius'],
                 "circle-stroke-color": "#000",
                 "circle-stroke-width": 1
+            }
+        });
+
+        // add cities hover layer
+        map.addLayer({
+            "id": "cities-hover",
+            "source": "nodes",
+            "type": "circle",
+            "filter": [
+                "all",
+                ["!=", "name_rus", "junction"],
+                [">", "cityRadius", 0]
+            ],
+            "paint": {
+                "circle-color": "rgba(0, 0, 0, 0)",
+                "circle-radius": [
+                    'interpolate',
+                    ['linear'],
+                    ['zoom'],
+                    2, ['/', ['get', 'cityRadius'], 4],
+                    10, ['get', 'cityRadius']
+                ],
+                "circle-stroke-color": "#000",
+                "circle-stroke-width": ["case",
+                    ["boolean", ["feature-state", "hover"], false],
+                    5,
+                    0
+                ],
             }
         });
 
@@ -3639,6 +3676,18 @@ function renderOrigLines(map, origLines, origLineWidth) {
     }
 }
 
+// function to change colors of edges
+function changeEdgesColor(map, cargoColorArray) {
+    let reverseCargoArray = cargoColorArray.slice().reverse();
+
+    reverseCargoArray.forEach(cargoObj => {
+        map.setPaintProperty(cargoObj.type, 'line-color', cargoObj.color);
+        let layerNodeID = cargoObj.type + "-nodes";
+        map.setPaintProperty(layerNodeID, 'circle-color', cargoObj.color);
+    })
+
+}
+
 // functions to change fill color and stoke color of nodes
 function changeCitiesFillColor(map, color) {
     map.setPaintProperty('cities', 'circle-color', color);
@@ -3646,6 +3695,7 @@ function changeCitiesFillColor(map, color) {
 
 function changeCitiesStrokeColor(map, color) {
     map.setPaintProperty('cities', 'circle-stroke-color', color);
+    map.setPaintProperty('cities-hover', 'circle-stroke-color', color);
 }
 
 

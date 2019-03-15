@@ -32,6 +32,7 @@ export function createOrigLines(linesIDArray, origLines, edges) {
   linesIDArray.forEach(id => {
 
       var origLine = {
+          id: id,
           properties: {
               lineID: id
           },

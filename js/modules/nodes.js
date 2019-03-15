@@ -3,12 +3,12 @@ import { isInRange } from "./common";
 
 // function to bind information about edges to node
 export function bindEdgesInfoToNodes(node, edges, map, cargoTypes) {
-    let nodeID = node.properties.OBJECTID;
-    let inEdges = [];
-    let outEdges = [];
+    const nodeID = node.properties.OBJECTID;
+    const inEdges = [];
+    const outEdges = [];
     const inCargos = {};
     const outCargos = {};
-    let filledAdjacentLines = [];
+    const filledAdjacentLines = [];
     let nodeTraffic = 0;
     let outTotal = 0;
     let inTotal = 0;
@@ -72,7 +72,8 @@ export function bindEdgesInfoToNodes(node, edges, map, cargoTypes) {
         }
 
     });
-
+    
+    node.id = nodeID;
     node.properties.filledAdjacentLines = filledAdjacentLines;
     node.properties.inEdges = inEdges;
     node.properties.inTotal = inTotal;
