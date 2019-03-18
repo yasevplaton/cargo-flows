@@ -268,18 +268,11 @@ window.onload = () => {
             // bind color picker to cities layers
             bindColorPickerToCitiesColorBoxes(citiesFillColorBox, citiesStrokeColorBox, map);
 
-            // const linePopup = new mapboxgl.Popup({
-            //     closeButton: false,
-            //     closeOnClick: false
-            // });
-
-            // const nodePopup = new mapboxgl.Popup({
-            //     closeButton: false,
-            //     closeOnClick: false
-            // });
-
             const infoWindowElements = getInfoWindowElements(infoWindow);
             addCargoList(infoWindowElements, cargoColorArray);
+
+            // show info window
+            infoWindow.style.display = "block";
 
 
             let hoveredLineId = null;
@@ -298,7 +291,7 @@ window.onload = () => {
                     map.setFeatureState({ source: 'background-lines', id: hoveredLineId }, { hover: true });
                 }
 
-                showLineInfoWindow(e, infoWindow, infoWindowElements);
+                showLineInfoWindow(e, infoWindowElements);
             });
 
             map.on('mouseleave', 'lines-hover', () => {
@@ -310,7 +303,7 @@ window.onload = () => {
 
                 hoveredLineId = null;
 
-                hideLineInfoWindow(infoWindow);
+                hideLineInfoWindow(infoWindowElements);
             });
 
             map.on('mousemove', 'cities-hover', e => {
@@ -330,7 +323,7 @@ window.onload = () => {
                     map.setFeatureState({ source: 'nodes', id: hoveredCityId }, { hover: true });
                 }
 
-                showNodeInfoWindow(e, infoWindow, infoWindowElements);
+                showNodeInfoWindow(e, infoWindowElements);
             });
 
             map.on('mouseleave', 'cities-hover', () => {
@@ -342,7 +335,7 @@ window.onload = () => {
 
                 hoveredCityId = null;
 
-                hideNodeInfoWindow(infoWindow);
+                hideNodeInfoWindow(infoWindowElements);
             });
 
             // initialize render counter

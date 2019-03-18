@@ -1,4 +1,4 @@
-export function showNodeInfoWindow(e, infoWindow, infoWindowElements) {
+export function showNodeInfoWindow(e, infoWindowElements) {
   // console.log(e.features);
 
   const nodeProps = e.features[0].properties;
@@ -40,8 +40,6 @@ export function showNodeInfoWindow(e, infoWindow, infoWindowElements) {
   infoWindowElements.dirOne.totalVolume.textContent = inTotal;
   infoWindowElements.dirTwo.totalVolume.textContent = outTotal;
 
-  infoWindow.style.display = 'block';
-
   // while (Math.abs(e.lngLat.lng - popupPosition[0]) > 180) {
   //   popupPosition[0] += e.lngLat.lng > popupPosition[0] ? 360 : -360;
   // }
@@ -54,7 +52,21 @@ export function showNodeInfoWindow(e, infoWindow, infoWindowElements) {
 
 }
 
-export function hideNodeInfoWindow(infoWindow) {
+export function hideNodeInfoWindow(infoWindowElements) {
 
-  infoWindow.style.display = 'none';
+  const tableBody = infoWindowElements.tableBody;
+
+  infoWindowElements.dirOne.title.textContent = 'Прямо';
+  infoWindowElements.dirTwo.title.textContent = 'Обратно';
+
+  const cargoValuesDirOne = tableBody.querySelectorAll('.info-window__col--dir-1');
+  const cargoValuesDirTwo = tableBody.querySelectorAll('.info-window__col--dir-2');
+
+  Array.from(cargoValuesDirOne).forEach(col => {
+    col.textContent = "-"
+  });
+
+  Array.from(cargoValuesDirTwo).forEach(col => {
+    col.textContent = "-"
+  });
 }

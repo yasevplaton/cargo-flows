@@ -51,9 +51,11 @@ export function addCargoList(infoWindowElements, cargoColorArray) {
   
     const cargoDirOneCol = document.createElement('td');
     cargoDirOneCol.classList.add('info-window__col', 'info-window__col--dir-1');
+    cargoDirOneCol.textContent = "-";
     
     const cargoDirTwoCol = document.createElement('td');
     cargoDirTwoCol.classList.add('info-window__col', 'info-window__col--dir-2');
+    cargoDirTwoCol.textContent = "-";
 
     const cargoCols = [cargoColorBoxCol, cargoTypeCol, cargoDirOneCol, cargoDirTwoCol];
 

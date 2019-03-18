@@ -411,6 +411,9 @@ window.onload = () => {
             const infoWindowElements = Object(_modules_info_window__WEBPACK_IMPORTED_MODULE_11__["getInfoWindowElements"])(infoWindow);
             Object(_modules_info_window__WEBPACK_IMPORTED_MODULE_11__["addCargoList"])(infoWindowElements, cargoColorArray);
 
+            // show info window
+            infoWindow.style.display = "block";
+
 
             let hoveredLineId = null;
             let hoveredCityId = null;
@@ -428,7 +431,7 @@ window.onload = () => {
                     map.setFeatureState({ source: 'background-lines', id: hoveredLineId }, { hover: true });
                 }
 
-                Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_12__["showLineInfoWindow"])(e, infoWindow, infoWindowElements);
+                Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_12__["showLineInfoWindow"])(e, infoWindowElements);
             });
 
             map.on('mouseleave', 'lines-hover', () => {
@@ -440,7 +443,7 @@ window.onload = () => {
 
                 hoveredLineId = null;
 
-                Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_12__["hideLineInfoWindow"])(infoWindow);
+                Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_12__["hideLineInfoWindow"])(infoWindowElements);
             });
 
             map.on('mousemove', 'cities-hover', e => {
@@ -460,7 +463,7 @@ window.onload = () => {
                     map.setFeatureState({ source: 'nodes', id: hoveredCityId }, { hover: true });
                 }
 
-                Object(_modules_nodes_info__WEBPACK_IMPORTED_MODULE_13__["showNodeInfoWindow"])(e, infoWindow, infoWindowElements);
+                Object(_modules_nodes_info__WEBPACK_IMPORTED_MODULE_13__["showNodeInfoWindow"])(e, infoWindowElements);
             });
 
             map.on('mouseleave', 'cities-hover', () => {
@@ -472,7 +475,7 @@ window.onload = () => {
 
                 hoveredCityId = null;
 
-                Object(_modules_nodes_info__WEBPACK_IMPORTED_MODULE_13__["hideNodeInfoWindow"])(infoWindow);
+                Object(_modules_nodes_info__WEBPACK_IMPORTED_MODULE_13__["hideNodeInfoWindow"])(infoWindowElements);
             });
 
             // initialize render counter
@@ -2366,9 +2369,11 @@ function addCargoList(infoWindowElements, cargoColorArray) {
   
     const cargoDirOneCol = document.createElement('td');
     cargoDirOneCol.classList.add('info-window__col', 'info-window__col--dir-1');
+    cargoDirOneCol.textContent = "-";
     
     const cargoDirTwoCol = document.createElement('td');
     cargoDirTwoCol.classList.add('info-window__col', 'info-window__col--dir-2');
+    cargoDirTwoCol.textContent = "-";
 
     const cargoCols = [cargoColorBoxCol, cargoTypeCol, cargoDirOneCol, cargoDirTwoCol];
 
@@ -2550,7 +2555,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function showLineInfoWindow(e, infoWindow, infoWindowElements) {
+function showLineInfoWindow(e, infoWindowElements) {
   // console.log(e.features);
 
   const lineID = e.features[0].properties.lineID;
@@ -2596,8 +2601,6 @@ function showLineInfoWindow(e, infoWindow, infoWindowElements) {
   infoWindowElements.dirOne.totalVolume.textContent = totalOneDir;
   infoWindowElements.dirTwo.totalVolume.textContent = totalTwoDir;
 
-  infoWindow.style.display = 'block';
-
   // while (Math.abs(e.lngLat.lng - popupPosition[0]) > 180) {
   //   popupPosition[0] += e.lngLat.lng > popupPosition[0] ? 360 : -360;
   // }
@@ -2609,8 +2612,25 @@ function showLineInfoWindow(e, infoWindow, infoWindowElements) {
 
 }
 
-function hideLineInfoWindow(infoWindow) {
-  infoWindow.style.display = 'none';
+function hideLineInfoWindow(infoWindowElements) {
+
+  const tableBody = infoWindowElements.tableBody;
+
+  infoWindowElements.dirOne.title.textContent = 'Прямо';
+  infoWindowElements.dirTwo.title.textContent = 'Обратно';
+
+  const cargoValuesDirOne = tableBody.querySelectorAll('.info-window__col--dir-1');
+  const cargoValuesDirTwo = tableBody.querySelectorAll('.info-window__col--dir-2');
+
+  Array.from(cargoValuesDirOne).forEach(col => {
+    col.textContent = "-"
+  });
+
+  Array.from(cargoValuesDirTwo).forEach(col => {
+    col.textContent = "-"
+  });
+
+
 }
 
 /***/ }),
@@ -2766,7 +2786,7 @@ if (!("hypot" in Math)) {  // Polyfill
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "showNodeInfoWindow", function() { return showNodeInfoWindow; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hideNodeInfoWindow", function() { return hideNodeInfoWindow; });
-function showNodeInfoWindow(e, infoWindow, infoWindowElements) {
+function showNodeInfoWindow(e, infoWindowElements) {
   // console.log(e.features);
 
   const nodeProps = e.features[0].properties;
@@ -2808,8 +2828,6 @@ function showNodeInfoWindow(e, infoWindow, infoWindowElements) {
   infoWindowElements.dirOne.totalVolume.textContent = inTotal;
   infoWindowElements.dirTwo.totalVolume.textContent = outTotal;
 
-  infoWindow.style.display = 'block';
-
   // while (Math.abs(e.lngLat.lng - popupPosition[0]) > 180) {
   //   popupPosition[0] += e.lngLat.lng > popupPosition[0] ? 360 : -360;
   // }
@@ -2822,9 +2840,23 @@ function showNodeInfoWindow(e, infoWindow, infoWindowElements) {
 
 }
 
-function hideNodeInfoWindow(infoWindow) {
+function hideNodeInfoWindow(infoWindowElements) {
 
-  infoWindow.style.display = 'none';
+  const tableBody = infoWindowElements.tableBody;
+
+  infoWindowElements.dirOne.title.textContent = 'Прямо';
+  infoWindowElements.dirTwo.title.textContent = 'Обратно';
+
+  const cargoValuesDirOne = tableBody.querySelectorAll('.info-window__col--dir-1');
+  const cargoValuesDirTwo = tableBody.querySelectorAll('.info-window__col--dir-2');
+
+  Array.from(cargoValuesDirOne).forEach(col => {
+    col.textContent = "-"
+  });
+
+  Array.from(cargoValuesDirTwo).forEach(col => {
+    col.textContent = "-"
+  });
 }
 
 /***/ }),

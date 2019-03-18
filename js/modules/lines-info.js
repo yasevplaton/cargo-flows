@@ -1,7 +1,7 @@
 
 
 
-export function showLineInfoWindow(e, infoWindow, infoWindowElements) {
+export function showLineInfoWindow(e, infoWindowElements) {
   // console.log(e.features);
 
   const lineID = e.features[0].properties.lineID;
@@ -47,8 +47,6 @@ export function showLineInfoWindow(e, infoWindow, infoWindowElements) {
   infoWindowElements.dirOne.totalVolume.textContent = totalOneDir;
   infoWindowElements.dirTwo.totalVolume.textContent = totalTwoDir;
 
-  infoWindow.style.display = 'block';
-
   // while (Math.abs(e.lngLat.lng - popupPosition[0]) > 180) {
   //   popupPosition[0] += e.lngLat.lng > popupPosition[0] ? 360 : -360;
   // }
@@ -60,6 +58,23 @@ export function showLineInfoWindow(e, infoWindow, infoWindowElements) {
 
 }
 
-export function hideLineInfoWindow(infoWindow) {
-  infoWindow.style.display = 'none';
+export function hideLineInfoWindow(infoWindowElements) {
+
+  const tableBody = infoWindowElements.tableBody;
+
+  infoWindowElements.dirOne.title.textContent = 'Прямо';
+  infoWindowElements.dirTwo.title.textContent = 'Обратно';
+
+  const cargoValuesDirOne = tableBody.querySelectorAll('.info-window__col--dir-1');
+  const cargoValuesDirTwo = tableBody.querySelectorAll('.info-window__col--dir-2');
+
+  Array.from(cargoValuesDirOne).forEach(col => {
+    col.textContent = "-"
+  });
+
+  Array.from(cargoValuesDirTwo).forEach(col => {
+    col.textContent = "-"
+  });
+
+
 }
