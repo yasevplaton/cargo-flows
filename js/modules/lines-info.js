@@ -1,4 +1,4 @@
-export function showLineData(e, infoWindowElements) {
+export function showLineData(e, infoWindowElements, infoWindowText) {
   // console.log(e.features);
 
   const lineID = e.features[0].properties.lineID;
@@ -10,8 +10,8 @@ export function showLineData(e, infoWindowElements) {
   const denominator = 10000;
   const factor = 10;
 
-  infoWindowElements.dirOne.title.textContent = 'Straight';
-  infoWindowElements.dirTwo.title.textContent = 'Back';
+  infoWindowElements.dirOne.title.textContent = infoWindowText.lineDirOne;
+  infoWindowElements.dirTwo.title.textContent = infoWindowText.lineDirTwo;
 
   const infoOneDir = JSON.parse(e.features[0].properties.dataOneDir);
   const infoTwoDir = JSON.parse(e.features[0].properties.dataTwoDir);
@@ -55,12 +55,12 @@ export function showLineData(e, infoWindowElements) {
 
 }
 
-export function hideLineData(infoWindowElements) {
+export function hideLineData(infoWindowElements, infoWindowText) {
 
   const tableBody = infoWindowElements.tableBody;
 
-  infoWindowElements.dirOne.title.textContent = 'Straight';
-  infoWindowElements.dirTwo.title.textContent = 'Back';
+  infoWindowElements.dirOne.title.textContent = infoWindowText.lineDirOne;
+  infoWindowElements.dirTwo.title.textContent = infoWindowText.lineDirTwo;
 
   const cargoValuesDirOne = tableBody.querySelectorAll('.info-window__col--dir-1');
   const cargoValuesDirTwo = tableBody.querySelectorAll('.info-window__col--dir-2');

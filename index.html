@@ -130,7 +130,7 @@
                 class="linear-scale__content collapse"
               >
                 <p class="interface-text linear-scale__text">
-                    Specify minimum and maximum line width in the tape using the slider or set values manually
+                    Specify minimum and maximum line width in a ribbon using the slider or set values manually
                 </p>
                 <div
                   id="widthSlider"
@@ -188,7 +188,7 @@
                 <div class="pretty p-default p-curve checkbox">
                   <input type="checkbox" id="cities-checkbox" checked />
                   <div class="state p-gray">
-                    <label class="checkbox__label"
+                    <label class="checkbox__label checkbox__label--cities"
                       >Show settlements</label
                     >
                   </div>
@@ -196,13 +196,13 @@
                 <div class="pretty p-default p-curve checkbox">
                   <input type="checkbox" id="junctions-checkbox" />
                   <div class="state p-gray">
-                    <label class="checkbox__label"
+                    <label class="checkbox__label checkbox__label--junctions"
                       >Show transit nodes</label
                     >
                   </div>
                 </div>
                 <div class="nodes-settings__fill-color">
-                  <div class="interface-text nodes-settings__text">
+                  <div class="interface-text nodes-settings__text nodes-settings__text--fill-color">
                     Select circle fill color
                   </div>
                   <span
@@ -211,7 +211,7 @@
                   ></span>
                 </div>
                 <div class="nodes-settings__stroke-color">
-                  <div class="interface-text nodes-settings__text">
+                  <div class="interface-text nodes-settings__text nodes-settings__text--stroke-color">
                     Select circle stroke color
                   </div>
                   <span
@@ -219,7 +219,7 @@
                     id="cities-stroke-color-box"
                   ></span>
                 </div>
-                <p class="interface-text">
+                <p class="interface-text nodes-settings__text--slider">
                     Specify minimum and maximum radius for circles of settlements using the slider or set values manually
                 </p>
                 <div
@@ -278,13 +278,13 @@
                 <div class="pretty p-default p-curve checkbox">
                   <input type="checkbox" id="edges-checkbox" checked />
                   <div class="state p-gray">
-                    <label class="checkbox__text">Show tapes</label>
+                    <label class="checkbox__label checkbox__label--ribbons">Show ribbons</label>
                   </div>
                 </div>
                 <div class="pretty p-default p-curve checkbox">
                   <input type="checkbox" id="cargo-nodes-checkbox" checked />
                   <div class="state p-gray">
-                    <label class="checkbox__text"
+                    <label class="checkbox__label checkbox__label--cargo-nodes"
                       >Show junction circles</label
                     >
                   </div>
@@ -296,7 +296,7 @@
                     checked
                   />
                   <div class="state p-gray">
-                    <label class="checkbox__text">Show shadow</label>
+                    <label class="checkbox__label checkbox__label--shadow">Show shadow</label>
                   </div>
                 </div>
               </div>
@@ -308,7 +308,7 @@
 
     <div id="map" class="map"></div>
     <div class="loading-map-panel" id="loading-map-panel">
-      <p class="loading-map-panel__text">map is loading</p>
+      <p class="loading-map-panel__text">wait, map is loading...</p>
     </div>
     <div class="greeting-panel__wrapper">
       <div

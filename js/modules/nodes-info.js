@@ -1,11 +1,11 @@
-export function showNodeData(e, infoWindowElements) {
+export function showNodeData(e, infoWindowElements, infoWindowText) {
   // console.log(e.features);
 
   const nodeProps = e.features[0].properties;
   const tableBody = infoWindowElements.tableBody;
 
-  infoWindowElements.dirOne.title.textContent = 'In';
-  infoWindowElements.dirTwo.title.textContent = 'Out';
+  infoWindowElements.dirOne.title.textContent = infoWindowText.nodeDirOne;
+  infoWindowElements.dirTwo.title.textContent = infoWindowText.nodeDirTwo;
 
   let inTotal = 0;
   let outTotal = 0;
@@ -52,12 +52,12 @@ export function showNodeData(e, infoWindowElements) {
 
 }
 
-export function hideNodeData(infoWindowElements) {
+export function hideNodeData(infoWindowElements, infoWindowText) {
 
   const tableBody = infoWindowElements.tableBody;
 
-  infoWindowElements.dirOne.title.textContent = 'Straight';
-  infoWindowElements.dirTwo.title.textContent = 'Back';
+  infoWindowElements.dirOne.title.textContent = infoWindowText.lineDirOne;
+  infoWindowElements.dirTwo.title.textContent = infoWindowText.lineDirTwo;
 
   const cargoValuesDirOne = tableBody.querySelectorAll('.info-window__col--dir-1');
   const cargoValuesDirTwo = tableBody.querySelectorAll('.info-window__col--dir-2');

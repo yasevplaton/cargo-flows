@@ -162,479 +162,577 @@ __webpack_require__.r(__webpack_exports__);
 
 
 window.onload = () => {
+  // get access to mapbox api
+  mapbox_gl__WEBPACK_IMPORTED_MODULE_2___default.a.accessToken =
+    "pk.eyJ1IjoieWFzZXZwbGF0b24iLCJhIjoiY2poaTJrc29jMDF0YzM2cDU1ZnM1c2xoMiJ9.FhmWdHG7ar14dQv1Aoqx4A";
 
-    // get access to mapbox api
-    mapbox_gl__WEBPACK_IMPORTED_MODULE_2___default.a.accessToken = 'pk.eyJ1IjoieWFzZXZwbGF0b24iLCJhIjoiY2poaTJrc29jMDF0YzM2cDU1ZnM1c2xoMiJ9.FhmWdHG7ar14dQv1Aoqx4A';
+  const map = new mapbox_gl__WEBPACK_IMPORTED_MODULE_2___default.a.Map({
+    container: "map",
+    style: "mapbox://styles/mapbox/dark-v9", // mapbox tiles location
+    // style: 'https://maps.tilehosting.com/styles/darkmatter/style.json?key=9jsySrA6E6EKeAPy7tod', // tiles from tilehosting.com
+    center: [37.64, 55.75],
+    zoom: 10
+  });
 
-    const map = new mapbox_gl__WEBPACK_IMPORTED_MODULE_2___default.a.Map({
-        container: 'map',
-        style: 'mapbox://styles/mapbox/dark-v9', // mapbox tiles location
-        // style: 'https://maps.tilehosting.com/styles/darkmatter/style.json?key=9jsySrA6E6EKeAPy7tod', // tiles from tilehosting.com
-        center: [37.64, 55.75],
-        zoom: 10
+  map.on("load", () => {
+    // remove greeting panel and make interface elements visible
+    document.getElementById("loading-map-panel").remove();
+
+    const greetingPanel = document.getElementById("greeting-panel");
+    greetingPanel.classList.remove("hidden");
+
+    const demoBtn = greetingPanel.querySelector("#btn-demo");
+    const uploadBtn = greetingPanel.querySelector("#btn-upload");
+
+    // get access to the necessary elements
+    const handleDataPanel = document.querySelector("#handle-data-panel");
+
+    const mainInterface = document.getElementById("main-interface-wrapper");
+    const inputFileElement = mainInterface.querySelector("#inputGoodsTable");
+    const buttonSubmit = mainInterface.querySelector("#btn-submit");
+    const editInterface = mainInterface.querySelector(
+      "#edit-interface-wrapper"
+    );
+    const colorTableBody = mainInterface.querySelector("#color-table-body");
+    const widthSlider = mainInterface.querySelector("#widthSlider");
+    const minWidthInput = mainInterface.querySelector("#min-width-input");
+    const maxWidthInput = mainInterface.querySelector("#max-width-input");
+    const cityRadiusSlider = mainInterface.querySelector("#cityRadiusSlider");
+    const minCityRadiusInput = mainInterface.querySelector("#min-radius-input");
+    const maxCityRadiusInput = mainInterface.querySelector("#max-radius-input");
+    const citiesCheckbox = mainInterface.querySelector("#cities-checkbox");
+    const junctionCheckbox = mainInterface.querySelector("#junctions-checkbox");
+    const citiesFillColorBox = mainInterface.querySelector(
+      "#cities-fill-color-box"
+    );
+    const citiesStrokeColorBox = mainInterface.querySelector(
+      "#cities-stroke-color-box"
+    );
+    const backgroundLinesCheckbox = mainInterface.querySelector(
+      "#background-lines-checkbox"
+    );
+    const edgesCheckbox = mainInterface.querySelector("#edges-checkbox");
+    const cargoNodesCheckbox = mainInterface.querySelector(
+      "#cargo-nodes-checkbox"
+    );
+
+    const infoWindow = document.querySelector(".info-window");
+
+    // get access to text elems to change interface language
+    const engBtn = greetingPanel.querySelector("#btn-en");
+    const ruBtn = greetingPanel.querySelector("#btn-ru");
+
+    // get text elements of app
+    const textElems = Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["getTextElems"])(
+      greetingPanel,
+      handleDataPanel,
+      mainInterface,
+      infoWindow
+    );
+
+    // set language mode as english by default
+    let langMode = "en";
+
+    // set text in info window as english by default
+    const infoWindowText = {
+      lineDirOne: "Straight",
+      lineDirTwo: "Back",
+      nodeDirOne: "In",
+      nodeDirTwo: "Out"
+    };
+
+    // change langMode when click on "en" button
+    engBtn.addEventListener('click', () => {
+        langMode = "en";
+        Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["fetchLanguageData"])(textElems, langMode);
+        Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["changeInfoWindowText"])(infoWindowText, langMode);
     });
 
-    map.on('load', () => {
-
-        // remove greeting panel and make interface elements visible
-        document.getElementById("loading-map-panel").remove();
-        document.getElementById("greeting-panel").classList.remove('hidden');
-
-        // get access to the necessary elements
-        const engBtn = document.getElementById('btn-en');
-        const ruBtn = document.getElementById('btn-ru');
-        const demoBtn = document.getElementById('btn-demo');
-        const uploadBtn = document.getElementById('btn-upload');
-        const mainInterface = document.getElementById('main-interface-wrapper');
-        const inputFileElement = document.getElementById('inputGoodsTable');
-        const buttonSubmit = document.getElementById('btn-submit');
-        const handleDataPanel = document.getElementById('handle-data-panel');
-        const editInterface = document.getElementById('edit-interface-wrapper');
-        const colorTableBody = document.getElementById('color-table-body');
-        const widthSlider = document.getElementById('widthSlider');
-        const minWidthInput = document.getElementById('min-width-input');
-        const maxWidthInput = document.getElementById('max-width-input');
-        const cityRadiusSlider = document.getElementById('cityRadiusSlider');
-        const minCityRadiusInput = document.getElementById('min-radius-input');
-        const maxCityRadiusInput = document.getElementById('max-radius-input');
-        const citiesCheckbox = document.getElementById('cities-checkbox');
-        const junctionCheckbox = document.getElementById('junctions-checkbox');
-        const citiesFillColorBox = document.getElementById('cities-fill-color-box');
-        const citiesStrokeColorBox = document.getElementById('cities-stroke-color-box');
-        const backgroundLinesCheckbox = document.getElementById('background-lines-checkbox');
-        const edgesCheckbox = document.getElementById('edges-checkbox');
-        const cargoNodesCheckbox = document.getElementById('cargo-nodes-checkbox');
-        const infoWindow = document.querySelector('.info-window');
-
-        // store server url
-        // localhost url for testing
-        // const url = 'http://127.0.0.1:5000/upload_data';
-
-        // pythonanywhere url for production
-        const url = 'https://yasevplaton.pythonanywhere.com/upload_data';
-
-        // initialize variable to store input file
-        let cargoTable,
-            edgesPromise,
-            nodesPromise;
-
-        // add click listener to sumbit button
-        buttonSubmit.addEventListener('click', (e) => {
-            // prevent default submit action
-            e.preventDefault();
-
-            // if we've already have input file
-            if (cargoTable) {
-                //  compare its name with name of current input file
-                if (inputFileElement.files[0].name = cargoTable.name) {
-                    // if names are same don't do anything
-                    alert('Выбран тот же файл! Пожалуйста, выберите другой.');
-                    return;
-                }
-            }
-
-            if (inputFileElement.files[0]) {
-
-                // show loading panel
-                handleDataPanel.classList.remove('hidden');
-
-                edgesPromise = fetch(url, {
-                    method: 'POST',
-                    body: inputFileElement.files[0]
-                }).then(response => response.json());
-
-                nodesPromise = fetch('./data/pointsVolgaRus.geojson?ass=' + Math.random()).then(response => response.json());
-
-                Promise.all([edgesPromise, nodesPromise])
-                    .then(([edges, nodes]) => main(edges, nodes))
-                    .catch(error => {
-                        handleDataPanel.classList.add('hidden');
-                        alert("Увы, произошла какая-то ошибка :( Если вы разработчик, можете глянуть в консоли и зарепортить багу на гитхабе https://github.com/yasevplaton/linear-cartodiagram. Если вы не понимаете, что такое консоль, бага или гитхаб, обратитесь в службу поддержки по адресу yasevplaton@gmail.com");
-                        console.error("Error with loading of data:", error)
-                    });
-
-            } else {
-
-                alert("Сначала нужно выбрать файл!");
-                return;
-
-            }
-        });
-
-        // add click listener to upload button
-        uploadBtn.addEventListener('click', () => {
-            document.getElementById("greeting-panel").classList.add('hidden');
-            mainInterface.classList.remove('hidden');
-        });
-
-        // add click listener to demo button
-        demoBtn.addEventListener('click', () => {
-
-            // hide greeting panel
-            document.getElementById("greeting-panel").classList.add('hidden');
-            
-            // show loading panel
-            handleDataPanel.classList.remove('hidden');
-
-            // initialize promises for data
-            edgesPromise = fetch('./data/edgesVolgaAssym.geojson?ass=' + Math.random()).then(response => response.json());
-            nodesPromise = fetch('./data/pointsVolgaRus.geojson?ass=' + Math.random()).then(response => response.json());
-
-            // if all promises are resolved invoke main function
-            Promise.all([edgesPromise, nodesPromise])
-                .then(([edges, nodes]) => main(edges, nodes))
-                .catch(error => console.error("Error with loading of data:", error));
-        });
-
-
-        // main function
-        function main(edges, nodes) {
-
-            // store input file in variable
-            cargoTable = inputFileElement.files[0];
-
-            // hide loading panel
-            handleDataPanel.classList.add('hidden');
-
-            // show main interface if it is hidden
-            if (mainInterface.classList.contains('hidden')) {
-                mainInterface.classList.remove('hidden');
-            }
-            // show edit interface
-            editInterface.classList.remove('hidden');
-
-            // set original line width
-            const origLineWidth = 1;
-            // const shadowOffset = 12;
-
-            // get bounding box of data to center and zoom map
-            let boundingBox = Object(_modules_common__WEBPACK_IMPORTED_MODULE_3__["getBoundingBox"])(nodes);
-
-            // get flow values
-            let flowValues = Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["getFlowValues"])(edges);
-
-            // get marks of classes for flow values
-            let jenks = Object(_modules_common__WEBPACK_IMPORTED_MODULE_3__["classifyArray"])(flowValues, 4);
-
-            // get cargo types
-            let cargoTypes = Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["getCargoTypes"])(edges);
-
-            // get random colors for cargo types
-            let cargoColorArray = Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["getRandomCargoColorArray"])(cargoTypes);
-
-            // create a blank object for storage original lines
-            const origLines = { "type": 'FeatureCollection', features: [] };
-
-            // collect ids of lines
-            let linesIDArray = Object(_modules_orig_lines__WEBPACK_IMPORTED_MODULE_9__["collectLinesIDs"])(edges);
-
-            // fill adjacent lines attribute to nodes
-            Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["fillAdjacentLinesAttr"])(nodes, edges);
-
-            // fill original lines object with data
-            Object(_modules_orig_lines__WEBPACK_IMPORTED_MODULE_9__["createOrigLines"])(linesIDArray, origLines, edges);
-
-            // set default values for width of edges
-            let minWidthDefault = 20, maxWidthDefault = 100, maxEdgeWidth = 200;
-            let minDefaultCityRadius = 5, maxDefaultCityRadius = 15, maxCityRadius = 40;
-
-            minWidthInput.value = minWidthDefault;
-            maxWidthInput.value = maxWidthDefault;
-
-            minCityRadiusInput.value = minDefaultCityRadius;
-            maxCityRadiusInput.value = maxDefaultCityRadius;
-
-            // get width array
-            let widthArray = Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["getWidthArray"])(minWidthDefault, maxWidthDefault);
-
-            // calculate width for edges
-            Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["calculateWidth"])(edges, widthArray, jenks);
-
-            // calculate offset for edges
-            Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["calculateOffset"])(edges, origLineWidth);
-
-            // bind data to original lines
-            Object(_modules_orig_lines__WEBPACK_IMPORTED_MODULE_9__["fillOrigLinesWithData"])(origLines, edges);
-            Object(_modules_bg_lines__WEBPACK_IMPORTED_MODULE_10__["addWidthAndOffsetAttr"])(origLines, edges);
-
-            const nodeTrafficArray = [];
-
-            // calculate node radius
-            nodes.features.forEach(node => {
-                Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["bindEdgesInfoToNodes"])(node, edges, map, cargoTypes);
-                Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["fillNodeTrafficArray"])(nodeTrafficArray, node);
-                Object(_modules_cargo_nodes__WEBPACK_IMPORTED_MODULE_6__["addNodeAttr"])(node, cargoTypes, map);
-            });
-
-            const nodeJenks = Object(_modules_common__WEBPACK_IMPORTED_MODULE_3__["classifyArray"])(nodeTrafficArray, 5);
-
-            let cityRadiusArray = Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["getCityRadiusArray"])(minDefaultCityRadius, maxDefaultCityRadius);
-
-            const loadingClassArray = [1, 2, 3, 4, 5];
-
-            nodes.features.forEach(node => {
-                Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["addLoadingClass"])(node, nodeJenks);
-                Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["addCityRadiusAttr"])(node, cityRadiusArray);
-            });
-
-            let multipleCargoNodesObject = Object(_modules_cargo_nodes__WEBPACK_IMPORTED_MODULE_6__["createMultipleCargoNodesObject"])(cargoTypes, nodes);
-
-
-            // render background lines
-            Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderBackgroundLines"])(map, origLines);
-            // render edges
-            Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderEdges"])(map, edges, cargoColorArray, multipleCargoNodesObject);
-            // render original lines
-            Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderOrigLines"])(map, origLines, origLineWidth);
-            // render nodes
-            Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderNodes"])(map, nodes, loadingClassArray);
-
-            // create color table
-            Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["createColorTable"])(colorTableBody, cargoColorArray, map, infoWindow);
-
-            // create width slider
-            Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["createSlider"])(widthSlider, minWidthDefault, maxWidthDefault, maxEdgeWidth);
-
-            // create slider for cities radius
-            Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["createSlider"])(cityRadiusSlider, minDefaultCityRadius, maxDefaultCityRadius, maxCityRadius);
-
-            // bind color picker to cities layers
-            Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["bindColorPickerToCitiesColorBoxes"])(citiesFillColorBox, citiesStrokeColorBox, map);
-
-            const infoWindowElements = Object(_modules_info_window__WEBPACK_IMPORTED_MODULE_11__["getInfoWindowElements"])(infoWindow);
-            Object(_modules_info_window__WEBPACK_IMPORTED_MODULE_11__["addCargoList"])(infoWindowElements, cargoColorArray);
-
-            // show info window
-            infoWindow.style.display = "block";
-
-
-            // initialize variables to store id of hovered feature
-            let hoveredLineId = null;
-            let hoveredCityId = null;
-
-            map.on('mousemove', 'lines-hover', e => {
-                map.getCanvas().style.cursor = 'pointer';
-
-                // if under cursor one or more feauteres
-                if (e.features.length > 0) {
-
-                    // and if hovered feature id is not null
-                    if (hoveredLineId) {
-                        // change feature state hover to false
-                        map.setFeatureState({ source: 'background-lines', id: hoveredLineId }, { hover: false });
-                    }
-
-                    // take id of first feature
-                    hoveredLineId = e.features[0].id;
-
-                    // set hover state for this line as true (it will change appearence of layer)
-                    map.setFeatureState({ source: 'background-lines', id: hoveredLineId }, { hover: true });
-                }
-
-                // show data for infoWindow
-                Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_12__["showLineData"])(e, infoWindowElements);
-            });
-
-            map.on('mouseleave', 'lines-hover', () => {
-                map.getCanvas().style.cursor = '';
-
-                if (hoveredLineId) {
-                    map.setFeatureState({ source: 'background-lines', id: hoveredLineId }, { hover: false });
-                }
-
-                hoveredLineId = null;
-
-                Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_12__["hideLineData"])(infoWindowElements);
-            });
-
-            map.on('mousemove', 'cities-hover', e => {
-                map.getCanvas().style.cursor = 'pointer';
-
-                if (hoveredLineId) {
-                    map.setFeatureState({ source: 'background-lines', id: hoveredLineId }, { hover: false });
-                }
-
-                if (e.features.length > 0) {
-                    if (hoveredCityId) {
-                        map.setFeatureState({ source: 'nodes', id: hoveredCityId }, { hover: false });
-                    }
-
-                    hoveredCityId = e.features[0].id;
-
-                    map.setFeatureState({ source: 'nodes', id: hoveredCityId }, { hover: true });
-                }
-
-                Object(_modules_nodes_info__WEBPACK_IMPORTED_MODULE_13__["showNodeData"])(e, infoWindowElements);
-            });
-
-            map.on('mouseleave', 'cities-hover', () => {
-                map.getCanvas().style.cursor = '';
-
-                if (hoveredCityId) {
-                    map.setFeatureState({ source: 'nodes', id: hoveredCityId }, { hover: false });
-                }
-
-                hoveredCityId = null;
-
-                Object(_modules_nodes_info__WEBPACK_IMPORTED_MODULE_13__["hideNodeData"])(infoWindowElements);
-            });
-
-            // initialize render counter
-            let startWidthSliderCounter = 0;
-            let startRadiusSliderCounter = 0;
-
-            // bind update listener to edge width slider
-            widthSlider.noUiSlider.on('update', function (values, handle) {
-
-                if (startWidthSliderCounter === 0 || startWidthSliderCounter === 1) {
-                    startWidthSliderCounter += 1;
-                    return;
-                }
-
-                let value = values[handle];
-
-                if (handle) {
-                    maxWidthInput.value = Math.round(value);
-                } else {
-                    minWidthInput.value = Math.round(value);
-                }
-
-                updateWidthSliderHandler();
-            });
-
-            // bind update listener to city radius slider
-            cityRadiusSlider.noUiSlider.on('update', function (values, handle) {
-
-                if (startRadiusSliderCounter === 0 || startRadiusSliderCounter === 1) {
-                    startRadiusSliderCounter += 1;
-                    return;
-                }
-
-                let value = values[handle];
-
-                if (handle) {
-                    maxCityRadiusInput.value = Math.round(value);
-                } else {
-                    minCityRadiusInput.value = Math.round(value);
-                }
-
-                updateCityRadiusSliderHandler();
-            });
-
-            // bind change listeners to width inputs
-            minWidthInput.addEventListener('change', function () {
-                if (this.value > +maxWidthInput.value) {
-                    minWidthInput.value = maxWidthInput.value;
-                    widthSlider.noUiSlider.set([+maxWidthInput.value, null]);
-                } else {
-                    widthSlider.noUiSlider.set([this.value, null]);
-                }
-            });
-
-            maxWidthInput.addEventListener('change', function () {
-                if (this.value < +minWidthInput.value) {
-                    maxWidthInput.value = minWidthInput.value;
-                    widthSlider.noUiSlider.set([null, +minWidthInput.value]);
-                } else {
-                    widthSlider.noUiSlider.set([null, this.value]);
-                }
-            });
-
-            // change listeners for city radius inputs
-            minCityRadiusInput.addEventListener('change', function () {
-                if (this.value > +maxCityRadiusInput.value) {
-                    minCityRadiusInput.value = maxCityRadiusInput.value;
-                    cityRadiusSlider.noUiSlider.set([+maxCityRadiusInput.value, null]);
-                } else {
-                    cityRadiusSlider.noUiSlider.set([this.value, null]);
-                }
-            });
-
-            maxCityRadiusInput.addEventListener('change', function () {
-                if (this.value < +minCityRadiusInput.value) {
-                    maxCityRadiusInput.value = minCityRadiusInput.value;
-                    cityRadiusSlider.noUiSlider.set([null, +minCityRadiusInput.value]);
-                } else {
-                    cityRadiusSlider.noUiSlider.set([null, this.value]);
-                }
-            });
-
-            // add click listener to junctions, background lines and edges checkboxes to toggle visibility of layers
-            citiesCheckbox.addEventListener('click', () => {
-                Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["toggleLayerVisibility"])(citiesCheckbox, map, 'cities');
-                loadingClassArray.forEach(loadingClass => {
-                    Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["toggleLayerVisibility"])(citiesCheckbox, map, `nodes-label-class-${loadingClass}`);
-                });
-            });
-
-
-            junctionCheckbox.addEventListener('click', () => {
-                Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["toggleLayerVisibility"])(junctionCheckbox, map, 'junctions');
-            });
-
-            backgroundLinesCheckbox.addEventListener('click', () => {
-                Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["toggleLayerVisibility"])(backgroundLinesCheckbox, map, 'background-lines');
-                Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["toggleLayerVisibility"])(backgroundLinesCheckbox, map, 'cargo-nodes-shadow');
-            });
-
-            edgesCheckbox.addEventListener('click', () => {
-                cargoTypes.forEach(type => {
-                    Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["toggleLayerVisibility"])(edgesCheckbox, map, type);
-                });
-            });
-
-            cargoNodesCheckbox.addEventListener('click', () => {
-                cargoTypes.forEach(type => {
-                    Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["toggleLayerVisibility"])(cargoNodesCheckbox, map, `${type}-nodes`);
-                });
-            });
-
-            // function to update edges width
-            function updateWidthSliderHandler() {
-                const currZoom = map.getZoom();
-                widthArray = Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["getWidthArray"])(+minWidthInput.value, +maxWidthInput.value);
-                Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["calculateWidth"])(edges, widthArray, jenks);
-                Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["calculateOffset"])(edges, origLineWidth);
-                Object(_modules_bg_lines__WEBPACK_IMPORTED_MODULE_10__["addWidthAndOffsetAttr"])(origLines, edges);
-                map.setZoom(10);
-
-                nodes.features.forEach(node => {
-                    Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["bindEdgesInfoToNodes"])(node, edges, map, cargoTypes);
-                    Object(_modules_cargo_nodes__WEBPACK_IMPORTED_MODULE_6__["addNodeAttr"])(node, cargoTypes, map);
-                });
-
-                multipleCargoNodesObject = Object(_modules_cargo_nodes__WEBPACK_IMPORTED_MODULE_6__["createMultipleCargoNodesObject"])(cargoTypes, nodes);
-                Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderBackgroundLines"])(map, origLines);
-                Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderEdges"])(map, edges, cargoColorArray, multipleCargoNodesObject);
-
-                map.setZoom(currZoom);
-            }
-
-            // function to update cityRadius
-            function updateCityRadiusSliderHandler() {
-                cityRadiusArray = Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["getCityRadiusArray"])(+minCityRadiusInput.value, +maxCityRadiusInput.value);
-
-                nodes.features.forEach(node => {
-                    Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["addCityRadiusAttr"])(node, cityRadiusArray);
-                });
-
-                Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderNodes"])(map, nodes, loadingClassArray);
-            }
-
-            // center and zoom map to data
-            map.fitBounds(
-                [[boundingBox.xMin, boundingBox.yMin], [boundingBox.xMax, boundingBox.yMax]],
-                { linear: false, speed: 0.3 }
+    // change langMode when click on "ru" button
+    ruBtn.addEventListener('click', () => {
+        langMode = "ru";
+        Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["fetchLanguageData"])(textElems, langMode);
+        Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["changeInfoWindowText"])(infoWindowText, langMode);
+    });
+
+    // store server url
+    // localhost url for testing
+    // const url = 'http://127.0.0.1:5000/upload_data';
+
+    // pythonanywhere url for production
+    const url = "https://yasevplaton.pythonanywhere.com/upload_data";
+
+    // initialize variable to store input file
+    let cargoTable, edgesPromise, nodesPromise;
+
+    // add click listener to sumbit button
+    buttonSubmit.addEventListener("click", e => {
+      // prevent default submit action
+      e.preventDefault();
+
+      // if we've already have input file
+      if (cargoTable) {
+        //  compare its name with name of current input file
+        if ((inputFileElement.files[0].name = cargoTable.name)) {
+          // if names are same don't do anything
+          alert("Выбран тот же файл! Пожалуйста, выберите другой.");
+          return;
+        }
+      }
+
+      if (inputFileElement.files[0]) {
+        // show loading panel
+        handleDataPanel.classList.remove("hidden");
+
+        edgesPromise = fetch(url, {
+          method: "POST",
+          body: inputFileElement.files[0]
+        }).then(response => response.json());
+
+        nodesPromise = fetch(
+          "./data/pointsVolgaRus.geojson?ass=" + Math.random()
+        ).then(response => response.json());
+
+        Promise.all([edgesPromise, nodesPromise])
+          .then(([edges, nodes]) => main(edges, nodes))
+          .catch(error => {
+            handleDataPanel.classList.add("hidden");
+            alert(
+              "Увы, произошла какая-то ошибка :( Если вы разработчик, можете глянуть в консоли и зарепортить багу на гитхабе https://github.com/yasevplaton/linear-cartodiagram. Если вы не понимаете, что такое консоль, бага или гитхаб, обратитесь в службу поддержки по адресу yasevplaton@gmail.com"
             );
+            console.error("Error with loading of data:", error);
+          });
+      } else {
+        alert("Сначала нужно выбрать файл!");
+        return;
+      }
+    });
+
+    // add click listener to upload button
+    uploadBtn.addEventListener("click", () => {
+      document.getElementById("greeting-panel").classList.add("hidden");
+      mainInterface.classList.remove("hidden");
+    });
+
+    // add click listener to demo button
+    demoBtn.addEventListener("click", () => {
+      // hide greeting panel
+      greetingPanel.classList.add("hidden");
+
+      // show loading panel
+      handleDataPanel.classList.remove("hidden");
+
+      // initialize promises for data
+      edgesPromise = fetch(
+        "./data/edgesVolgaAssym.geojson?ass=" + Math.random()
+      ).then(response => response.json());
+      nodesPromise = fetch(
+        "./data/pointsVolgaRus.geojson?ass=" + Math.random()
+      ).then(response => response.json());
+
+      // if all promises are resolved invoke main function
+      Promise.all([edgesPromise, nodesPromise])
+        .then(([edges, nodes]) => main(edges, nodes))
+        .catch(error => console.error("Error with loading of data:", error));
+    });
+
+    // main function
+    function main(edges, nodes) {
+      // store input file in variable
+      cargoTable = inputFileElement.files[0];
+
+      // hide loading panel
+      handleDataPanel.classList.add("hidden");
+
+      // show main interface if it is hidden
+      if (mainInterface.classList.contains("hidden")) {
+        mainInterface.classList.remove("hidden");
+      }
+      // show edit interface
+      editInterface.classList.remove("hidden");
+
+      // set original line width
+      const origLineWidth = 1;
+      // const shadowOffset = 12;
+
+      // get bounding box of data to center and zoom map
+      let boundingBox = Object(_modules_common__WEBPACK_IMPORTED_MODULE_3__["getBoundingBox"])(nodes);
+
+      // get flow values
+      let flowValues = Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["getFlowValues"])(edges);
+
+      // get marks of classes for flow values
+      let jenks = Object(_modules_common__WEBPACK_IMPORTED_MODULE_3__["classifyArray"])(flowValues, 4);
+
+      // get cargo types
+      let cargoTypes = Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["getCargoTypes"])(edges);
+
+      // get random colors for cargo types
+      let cargoColorArray = Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["getRandomCargoColorArray"])(cargoTypes);
+
+      // create a blank object for storage original lines
+      const origLines = { type: "FeatureCollection", features: [] };
+
+      // collect ids of lines
+      let linesIDArray = Object(_modules_orig_lines__WEBPACK_IMPORTED_MODULE_9__["collectLinesIDs"])(edges);
+
+      // fill adjacent lines attribute to nodes
+      Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["fillAdjacentLinesAttr"])(nodes, edges);
+
+      // fill original lines object with data
+      Object(_modules_orig_lines__WEBPACK_IMPORTED_MODULE_9__["createOrigLines"])(linesIDArray, origLines, edges);
+
+      // set default values for width of edges
+      let minWidthDefault = 20,
+        maxWidthDefault = 100,
+        maxEdgeWidth = 200;
+      let minDefaultCityRadius = 5,
+        maxDefaultCityRadius = 15,
+        maxCityRadius = 40;
+
+      minWidthInput.value = minWidthDefault;
+      maxWidthInput.value = maxWidthDefault;
+
+      minCityRadiusInput.value = minDefaultCityRadius;
+      maxCityRadiusInput.value = maxDefaultCityRadius;
+
+      // get width array
+      let widthArray = Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["getWidthArray"])(minWidthDefault, maxWidthDefault);
+
+      // calculate width for edges
+      Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["calculateWidth"])(edges, widthArray, jenks);
+
+      // calculate offset for edges
+      Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["calculateOffset"])(edges, origLineWidth);
+
+      // bind data to original lines
+      Object(_modules_orig_lines__WEBPACK_IMPORTED_MODULE_9__["fillOrigLinesWithData"])(origLines, edges);
+      Object(_modules_bg_lines__WEBPACK_IMPORTED_MODULE_10__["addWidthAndOffsetAttr"])(origLines, edges);
+
+      const nodeTrafficArray = [];
+
+      // calculate node radius
+      nodes.features.forEach(node => {
+        Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["bindEdgesInfoToNodes"])(node, edges, map, cargoTypes);
+        Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["fillNodeTrafficArray"])(nodeTrafficArray, node);
+        Object(_modules_cargo_nodes__WEBPACK_IMPORTED_MODULE_6__["addNodeAttr"])(node, cargoTypes, map);
+      });
+
+      const nodeJenks = Object(_modules_common__WEBPACK_IMPORTED_MODULE_3__["classifyArray"])(nodeTrafficArray, 5);
+
+      let cityRadiusArray = Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["getCityRadiusArray"])(
+        minDefaultCityRadius,
+        maxDefaultCityRadius
+      );
+
+      const loadingClassArray = [1, 2, 3, 4, 5];
+
+      nodes.features.forEach(node => {
+        Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["addLoadingClass"])(node, nodeJenks);
+        Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["addCityRadiusAttr"])(node, cityRadiusArray);
+      });
+
+      let multipleCargoNodesObject = Object(_modules_cargo_nodes__WEBPACK_IMPORTED_MODULE_6__["createMultipleCargoNodesObject"])(
+        cargoTypes,
+        nodes
+      );
+
+      // render background lines
+      Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderBackgroundLines"])(map, origLines);
+      // render edges
+      Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderEdges"])(map, edges, cargoColorArray, multipleCargoNodesObject);
+      // render original lines
+      Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderOrigLines"])(map, origLines, origLineWidth);
+      // render nodes
+      Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderNodes"])(map, nodes, loadingClassArray);
+
+      // create color table
+      Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["createColorTable"])(colorTableBody, cargoColorArray, map, infoWindow);
+
+      // create width slider
+      Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["createSlider"])(widthSlider, minWidthDefault, maxWidthDefault, maxEdgeWidth);
+
+      // create slider for cities radius
+      Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["createSlider"])(
+        cityRadiusSlider,
+        minDefaultCityRadius,
+        maxDefaultCityRadius,
+        maxCityRadius
+      );
+
+      // bind color picker to cities layers
+      Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["bindColorPickerToCitiesColorBoxes"])(
+        citiesFillColorBox,
+        citiesStrokeColorBox,
+        map
+      );
+
+      const infoWindowElements = Object(_modules_info_window__WEBPACK_IMPORTED_MODULE_11__["getInfoWindowElements"])(infoWindow);
+      Object(_modules_info_window__WEBPACK_IMPORTED_MODULE_11__["addCargoList"])(infoWindowElements, cargoColorArray);
+
+      // show info window
+      infoWindow.style.display = "block";
+
+      // initialize variables to store id of hovered feature
+      let hoveredLineId = null;
+      let hoveredCityId = null;
+
+      map.on("mousemove", "lines-hover", e => {
+        map.getCanvas().style.cursor = "pointer";
+
+        // if under cursor one or more feauteres
+        if (e.features.length > 0) {
+          // and if hovered feature id is not null
+          if (hoveredLineId) {
+            // change feature state hover to false
+            map.setFeatureState(
+              { source: "background-lines", id: hoveredLineId },
+              { hover: false }
+            );
+          }
+
+          // take id of first feature
+          hoveredLineId = e.features[0].id;
+
+          // set hover state for this line as true (it will change appearence of layer)
+          map.setFeatureState(
+            { source: "background-lines", id: hoveredLineId },
+            { hover: true }
+          );
         }
 
-    });
-    // map.on('zoomend', function () {
-    //     document.getElementById('zoom-level').innerHTML = 'Zoom Level: ' + map.getZoom();
-    // });
+        // show data for infoWindow
+        Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_12__["showLineData"])(e, infoWindowElements, infoWindowText);
+      });
 
-    // const to10ZoomBtn = document.getElementById('to-10-zoom-level');
-    // to10ZoomBtn.addEventListener('click', () => map.setZoom(10));
+      map.on("mouseleave", "lines-hover", () => {
+        map.getCanvas().style.cursor = "";
+
+        if (hoveredLineId) {
+          map.setFeatureState(
+            { source: "background-lines", id: hoveredLineId },
+            { hover: false }
+          );
+        }
+
+        hoveredLineId = null;
+
+        Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_12__["hideLineData"])(infoWindowElements, infoWindowText);
+      });
+
+      map.on("mousemove", "cities-hover", e => {
+        map.getCanvas().style.cursor = "pointer";
+
+        if (hoveredLineId) {
+          map.setFeatureState(
+            { source: "background-lines", id: hoveredLineId },
+            { hover: false }
+          );
+        }
+
+        if (e.features.length > 0) {
+          if (hoveredCityId) {
+            map.setFeatureState(
+              { source: "nodes", id: hoveredCityId },
+              { hover: false }
+            );
+          }
+
+          hoveredCityId = e.features[0].id;
+
+          map.setFeatureState(
+            { source: "nodes", id: hoveredCityId },
+            { hover: true }
+          );
+        }
+
+        Object(_modules_nodes_info__WEBPACK_IMPORTED_MODULE_13__["showNodeData"])(e, infoWindowElements, infoWindowText);
+      });
+
+      map.on("mouseleave", "cities-hover", () => {
+        map.getCanvas().style.cursor = "";
+
+        if (hoveredCityId) {
+          map.setFeatureState(
+            { source: "nodes", id: hoveredCityId },
+            { hover: false }
+          );
+        }
+
+        hoveredCityId = null;
+
+        Object(_modules_nodes_info__WEBPACK_IMPORTED_MODULE_13__["hideNodeData"])(infoWindowElements, infoWindowText);
+      });
+
+      // initialize render counter
+      let startWidthSliderCounter = 0;
+      let startRadiusSliderCounter = 0;
+
+      // bind update listener to edge width slider
+      widthSlider.noUiSlider.on("update", function(values, handle) {
+        if (startWidthSliderCounter === 0 || startWidthSliderCounter === 1) {
+          startWidthSliderCounter += 1;
+          return;
+        }
+
+        let value = values[handle];
+
+        if (handle) {
+          maxWidthInput.value = Math.round(value);
+        } else {
+          minWidthInput.value = Math.round(value);
+        }
+
+        updateWidthSliderHandler();
+      });
+
+      // bind update listener to city radius slider
+      cityRadiusSlider.noUiSlider.on("update", function(values, handle) {
+        if (startRadiusSliderCounter === 0 || startRadiusSliderCounter === 1) {
+          startRadiusSliderCounter += 1;
+          return;
+        }
+
+        let value = values[handle];
+
+        if (handle) {
+          maxCityRadiusInput.value = Math.round(value);
+        } else {
+          minCityRadiusInput.value = Math.round(value);
+        }
+
+        updateCityRadiusSliderHandler();
+      });
+
+      // bind change listeners to width inputs
+      minWidthInput.addEventListener("change", function() {
+        if (this.value > +maxWidthInput.value) {
+          minWidthInput.value = maxWidthInput.value;
+          widthSlider.noUiSlider.set([+maxWidthInput.value, null]);
+        } else {
+          widthSlider.noUiSlider.set([this.value, null]);
+        }
+      });
+
+      maxWidthInput.addEventListener("change", function() {
+        if (this.value < +minWidthInput.value) {
+          maxWidthInput.value = minWidthInput.value;
+          widthSlider.noUiSlider.set([null, +minWidthInput.value]);
+        } else {
+          widthSlider.noUiSlider.set([null, this.value]);
+        }
+      });
+
+      // change listeners for city radius inputs
+      minCityRadiusInput.addEventListener("change", function() {
+        if (this.value > +maxCityRadiusInput.value) {
+          minCityRadiusInput.value = maxCityRadiusInput.value;
+          cityRadiusSlider.noUiSlider.set([+maxCityRadiusInput.value, null]);
+        } else {
+          cityRadiusSlider.noUiSlider.set([this.value, null]);
+        }
+      });
+
+      maxCityRadiusInput.addEventListener("change", function() {
+        if (this.value < +minCityRadiusInput.value) {
+          maxCityRadiusInput.value = minCityRadiusInput.value;
+          cityRadiusSlider.noUiSlider.set([null, +minCityRadiusInput.value]);
+        } else {
+          cityRadiusSlider.noUiSlider.set([null, this.value]);
+        }
+      });
+
+      // add click listener to junctions, background lines and edges checkboxes to toggle visibility of layers
+      citiesCheckbox.addEventListener("click", () => {
+        Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["toggleLayerVisibility"])(citiesCheckbox, map, "cities");
+        loadingClassArray.forEach(loadingClass => {
+          Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["toggleLayerVisibility"])(
+            citiesCheckbox,
+            map,
+            `nodes-label-class-${loadingClass}`
+          );
+        });
+      });
+
+      junctionCheckbox.addEventListener("click", () => {
+        Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["toggleLayerVisibility"])(junctionCheckbox, map, "junctions");
+      });
+
+      backgroundLinesCheckbox.addEventListener("click", () => {
+        Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["toggleLayerVisibility"])(backgroundLinesCheckbox, map, "background-lines");
+        Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["toggleLayerVisibility"])(
+          backgroundLinesCheckbox,
+          map,
+          "cargo-nodes-shadow"
+        );
+      });
+
+      edgesCheckbox.addEventListener("click", () => {
+        cargoTypes.forEach(type => {
+          Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["toggleLayerVisibility"])(edgesCheckbox, map, type);
+        });
+      });
+
+      cargoNodesCheckbox.addEventListener("click", () => {
+        cargoTypes.forEach(type => {
+          Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["toggleLayerVisibility"])(cargoNodesCheckbox, map, `${type}-nodes`);
+        });
+      });
+
+      // function to update edges width
+      function updateWidthSliderHandler() {
+        const currZoom = map.getZoom();
+        widthArray = Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["getWidthArray"])(+minWidthInput.value, +maxWidthInput.value);
+        Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["calculateWidth"])(edges, widthArray, jenks);
+        Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["calculateOffset"])(edges, origLineWidth);
+        Object(_modules_bg_lines__WEBPACK_IMPORTED_MODULE_10__["addWidthAndOffsetAttr"])(origLines, edges);
+        map.setZoom(10);
+
+        nodes.features.forEach(node => {
+          Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["bindEdgesInfoToNodes"])(node, edges, map, cargoTypes);
+          Object(_modules_cargo_nodes__WEBPACK_IMPORTED_MODULE_6__["addNodeAttr"])(node, cargoTypes, map);
+        });
+
+        multipleCargoNodesObject = Object(_modules_cargo_nodes__WEBPACK_IMPORTED_MODULE_6__["createMultipleCargoNodesObject"])(
+          cargoTypes,
+          nodes
+        );
+        Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderBackgroundLines"])(map, origLines);
+        Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderEdges"])(map, edges, cargoColorArray, multipleCargoNodesObject);
+
+        map.setZoom(currZoom);
+      }
+
+      // function to update cityRadius
+      function updateCityRadiusSliderHandler() {
+        cityRadiusArray = Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["getCityRadiusArray"])(
+          +minCityRadiusInput.value,
+          +maxCityRadiusInput.value
+        );
+
+        nodes.features.forEach(node => {
+          Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["addCityRadiusAttr"])(node, cityRadiusArray);
+        });
+
+        Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderNodes"])(map, nodes, loadingClassArray);
+      }
+
+      // center and zoom map to data
+      map.fitBounds(
+        [
+          [boundingBox.xMin, boundingBox.yMin],
+          [boundingBox.xMax, boundingBox.yMax]
+        ],
+        { linear: false, speed: 0.3 }
+      );
+    }
+  });
+  // map.on('zoomend', function () {
+  //     document.getElementById('zoom-level').innerHTML = 'Zoom Level: ' + map.getZoom();
+  // });
+
+  // const to10ZoomBtn = document.getElementById('to-10-zoom-level');
+  // to10ZoomBtn.addEventListener('click', () => map.setZoom(10));
 };
 
 
@@ -2403,12 +2501,14 @@ function getInfoWindowMarkup(infoWindow) {
 /*!*********************************!*\
   !*** ./js/modules/interface.js ***!
   \*********************************/
-/*! exports provided: changeInterfaceLanguage, createColorBox, bindColorPicker, createColorTable, createSlider, toggleLayerVisibility, toggleLayerOpacity, bindColorPickerToCitiesColorBoxes */
+/*! exports provided: getTextElems, fetchLanguageData, changeInfoWindowText, createColorBox, bindColorPicker, createColorTable, createSlider, toggleLayerVisibility, toggleLayerOpacity, bindColorPickerToCitiesColorBoxes */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* WEBPACK VAR INJECTION */(function(noUiSlider) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "changeInterfaceLanguage", function() { return changeInterfaceLanguage; });
+/* WEBPACK VAR INJECTION */(function(noUiSlider) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTextElems", function() { return getTextElems; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fetchLanguageData", function() { return fetchLanguageData; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "changeInfoWindowText", function() { return changeInfoWindowText; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createColorBox", function() { return createColorBox; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bindColorPicker", function() { return bindColorPicker; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createColorTable", function() { return createColorTable; });
@@ -2428,14 +2528,277 @@ __webpack_require__.r(__webpack_exports__);
 
 const Huebee = __webpack_require__(/*! huebee */ "./node_modules/huebee/huebee.js");
 
+// function to get text elements of app
+function getTextElems(
+  greetingPanel,
+  handleDataPanel,
+  mainInterface,
+  infoWindow
+) {
+  const greetingRow = mainInterface.querySelector(".greeting-row");
+  const greetingRowTitle = greetingRow.querySelector(".title");
+
+  const uploadRow = mainInterface.querySelector(".upload-data");
+  const uploadRowTitle = uploadRow.querySelector(".step-title");
+  const uploadRowText = uploadRow.querySelector(".upload-data__text");
+  const buttonSubmit = uploadRow.querySelector("#btn-submit");
+
+  const cargoColorsRow = mainInterface.querySelector(".cargo-colors");
+  const cargoColorsRowTitle = cargoColorsRow.querySelector(".step-title");
+  const cargoColorsRowText = cargoColorsRow.querySelector(
+    ".cargo-colors__text"
+  );
+
+  const linearScaleRow = mainInterface.querySelector(".linear-scale");
+  const linearScaleRowTitle = linearScaleRow.querySelector(".step-title");
+  const linearScaleRowText = linearScaleRow.querySelector(
+    ".linear-scale__text"
+  );
+
+  const nodesSettingsRow = mainInterface.querySelector(".nodes-settings");
+  const nodesSettingsRowTitle = nodesSettingsRow.querySelector(".step-title");
+  const citiesCheckboxLabel = nodesSettingsRow.querySelector(
+    ".checkbox__label--cities"
+  );
+  const junctionsCheckboxLabel = nodesSettingsRow.querySelector(
+    ".checkbox__label--junctions"
+  );
+  const citiesFillLabel = nodesSettingsRow.querySelector(
+    ".nodes-settings__text--fill-color"
+  );
+  const citiesStrokeLabel = nodesSettingsRow.querySelector(
+    ".nodes-settings__text--stroke-color"
+  );
+  const nodesSettingsSliderText = nodesSettingsRow.querySelector(
+    ".nodes-settings__text--slider"
+  );
+
+  const otherSettingsRow = mainInterface.querySelector(".other-settings");
+  const otherSettingsRowTitle = otherSettingsRow.querySelector(".step-title");
+  const ribbonsCheckboxLabel = otherSettingsRow.querySelector(
+    ".checkbox__label--ribbons"
+  );
+  const cargoNodesCheckboxLabel = otherSettingsRow.querySelector(
+    ".checkbox__label--cargo-nodes"
+  );
+  const shadowCheckboxLabel = otherSettingsRow.querySelector(
+    ".checkbox__label--shadow"
+  );
+
+  const greetingPanelText = greetingPanel.querySelector(
+    ".greeting-panel__text"
+  );
+  const demoBtn = greetingPanel.querySelector("#btn-demo");
+  const uploadBtn = greetingPanel.querySelector("#btn-upload");
+
+  const handleDataPanelText = handleDataPanel.querySelector(
+    ".handle-data-panel__text"
+  );
+
+  const infoWindowThead = infoWindow.querySelector(
+    ".info-window__table-heading"
+  );
+  const infoWindowTypeColText = infoWindowThead.querySelector(
+    ".info-window__col--cargo-color"
+  );
+  const infoWindowDirOneColText = infoWindowThead.querySelector(
+    ".info-window__col--dir-1"
+  );
+  const infoWindowDirTwoColText = infoWindowThead.querySelector(
+    ".info-window__col--dir-2"
+  );
+  const infoWindowTotalColText = infoWindow.querySelector(
+    ".info-window__col--total-title"
+  );
+
+  const textElems = {
+    mainInterface: {
+      greetingRow: {
+        title: greetingRowTitle
+      },
+      uploadDataRow: {
+        title: uploadRowTitle,
+        text: uploadRowText,
+        btnSubmit: buttonSubmit
+      },
+      cargoColorsRow: {
+        title: cargoColorsRowTitle,
+        text: cargoColorsRowText
+      },
+      linearScaleRow: {
+        title: linearScaleRowTitle,
+        text: linearScaleRowText
+      },
+      nodesSettingsRow: {
+        title: nodesSettingsRowTitle,
+        citiesCheckboxLabel: citiesCheckboxLabel,
+        junctionsCheckboxLabel: junctionsCheckboxLabel,
+        citiesFillLabel: citiesFillLabel,
+        citiesStrokeLabel: citiesStrokeLabel,
+        nodesSettingsSliderText: nodesSettingsSliderText
+      },
+      otherSettingsRow: {
+        title: otherSettingsRowTitle,
+        ribbonsCheckboxLabel: ribbonsCheckboxLabel,
+        cargoNodesCheckboxLabel: cargoNodesCheckboxLabel,
+        shadowCheckboxLabel: shadowCheckboxLabel
+      }
+    },
+
+    greetingPanel: {
+      greetingPanelText: greetingPanelText,
+      demoBtn: demoBtn,
+      uploadBtn: uploadBtn
+    },
+
+    handleDataPanelText: handleDataPanelText,
+
+    infoWindow: {
+      typeText: infoWindowTypeColText,
+      dirOneText: infoWindowDirOneColText,
+      dirTwoText: infoWindowDirTwoColText,
+      totalText: infoWindowTotalColText
+    }
+  };
+
+  return textElems;
+}
+
+// functiont to fetch language data depending on language mode
+function fetchLanguageData(elems, langMode) {
+  let languageDataPromise;
+
+  if (langMode === "en") {
+    languageDataPromise = fetch("./data/en.json?ass=" + Math.random()).then(
+      response => response.json()
+    );
+
+    languageDataPromise.then(data => {
+      changeInterfaceLanguage(elems, data);
+    });
+  }
+
+  if (langMode === "ru") {
+    languageDataPromise = fetch("./data/ru.json?ass=" + Math.random()).then(
+      response => response.json()
+    );
+
+    languageDataPromise.then(data => {
+      changeInterfaceLanguage(elems, data);
+    });
+  }
+}
+
+// function to change interface language
 function changeInterfaceLanguage(elems, data) {
+  const greetingRow = elems.mainInterface.greetingRow;
+  const dataGreetingRow = data.mainInterface.greetingRow;
+  changeInnerHtml(greetingRow.title, dataGreetingRow.title);
+
+  const uploadDataRow = elems.mainInterface.uploadDataRow;
+  const dataUploadDataRow = data.mainInterface.uploadDataRow;
+  changeInnerHtml(uploadDataRow.title, dataUploadDataRow.title);
+  changeInnerHtml(uploadDataRow.text, dataUploadDataRow.text);
+  changeInnerHtml(uploadDataRow.btnSubmit, dataUploadDataRow.btnSubmit);
+
+  const cargoColorsRow = elems.mainInterface.cargoColorsRow;
+  const dataCargoColorsRow = data.mainInterface.cargoColorsRow;
+  changeInnerHtml(cargoColorsRow.title, dataCargoColorsRow.title);
+  changeInnerHtml(cargoColorsRow.text, dataCargoColorsRow.text);
+
+  const linearScaleRow = elems.mainInterface.linearScaleRow;
+  const dataLinearScaleRow = data.mainInterface.linearScaleRow;
+  changeInnerHtml(linearScaleRow.title, dataLinearScaleRow.title);
+  changeInnerHtml(linearScaleRow.text, dataLinearScaleRow.text);
+
+  const nodesSettingsRow = elems.mainInterface.nodesSettingsRow;
+  const dataNodesSettingsRow = data.mainInterface.nodesSettingsRow;
+  changeInnerHtml(nodesSettingsRow.title, dataNodesSettingsRow.title);
+  changeInnerHtml(
+    nodesSettingsRow.citiesCheckboxLabel,
+    dataNodesSettingsRow.citiesCheckboxLabel
+  );
+  changeInnerHtml(
+    nodesSettingsRow.junctionsCheckboxLabel,
+    dataNodesSettingsRow.junctionsCheckboxLabel
+  );
+  changeInnerHtml(
+    nodesSettingsRow.citiesFillLabel,
+    dataNodesSettingsRow.citiesFillLabel
+  );
+  changeInnerHtml(
+    nodesSettingsRow.citiesStrokeLabel,
+    dataNodesSettingsRow.citiesStrokeLabel
+  );
+  changeInnerHtml(
+    nodesSettingsRow.nodesSettingsSliderText,
+    dataNodesSettingsRow.nodesSettingsSliderText
+  );
+
+  const otherSettingsRow = elems.mainInterface.otherSettingsRow;
+  const dataOtherSettingsRow = data.mainInterface.otherSettingsRow;
+  changeInnerHtml(otherSettingsRow.title, dataOtherSettingsRow.title);
+  changeInnerHtml(
+    otherSettingsRow.ribbonsCheckboxLabel,
+    dataOtherSettingsRow.ribbonsCheckboxLabel
+  );
+  changeInnerHtml(
+    otherSettingsRow.cargoNodesCheckboxLabel,
+    dataOtherSettingsRow.cargoNodesCheckboxLabel
+  );
+  changeInnerHtml(
+    otherSettingsRow.shadowCheckboxLabel,
+    dataOtherSettingsRow.shadowCheckboxLabel
+  );
+
+  const greetingPanel = elems.greetingPanel;
+  const dataGreetingPanel = data.greetingPanel;
+  changeInnerHtml(
+    greetingPanel.greetingPanelText,
+    dataGreetingPanel.greetingPanelText
+  );
+  changeInnerHtml(greetingPanel.demoBtn, dataGreetingPanel.demoBtn);
+  changeInnerHtml(greetingPanel.uploadBtn, dataGreetingPanel.uploadBtn);
+
+  const handleDataPanelText = elems.handleDataPanelText;
+  const datahandleDataPanelText = data.handleDataPanelText;
+  changeInnerHtml(handleDataPanelText, datahandleDataPanelText);
+
+  const infoWindow = elems.infoWindow;
+  const dataInfoWindow = data.infoWindow;
+  changeInnerHtml(infoWindow.typeText, dataInfoWindow.typeText);
+  changeInnerHtml(infoWindow.dirOneText, dataInfoWindow.dirOneText);
+  changeInnerHtml(infoWindow.dirTwoText, dataInfoWindow.dirTwoText);
+  changeInnerHtml(infoWindow.totalText, dataInfoWindow.totalText);
+}
+
+// function to change inner html of an element
+function changeInnerHtml(elem, html) {
+  elem.innerHTML = html;
+}
+
+function changeInfoWindowText(infoWindowText, langMode) {
   
+  if (langMode === "en") {
+    infoWindowText.lineDirOne = "Straight";
+    infoWindowText.lineDirTwo = "Back";
+    infoWindowText.nodeDirOne = "In";
+    infoWindowText.nodeDirTwo = "Out";
+
+
+  } else if (langMode === "ru") {
+
+    infoWindowText.lineDirOne = "Прямо";
+    infoWindowText.lineDirTwo = "Обратно";
+    infoWindowText.nodeDirOne = "Вход";
+    infoWindowText.nodeDirTwo = "Выход";
+  }
 }
 
 // function to create color box
 function createColorBox(cargo) {
-  let colorBox = document.createElement('span');
-  colorBox.classList.add('color-box');
+  let colorBox = document.createElement("span");
+  colorBox.classList.add("color-box");
   colorBox.style.backgroundColor = cargo.color;
   colorBox.id = cargo.id;
 
@@ -2446,30 +2809,28 @@ function createColorBox(cargo) {
 function bindColorPicker(colorBox, cargoColorArray, map, infoWindow) {
   var hueb = new Huebee(colorBox, {
     setText: false,
-    notation: 'hex'
+    notation: "hex"
   });
 
-  hueb.on('change', function (color) {
+  hueb.on("change", function(color) {
     let cargoID = +this.anchor.id;
     Object(_common__WEBPACK_IMPORTED_MODULE_0__["changeCargoColor"])(cargoColorArray, cargoID, color);
     Object(_render__WEBPACK_IMPORTED_MODULE_1__["changeEdgesColor"])(map, cargoColorArray);
     Object(_info_window__WEBPACK_IMPORTED_MODULE_3__["changeColorInfoWindowColorBox"])(color, cargoID, infoWindow);
   });
-
 }
 
 // function to create color table
 function createColorTable(tableBody, cargoColorArray, map, infoWindow) {
-
   cargoColorArray.forEach(cargo => {
-    let row = document.createElement('tr');
-    row.classList.add('cargo-colors__row');
-    let colId = document.createElement('td');
+    let row = document.createElement("tr");
+    row.classList.add("cargo-colors__row");
+    let colId = document.createElement("td");
     colId.innerHTML = cargo.id;
-    let colType = document.createElement('td');
+    let colType = document.createElement("td");
     colType.innerHTML = cargo.type;
 
-    let colColor = document.createElement('td');
+    let colColor = document.createElement("td");
     let colorBox = createColorBox(cargo);
     colColor.appendChild(colorBox);
 
@@ -2478,7 +2839,7 @@ function createColorTable(tableBody, cargoColorArray, map, infoWindow) {
     let cols = [colId, colType, colColor];
 
     cols.forEach(col => {
-      col.classList.add('cargo-colors__col');
+      col.classList.add("cargo-colors__col");
       row.appendChild(col);
     });
 
@@ -2492,56 +2853,58 @@ function createSlider(el, minWidthDefault, maxWidthDefault, maxWidth) {
     start: [minWidthDefault, maxWidthDefault],
     connect: true,
     range: {
-      'min': [0, 1],
-      'max': [maxWidth]
+      min: [0, 1],
+      max: [maxWidth]
     }
   });
 }
 
 // function to toggle layer visibility
 function toggleLayerVisibility(layerCheckbox, map, layerId) {
-
   if (layerCheckbox.checked) {
-    map.setLayoutProperty(layerId, 'visibility', 'visible');
+    map.setLayoutProperty(layerId, "visibility", "visible");
   } else {
-    map.setLayoutProperty(layerId, 'visibility', 'none');
+    map.setLayoutProperty(layerId, "visibility", "none");
   }
 }
 
 function toggleLayerOpacity(layerCheckbox, map, layerId) {
-
   if (layerCheckbox.checked) {
-    map.setLayoutProperty(layerId, 'line-opacity', 1);
+    map.setLayoutProperty(layerId, "line-opacity", 1);
   } else {
-    map.setLayoutProperty(layerId, 'line-opacity', 0);
+    map.setLayoutProperty(layerId, "line-opacity", 0);
   }
 }
 
-function bindColorPickerToCitiesColorBoxes(fillColorBox, strokeColorBox, map) {
+function bindColorPickerToCitiesColorBoxes(
+  fillColorBox,
+  strokeColorBox,
+  map
+) {
   const fillHueb = new Huebee(fillColorBox, {
     setText: false,
-    notation: 'hex'
+    notation: "hex"
   });
 
   const strokeHueb = new Huebee(strokeColorBox, {
     setText: false,
-    notation: 'hex'
+    notation: "hex"
   });
 
-  fillHueb.element.classList.add('huebee__cities-color');
-  strokeHueb.element.classList.add('huebee__cities-color');
+  fillHueb.element.classList.add("huebee__cities-color");
+  strokeHueb.element.classList.add("huebee__cities-color");
 
   fillHueb.container.style.left = "-241px";
   strokeHueb.container.style.left = "-241px";
 
-  fillHueb.on('change', function (color) {
+  fillHueb.on("change", function(color) {
     Object(_render__WEBPACK_IMPORTED_MODULE_1__["changeCitiesFillColor"])(map, color);
   });
 
-  strokeHueb.on('change', function (color) {
+  strokeHueb.on("change", function(color) {
     Object(_render__WEBPACK_IMPORTED_MODULE_1__["changeCitiesStrokeColor"])(map, color);
   });
-};
+}
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! nouislider */ "./node_modules/nouislider/distribute/nouislider.js")))
 
@@ -2558,7 +2921,7 @@ function bindColorPickerToCitiesColorBoxes(fillColorBox, strokeColorBox, map) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "showLineData", function() { return showLineData; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hideLineData", function() { return hideLineData; });
-function showLineData(e, infoWindowElements) {
+function showLineData(e, infoWindowElements, infoWindowText) {
   // console.log(e.features);
 
   const lineID = e.features[0].properties.lineID;
@@ -2570,8 +2933,8 @@ function showLineData(e, infoWindowElements) {
   const denominator = 10000;
   const factor = 10;
 
-  infoWindowElements.dirOne.title.textContent = 'Straight';
-  infoWindowElements.dirTwo.title.textContent = 'Back';
+  infoWindowElements.dirOne.title.textContent = infoWindowText.lineDirOne;
+  infoWindowElements.dirTwo.title.textContent = infoWindowText.lineDirTwo;
 
   const infoOneDir = JSON.parse(e.features[0].properties.dataOneDir);
   const infoTwoDir = JSON.parse(e.features[0].properties.dataTwoDir);
@@ -2615,12 +2978,12 @@ function showLineData(e, infoWindowElements) {
 
 }
 
-function hideLineData(infoWindowElements) {
+function hideLineData(infoWindowElements, infoWindowText) {
 
   const tableBody = infoWindowElements.tableBody;
 
-  infoWindowElements.dirOne.title.textContent = 'Straight';
-  infoWindowElements.dirTwo.title.textContent = 'Back';
+  infoWindowElements.dirOne.title.textContent = infoWindowText.lineDirOne;
+  infoWindowElements.dirTwo.title.textContent = infoWindowText.lineDirTwo;
 
   const cargoValuesDirOne = tableBody.querySelectorAll('.info-window__col--dir-1');
   const cargoValuesDirTwo = tableBody.querySelectorAll('.info-window__col--dir-2');
@@ -2789,14 +3152,14 @@ if (!("hypot" in Math)) {  // Polyfill
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "showNodeData", function() { return showNodeData; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hideNodeData", function() { return hideNodeData; });
-function showNodeData(e, infoWindowElements) {
+function showNodeData(e, infoWindowElements, infoWindowText) {
   // console.log(e.features);
 
   const nodeProps = e.features[0].properties;
   const tableBody = infoWindowElements.tableBody;
 
-  infoWindowElements.dirOne.title.textContent = 'In';
-  infoWindowElements.dirTwo.title.textContent = 'Out';
+  infoWindowElements.dirOne.title.textContent = infoWindowText.nodeDirOne;
+  infoWindowElements.dirTwo.title.textContent = infoWindowText.nodeDirTwo;
 
   let inTotal = 0;
   let outTotal = 0;
@@ -2843,12 +3206,12 @@ function showNodeData(e, infoWindowElements) {
 
 }
 
-function hideNodeData(infoWindowElements) {
+function hideNodeData(infoWindowElements, infoWindowText) {
 
   const tableBody = infoWindowElements.tableBody;
 
-  infoWindowElements.dirOne.title.textContent = 'Straight';
-  infoWindowElements.dirTwo.title.textContent = 'Back';
+  infoWindowElements.dirOne.title.textContent = infoWindowText.lineDirOne;
+  infoWindowElements.dirTwo.title.textContent = infoWindowText.lineDirTwo;
 
   const cargoValuesDirOne = tableBody.querySelectorAll('.info-window__col--dir-1');
   const cargoValuesDirTwo = tableBody.querySelectorAll('.info-window__col--dir-2');

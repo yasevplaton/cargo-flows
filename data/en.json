@@ -1,49 +1,47 @@
 {
-  "main-interface": {
-    "greeting-row-row": {
+  "mainInterface": {
+    "greetingRow": {
       "title": "Hello! Welcome to the master of building cargo flow maps!"
     },
-    "upload-data-row": {
-      "title": "Data uploading",
+    "uploadDataRow": {
+      "title": "Data uploading ",
       "text": "Upload a .csv file (comma separated) with cargo flows data",
-      "btn-submit": "Submit"
+      "btnSubmit": "Submit"
     },
-    "cargo-colors-row": {
-      "title": "Cargo color settings",
+    "cargoColorsRow": {
+      "title": "Cargo color settings <i class='fas fa-caret-down'></i>",
       "text": "Select suitable colors for cargos"
     },
-    "linear-scale-row": {
-      "title": "Linear scale settings",
-      "text": "Specify minimum and maximum line width in the tape using the slider or set values manually"
+    "linearScaleRow": {
+      "title": "Linear scale settings <i class='fas fa-caret-down'></i>",
+      "text": "Specify minimum and maximum line width in a ribbon using the slider or set values manually"
     },
-    "nodes-settings-row": {
-      "title": "Transport nodes display settings",
-      "cities-chekbox-label": "Show settlements",
-      "junctions-chekbox-label": "Show transit nodes",
-      "fill-color-text": "Select circle fill color",
-      "stroke-color-text": "Select circle stroke color",
-      "radius-slider-text": "Specify minimum and maximum radius for circles of settlements using the slider or set values manually"
+    "nodesSettingsRow": {
+      "title": "Transport nodes display settings <i class='fas fa-caret-down'></i>",
+      "citiesCheckboxLabel": "Show settlements",
+      "junctionsCheckboxLabel": "Show transit nodes",
+      "citiesFillLabel": "Select circle fill color",
+      "citiesStrokeLabel": "Select circle stroke color",
+      "nodesSettingsSliderText": "Specify minimum and maximum radius for circles of settlements using the slider or set values manually"
     },
-    "other-settings-row": {
-      "title": "Other settings",
-      "edges-checkbox-text": "Show tapes",
-      "cargo-nodes-checkbox": "Show junction cirlces",
-      "shadow-checkbox": "Show shadow"
+    "otherSettingsRow": {
+      "title": "Other settings <i class='fas fa-caret-down'></i>",
+      "ribbonsCheckboxLabel": "Show ribbons",
+      "cargoNodesCheckboxLabel": "Show junction cirlces",
+      "shadowCheckboxLabel": "Show shadow"
     }
   },
-  "loading-map-panel": "map is loading",
-  "greeting-panel": {
-    "greeting-text": "Hello! Welcome to the master of building cargo flow maps. If you want to work with your data, upload it using a special form. If you want to familiarize yourself with the functionality of the application on pre-prepared data, click 'Demo'. Enjoy it!",
-    "demo-btn": "Demo",
-    "upload-btn": "Upload data"
+  "loadingMapPanel": "map is loading",
+  "greetingPanel": {
+    "greetingPanelText": "Hello! Welcome to the master of building cargo flow maps. If you want to work with your data, upload it using a special form. If you want to familiarize yourself with the functionality of the application on pre-prepared data, click 'Demo'. Enjoy it!",
+    "demoBtn": "Demo",
+    "uploadBtn": "Upload data"
   },
-  "handle-data-panel": "Wait, data is processed...",
-  "info-window": {
-    "type": "type",
-    "line-dir-one": "Straight",
-    "line-dir-two": "Back",
-    "node-dir-one": "In",
-    "node-dir-two": "Out",
-    "total": "Summary"
+  "handleDataPanelText": "Wait, data is processed...",
+  "infoWindow": {
+    "typeText": "Type",
+    "dirOneText": "Straight",
+    "dirTwoText": "Back",
+    "totalText": "Summary"
   }
 }
