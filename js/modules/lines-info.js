@@ -10,8 +10,8 @@ export function showLineData(e, infoWindowElements) {
   const denominator = 10000;
   const factor = 10;
 
-  infoWindowElements.dirOne.title.textContent = 'Прямо';
-  infoWindowElements.dirTwo.title.textContent = 'Обратно';
+  infoWindowElements.dirOne.title.textContent = 'Straight';
+  infoWindowElements.dirTwo.title.textContent = 'Back';
 
   const infoOneDir = JSON.parse(e.features[0].properties.dataOneDir);
   const infoTwoDir = JSON.parse(e.features[0].properties.dataTwoDir);
@@ -59,8 +59,8 @@ export function hideLineData(infoWindowElements) {
 
   const tableBody = infoWindowElements.tableBody;
 
-  infoWindowElements.dirOne.title.textContent = 'Прямо';
-  infoWindowElements.dirTwo.title.textContent = 'Обратно';
+  infoWindowElements.dirOne.title.textContent = 'Straight';
+  infoWindowElements.dirTwo.title.textContent = 'Back';
 
   const cargoValuesDirOne = tableBody.querySelectorAll('.info-window__col--dir-1');
   const cargoValuesDirTwo = tableBody.querySelectorAll('.info-window__col--dir-2');

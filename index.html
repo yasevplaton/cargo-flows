@@ -1,253 +1,407 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Cargo Flows Map Generator</title>
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <link rel="icon" type="image/png" href="./data/img/favicon.png" />
 
-    <head>
-        <meta charset='utf-8' />
-        <title>Cargo Flows Map Generator</title>
-        <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-        <link rel="icon" type="image/png" href="./data/img/favicon.png" />
+    <!-- Third-party CSS -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&amp;subset=cyrillic"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+      integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr"
+      crossorigin="anonymous"
+    />
 
-        <!-- Third-party CSS -->
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&amp;subset=cyrillic"
-            rel="stylesheet">
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
-            integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="stylesheet" href="./css/lib/bootstrap.min.css" />
+    <link rel="stylesheet" href="./css/lib/mapbox-gl.css" />
+    <link rel="stylesheet" href="./css/lib/huebee.min.css" />
+    <link rel="stylesheet" href="./css/lib/nouislider.min.css" />
+    <link rel="stylesheet" href="./css/lib/pretty-checkbox.min.css" />
 
-        <link rel="stylesheet" href="./css/lib/bootstrap.min.css">
-        <link rel="stylesheet" href="./css/lib/mapbox-gl.css">
-        <link rel="stylesheet" href="./css/lib/huebee.min.css">
-        <link rel="stylesheet" href="./css/lib/nouislider.min.css">
-        <link rel="stylesheet" href="./css/lib/pretty-checkbox.min.css">
+    <link rel="stylesheet" href="./css/layout/base.css" />
+  </head>
 
-        <link rel="stylesheet" href="./css/layout/base.css">
-
-    </head>
-
-    <body>
-
-        <div id="main-interface-wrapper" class="hidden main-interface-wrapper main-interface-wrapper--dark">
-            <div class="container">
-                <div class="row greeting-row">
-                    <div class="col-lg-12">
-                        <h5 class="title title__main">Привет! Добро пожаловать в мастер построения карт грузопотоков!
-                        </h5>
-                        <br>
-                    </div>
+  <body>
+    <div
+      id="main-interface-wrapper"
+      class="hidden main-interface-wrapper main-interface-wrapper--dark"
+    >
+      <div class="container">
+        <div class="row greeting-row">
+          <div class="col-lg-12">
+            <h5 class="title title__main">
+                Hello! Welcome to the master of building cargo flow maps!
+            </h5>
+            <br />
+          </div>
+        </div>
+        <div class="row upload-data">
+          <div class="col-lg-12">
+            <h6 class="step-title step-title--dark">Data uploading</h6>
+            <div class="upload-data__content">
+              <p class="upload-data__text">
+                Upload a .csv file (comma separated) with cargo flows data
+              </p>
+              <form class="upload-data__form">
+                <div class="form-group upload-data__form-group">
+                  <input
+                    type="file"
+                    class="form-control-file"
+                    name="CSVGoods"
+                    id="inputGoodsTable"
+                  />
                 </div>
-                <div class="row upload-data">
-                    <div class="col-lg-12">
-                        <h6 class="step-title step-title--dark">Загрузка данных</h6>
-                        <div class="upload-data__content">
-                            <p class="upload-data__text">Загрузите файл .csv <i>(разделитель - запятая)</i> с данными о
-                                грузопотоках</p>
-                            <form class="upload-data__form">
-                                <div class="form-group upload-data__form-group">
-                                    <input type="file" class="form-control-file" name="CSVGoods" id="inputGoodsTable">
-                                </div>
-                                <button type="submit" class="btn btn-dark" id="btn-submit">Отправить</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <div id="edit-interface-wrapper" class="edit-interface-wrapper hidden">
-                    <div class="row cargo-colors">
-                        <div class="col-lg-12">
-                            <hr class="hr hr--dark">
-                            <h6 class="step-title step-title--dark" data-toggle="collapse" href="#cargo-colors__content"
-                                role="button" aria-expanded="false" aria-controls="cargo-colors__content">Настройки
-                                цветов для
-                                грузов
-                                <i class="fas fa-caret-down"></i>
-                            </h6>
-                            <div id="cargo-colors__content" class="cargo-colors__content collapse">
-                                <p class="interface-text cargo-colors__text">Выберите подходящие цвета для грузов</p>
-                                <table class="table borderless cargo-colors__table">
-                                    <thead class="cargo-colors__table-heading">
-                                        <tr class="cargo-colors__row cargo-colors__row--heading">
-                                            <th scope="cargo-colors__col cargo-colors__col--heading">ID</th>
-                                            <th scope="cargo-colors__col cargo-colors__col--heading">TYPE</th>
-                                            <th scope="cargo-colors__col cargo-colors__col--heading">COLOR</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="color-table-body" class="cargo-colors__table-body">
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row linear-scale">
-                        <div class="col-lg-12">
-                            <hr class="hr hr--dark">
-                            <h6 class="step-title step-title--dark" data-toggle="collapse" href="#linear-scale__content"
-                                role="button" aria-expanded="false" aria-controls="linear-scale__content">Настройки
-                                линейного
-                                масштаба
-                                <i class="fas fa-caret-down"></i>
-                            </h6>
-                            <div id="linear-scale__content" class="linear-scale__content collapse">
-                                <p class="interface-text linear-scale__text">Укажите минимальную и максимальную ширину
-                                    линии в ленте с
-                                    помощью слайдера или введите значения вручную</p>
-                                <div id="widthSlider" class="slider linear-scale__width-slider"></div>
-                                <div class="input-row linear-scale__input-row">
-                                    <div class="input-col input-col--left">
-                                        <label for="min-width-input"
-                                            class="input-label input-label--prefix">min:</label>
-                                        <input type="text" class="form-control input-text" id="min-width-input">
-                                        <span class="input-label input-label--postfix">px</span>
-                                    </div>
-                                    <div class="input-col input-col--right">
-                                        <label for="max-width-input"
-                                            class="input-label input-label--prefix">max:</label>
-                                        <input type="text" class="form-control input-text" id="max-width-input">
-                                        <span class="input-label input-label--postfix">px</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row nodes-settings">
-                        <div class="col-lg-12">
-                            <hr class="hr hr--dark">
-                            <h6 class="step-title step-title--dark" data-toggle="collapse"
-                                href="#nodes-settings__content" role="button" aria-expanded="false"
-                                aria-controls="nodes-settings__content">Настройки отображения
-                                транспортных
-                                узлов
-                                <i class="fas fa-caret-down"></i>
-                            </h6>
-                            <div id="nodes-settings__content" class="nodes-settings__content collapse">
-                                <div class="pretty p-default p-curve checkbox">
-                                    <input type="checkbox" id="cities-checkbox" checked />
-                                    <div class="state p-gray">
-                                        <label class="checkbox__label">Отображать населенные пункты</label>
-                                    </div>
-                                </div>
-                                <div class="pretty p-default p-curve checkbox">
-                                    <input type="checkbox" id="junctions-checkbox" />
-                                    <div class="state p-gray">
-                                        <label class="checkbox__label">Отображать транзитные пункты</label>
-                                    </div>
-                                </div>
-                                <div class="nodes-settings__fill-color">
-                                    <div class="interface-text nodes-settings__text">Выберите цвет заливки значка</div>
-                                    <span class="color-box nodes-settings__color-box" id="cities-fill-color-box"></span>
-                                </div>
-                                <div class="nodes-settings__stroke-color">
-                                    <div class="interface-text nodes-settings__text">Выберите цвет обводки значка</div>
-                                    <span class="color-box nodes-settings__color-box"
-                                        id="cities-stroke-color-box"></span>
-                                </div>
-                                <p class="interface-text">Укажите минимальный и максимальный радиус для значков
-                                    населенных пунктов с помощью
-                                    слайдера или введите значения вручную</p>
-                                <div id="cityRadiusSlider" class="slider nodes-settings__slider"></div>
-                                <div class="input-row radius-input-row">
-                                    <div class="input-col input-col--left">
-                                        <label for="min-radius-input"
-                                            class="input-label input-label--prefix">min:</label>
-                                        <input type="text" class="form-control input-text" id="min-radius-input">
-                                        <span class="input-label input-label--postfix">px</span>
-                                    </div>
-                                    <div class="input-col input-col--right">
-                                        <label for="max-radius-input"
-                                            class="input-label input-label--prefix">max:</label>
-                                        <input type="text" class="form-control input-text" id="max-radius-input">
-                                        <span class="input-label input-label--postfix">px</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row other-settings">
-                        <div class="col-lg-12">
-                            <hr class="hr hr--dark">
-                            <h6 class="step-title step-title--dark" data-toggle="collapse"
-                                href="#other-settings__content" role="button" aria-expanded="false"
-                                aria-controls="other-settings__content">Прочие настройки
-                                <i class="fas fa-caret-down"></i>
-                            </h6>
-                            <div id="other-settings__content" class="other-settings__content collapse">
-                                <div class="pretty p-default p-curve checkbox">
-                                    <input type="checkbox" id="edges-checkbox" checked />
-                                    <div class="state p-gray">
-                                        <label class="checkbox__text">Отображать ленты</label>
-                                    </div>
-                                </div>
-                                <div class="pretty p-default p-curve checkbox">
-                                    <input type="checkbox" id="cargo-nodes-checkbox" checked />
-                                    <div class="state p-gray">
-                                        <label class="checkbox__text">Отображать цветные кружки</label>
-                                    </div>
-                                </div>
-                                <div class="pretty p-default p-curve checkbox">
-                                    <input type="checkbox" id="background-lines-checkbox" checked />
-                                    <div class="state p-gray">
-                                        <label class="checkbox__text">Отображать тень</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <button type="submit" class="btn btn-dark" id="btn-submit">
+                  Submit
+                </button>
+              </form>
             </div>
+          </div>
         </div>
-
-        <div id="map" class="map"></div>
-        <div class="loading-map-panel" id="loading-map-panel">
-            <p class="loading-map-panel__text">Подождите, карта загружается</p>
-        </div>
-        <div class="greeting-panel__wrapper">
-            <div id="greeting-panel" class="greeting-panel greeting-panel--dark hidden">
-                <p class="greeting-panel__text">Здравствуйте! Вас приветствует мастер построения карт грузопотоков. Если
-                    вы хотите работать со
-                    своими данными - загрузите их с помощью специальной формы. Если вы хотите ознакомиться с
-                    функционалом приложения на заранее подготовленных данных, нажмите "Демо". Enjoy it!</p>
-                <div class="greeting-panel__btns-row">
-                    <button class="btn btn-demo" id="btn-demo">
-                        Демо
-                    </button>
-                    <button class="btn btn-upload btn-primary" id="btn-upload">
-                        Загрузить данные
-                    </button>
-                </div>
+        <div id="edit-interface-wrapper" class="edit-interface-wrapper hidden">
+          <div class="row cargo-colors">
+            <div class="col-lg-12">
+              <hr class="hr hr--dark" />
+              <h6
+                class="step-title step-title--dark"
+                data-toggle="collapse"
+                href="#cargo-colors__content"
+                role="button"
+                aria-expanded="false"
+                aria-controls="cargo-colors__content"
+              >
+              Cargo color settings
+                <i class="fas fa-caret-down"></i>
+              </h6>
+              <div
+                id="cargo-colors__content"
+                class="cargo-colors__content collapse"
+              >
+                <p class="interface-text cargo-colors__text">
+                    Select suitable colors for cargos
+                </p>
+                <table class="table borderless cargo-colors__table">
+                  <thead class="cargo-colors__table-heading">
+                    <tr class="cargo-colors__row cargo-colors__row--heading">
+                      <th scope="cargo-colors__col cargo-colors__col--heading">
+                        ID
+                      </th>
+                      <th scope="cargo-colors__col cargo-colors__col--heading">
+                        TYPE
+                      </th>
+                      <th scope="cargo-colors__col cargo-colors__col--heading">
+                        COLOR
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody
+                    id="color-table-body"
+                    class="cargo-colors__table-body"
+                  ></tbody>
+                </table>
+              </div>
             </div>
+          </div>
+          <div class="row linear-scale">
+            <div class="col-lg-12">
+              <hr class="hr hr--dark" />
+              <h6
+                class="step-title step-title--dark"
+                data-toggle="collapse"
+                href="#linear-scale__content"
+                role="button"
+                aria-expanded="false"
+                aria-controls="linear-scale__content"
+              >
+                Linear scale settings
+                <i class="fas fa-caret-down"></i>
+              </h6>
+              <div
+                id="linear-scale__content"
+                class="linear-scale__content collapse"
+              >
+                <p class="interface-text linear-scale__text">
+                    Specify minimum and maximum line width in the tape using the slider or set values manually
+                </p>
+                <div
+                  id="widthSlider"
+                  class="slider linear-scale__width-slider"
+                ></div>
+                <div class="input-row linear-scale__input-row">
+                  <div class="input-col input-col--left">
+                    <label
+                      for="min-width-input"
+                      class="input-label input-label--prefix"
+                      >min:</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control input-text"
+                      id="min-width-input"
+                    />
+                    <span class="input-label input-label--postfix">px</span>
+                  </div>
+                  <div class="input-col input-col--right">
+                    <label
+                      for="max-width-input"
+                      class="input-label input-label--prefix"
+                      >max:</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control input-text"
+                      id="max-width-input"
+                    />
+                    <span class="input-label input-label--postfix">px</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row nodes-settings">
+            <div class="col-lg-12">
+              <hr class="hr hr--dark" />
+              <h6
+                class="step-title step-title--dark"
+                data-toggle="collapse"
+                href="#nodes-settings__content"
+                role="button"
+                aria-expanded="false"
+                aria-controls="nodes-settings__content"
+              >
+              Transport nodes display settings
+                <i class="fas fa-caret-down"></i>
+              </h6>
+              <div
+                id="nodes-settings__content"
+                class="nodes-settings__content collapse"
+              >
+                <div class="pretty p-default p-curve checkbox">
+                  <input type="checkbox" id="cities-checkbox" checked />
+                  <div class="state p-gray">
+                    <label class="checkbox__label"
+                      >Show settlements</label
+                    >
+                  </div>
+                </div>
+                <div class="pretty p-default p-curve checkbox">
+                  <input type="checkbox" id="junctions-checkbox" />
+                  <div class="state p-gray">
+                    <label class="checkbox__label"
+                      >Show transit nodes</label
+                    >
+                  </div>
+                </div>
+                <div class="nodes-settings__fill-color">
+                  <div class="interface-text nodes-settings__text">
+                    Select circle fill color
+                  </div>
+                  <span
+                    class="color-box nodes-settings__color-box"
+                    id="cities-fill-color-box"
+                  ></span>
+                </div>
+                <div class="nodes-settings__stroke-color">
+                  <div class="interface-text nodes-settings__text">
+                    Select circle stroke color
+                  </div>
+                  <span
+                    class="color-box nodes-settings__color-box"
+                    id="cities-stroke-color-box"
+                  ></span>
+                </div>
+                <p class="interface-text">
+                    Specify minimum and maximum radius for circles of settlements using the slider or set values manually
+                </p>
+                <div
+                  id="cityRadiusSlider"
+                  class="slider nodes-settings__slider"
+                ></div>
+                <div class="input-row radius-input-row">
+                  <div class="input-col input-col--left">
+                    <label
+                      for="min-radius-input"
+                      class="input-label input-label--prefix"
+                      >min:</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control input-text"
+                      id="min-radius-input"
+                    />
+                    <span class="input-label input-label--postfix">px</span>
+                  </div>
+                  <div class="input-col input-col--right">
+                    <label
+                      for="max-radius-input"
+                      class="input-label input-label--prefix"
+                      >max:</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control input-text"
+                      id="max-radius-input"
+                    />
+                    <span class="input-label input-label--postfix">px</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row other-settings">
+            <div class="col-lg-12">
+              <hr class="hr hr--dark" />
+              <h6
+                class="step-title step-title--dark"
+                data-toggle="collapse"
+                href="#other-settings__content"
+                role="button"
+                aria-expanded="false"
+                aria-controls="other-settings__content"
+              >
+                Other settings
+                <i class="fas fa-caret-down"></i>
+              </h6>
+              <div
+                id="other-settings__content"
+                class="other-settings__content collapse"
+              >
+                <div class="pretty p-default p-curve checkbox">
+                  <input type="checkbox" id="edges-checkbox" checked />
+                  <div class="state p-gray">
+                    <label class="checkbox__text">Show tapes</label>
+                  </div>
+                </div>
+                <div class="pretty p-default p-curve checkbox">
+                  <input type="checkbox" id="cargo-nodes-checkbox" checked />
+                  <div class="state p-gray">
+                    <label class="checkbox__text"
+                      >Show junction circles</label
+                    >
+                  </div>
+                </div>
+                <div class="pretty p-default p-curve checkbox">
+                  <input
+                    type="checkbox"
+                    id="background-lines-checkbox"
+                    checked
+                  />
+                  <div class="state p-gray">
+                    <label class="checkbox__text">Show shadow</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div id="handle-data-panel" class="handle-data-panel hidden">
-            <p class="handle-data-panel__text">Подождите, идет обработка данных...</p>
+      </div>
+    </div>
+
+    <div id="map" class="map"></div>
+    <div class="loading-map-panel" id="loading-map-panel">
+      <p class="loading-map-panel__text">map is loading</p>
+    </div>
+    <div class="greeting-panel__wrapper">
+      <div
+        id="greeting-panel"
+        class="greeting-panel greeting-panel--dark hidden"
+      >
+        <p class="greeting-panel__text">
+          Hello! Welcome to the master of building cargo flow maps. If you want
+          to work with your data, upload it using a special form. If you want to
+          familiarize yourself with the functionality of the application on
+          pre-prepared data, click 'Demo'. Enjoy it!
+        </p>
+        <div class="greeting-panel__btns-row">
+          <button type="button" class="btn btn-demo" id="btn-demo">
+            Demo
+          </button>
+          <button
+            type="button"
+            class="btn btn-upload btn-primary"
+            id="btn-upload"
+          >
+            Upload data
+          </button>
         </div>
-        <div class="zoom-interface">
-            <div id='zoom-level' class="current-zoom">Zoom Level: 15</div>
-            <button type="button" id="to-10-zoom-level" class="btn btn--10-zoom-level">To Zoom level 10</button>
+        <div class="language-interface">
+          <div class="language-interface__text">
+            Change language / Поменять язык
+          </div>
+          <div class="language-interface__btns">
+            <button type="button" class="btn btn-secondary" id="btn-en">
+              En
+            </button>
+            <button type="button" class="btn btn-secondary" id="btn-ru">
+              Ru
+            </button>
+          </div>
         </div>
-        <div class="info-window">
-            <table class="table borderless info-window__table">
-                <thead class="info-window__table-heading">
-                    <tr class="info-window__row info-window__row--heading">
-                        <th class="info-window__col info-window__col--heading info-window__col--cargo-color" colspan="2">Тип</th>
-                        <th class="info-window__col info-window__col--heading info-window__col--dir-1">Прямо</th>
-                        <th class="info-window__col info-window__col--heading info-window__col--dir-2">Обратно</th>
-                    </tr>
-                </thead>
-                <tbody id="info-window__table-body" class="info-window__table-body">
-                    <tr class="info-window__row info-window__row--total">
-                        <td class="info-window__col info-window__col--total-title" colspan="2">
-                            Суммарно
-                        </td>
-                        <td class="info-window__col info-window__col--dir-1">
-                            -
-                        </td>
-                        <td class="info-window__col info-window__col--dir-2">
-                            -
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+      </div>
+    </div>
+    <div id="handle-data-panel" class="handle-data-panel hidden">
+      <p class="handle-data-panel__text">Wait, data is processed...</p>
+    </div>
+    <!-- <div class="zoom-interface">
+      <div id="zoom-level" class="current-zoom">Zoom Level: 15</div>
+      <button
+        type="button"
+        id="to-10-zoom-level"
+        class="btn btn--10-zoom-level"
+      >
+        To Zoom level 10
+      </button>
+    </div> -->
+    <div class="info-window">
+      <table class="table borderless info-window__table">
+        <thead class="info-window__table-heading">
+          <tr class="info-window__row info-window__row--heading">
+            <th
+              class="info-window__col info-window__col--heading info-window__col--cargo-color"
+              colspan="2"
+            >
+              Type
+            </th>
+            <th
+              class="info-window__col info-window__col--heading info-window__col--dir-1"
+            >
+              Straight
+            </th>
+            <th
+              class="info-window__col info-window__col--heading info-window__col--dir-2"
+            >
+              Back
+            </th>
+          </tr>
+        </thead>
+        <tbody id="info-window__table-body" class="info-window__table-body">
+          <tr class="info-window__row info-window__row--total">
+            <td
+              class="info-window__col info-window__col--total-title"
+              colspan="2"
+            >
+              Summary
+            </td>
+            <td class="info-window__col info-window__col--dir-1">
+              -
+            </td>
+            <td class="info-window__col info-window__col--dir-2">
+              -
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
 
-        </div>
-
-    </body>
-
-    <script src='./dist/bundle.js'></script>
-
+  <script src="./dist/bundle.js"></script>
 </html>

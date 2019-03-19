@@ -181,6 +181,8 @@ window.onload = () => {
         document.getElementById("greeting-panel").classList.remove('hidden');
 
         // get access to the necessary elements
+        const engBtn = document.getElementById('btn-en');
+        const ruBtn = document.getElementById('btn-ru');
         const demoBtn = document.getElementById('btn-demo');
         const uploadBtn = document.getElementById('btn-upload');
         const mainInterface = document.getElementById('main-interface-wrapper');
@@ -627,12 +629,12 @@ window.onload = () => {
         }
 
     });
-    map.on('zoomend', function () {
-        document.getElementById('zoom-level').innerHTML = 'Zoom Level: ' + map.getZoom();
-    });
+    // map.on('zoomend', function () {
+    //     document.getElementById('zoom-level').innerHTML = 'Zoom Level: ' + map.getZoom();
+    // });
 
-    const to10ZoomBtn = document.getElementById('to-10-zoom-level');
-    to10ZoomBtn.addEventListener('click', () => map.setZoom(10));
+    // const to10ZoomBtn = document.getElementById('to-10-zoom-level');
+    // to10ZoomBtn.addEventListener('click', () => map.setZoom(10));
 };
 
 
@@ -2401,12 +2403,13 @@ function getInfoWindowMarkup(infoWindow) {
 /*!*********************************!*\
   !*** ./js/modules/interface.js ***!
   \*********************************/
-/*! exports provided: createColorBox, bindColorPicker, createColorTable, createSlider, toggleLayerVisibility, toggleLayerOpacity, bindColorPickerToCitiesColorBoxes */
+/*! exports provided: changeInterfaceLanguage, createColorBox, bindColorPicker, createColorTable, createSlider, toggleLayerVisibility, toggleLayerOpacity, bindColorPickerToCitiesColorBoxes */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* WEBPACK VAR INJECTION */(function(noUiSlider) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createColorBox", function() { return createColorBox; });
+/* WEBPACK VAR INJECTION */(function(noUiSlider) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "changeInterfaceLanguage", function() { return changeInterfaceLanguage; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createColorBox", function() { return createColorBox; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bindColorPicker", function() { return bindColorPicker; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createColorTable", function() { return createColorTable; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createSlider", function() { return createSlider; });
@@ -2424,6 +2427,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const Huebee = __webpack_require__(/*! huebee */ "./node_modules/huebee/huebee.js");
+
+function changeInterfaceLanguage(elems, data) {
+  
+}
 
 // function to create color box
 function createColorBox(cargo) {
@@ -2563,8 +2570,8 @@ function showLineData(e, infoWindowElements) {
   const denominator = 10000;
   const factor = 10;
 
-  infoWindowElements.dirOne.title.textContent = 'Прямо';
-  infoWindowElements.dirTwo.title.textContent = 'Обратно';
+  infoWindowElements.dirOne.title.textContent = 'Straight';
+  infoWindowElements.dirTwo.title.textContent = 'Back';
 
   const infoOneDir = JSON.parse(e.features[0].properties.dataOneDir);
   const infoTwoDir = JSON.parse(e.features[0].properties.dataTwoDir);
@@ -2612,8 +2619,8 @@ function hideLineData(infoWindowElements) {
 
   const tableBody = infoWindowElements.tableBody;
 
-  infoWindowElements.dirOne.title.textContent = 'Прямо';
-  infoWindowElements.dirTwo.title.textContent = 'Обратно';
+  infoWindowElements.dirOne.title.textContent = 'Straight';
+  infoWindowElements.dirTwo.title.textContent = 'Back';
 
   const cargoValuesDirOne = tableBody.querySelectorAll('.info-window__col--dir-1');
   const cargoValuesDirTwo = tableBody.querySelectorAll('.info-window__col--dir-2');
@@ -2788,8 +2795,8 @@ function showNodeData(e, infoWindowElements) {
   const nodeProps = e.features[0].properties;
   const tableBody = infoWindowElements.tableBody;
 
-  infoWindowElements.dirOne.title.textContent = 'Вход';
-  infoWindowElements.dirTwo.title.textContent = 'Выход';
+  infoWindowElements.dirOne.title.textContent = 'In';
+  infoWindowElements.dirTwo.title.textContent = 'Out';
 
   let inTotal = 0;
   let outTotal = 0;
@@ -2840,8 +2847,8 @@ function hideNodeData(infoWindowElements) {
 
   const tableBody = infoWindowElements.tableBody;
 
-  infoWindowElements.dirOne.title.textContent = 'Прямо';
-  infoWindowElements.dirTwo.title.textContent = 'Обратно';
+  infoWindowElements.dirOne.title.textContent = 'Straight';
+  infoWindowElements.dirTwo.title.textContent = 'Back';
 
   const cargoValuesDirOne = tableBody.querySelectorAll('.info-window__col--dir-1');
   const cargoValuesDirTwo = tableBody.querySelectorAll('.info-window__col--dir-2');
@@ -7997,7 +8004,7 @@ function changeCitiesStrokeColor(map, color) {
 
 exports = module.exports = __webpack_require__(/*! ../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
 // Module
-exports.push([module.i, "/* blocks rules */\n.loading-map-panel {\n  position: fixed;\n  z-index: 1;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  color: #fff;\n  text-align: center; }\n\n.map {\n  position: absolute;\n  z-index: -1;\n  width: 100%;\n  height: 100%;\n  padding: 0;\n  margin: 0; }\n\n.greeting-panel__wrapper {\n  position: fixed;\n  z-index: 1;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%); }\n\n.greeting-panel {\n  color: #333;\n  background-color: rgba(255, 255, 255, 0.85);\n  text-align: center;\n  width: 450px;\n  padding: 20px 25px;\n  border-radius: 5px;\n  animation: emersion 0.7s 0.5s both cubic-bezier(0.04, 0.36, 0.1, 1.06); }\n\n.greeting-panel--dark {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0; }\n\n.greeting-panel__text {\n  font-size: 17px;\n  line-height: 1.4em;\n  font-weight: 300; }\n\n.greeting-panel__btns-row {\n  margin-top: 10px; }\n\n@keyframes emersion {\n  0% {\n    opacity: 0;\n    transform: scale(0.8); }\n  100% {\n    opacity: 1;\n    transform: scale(1); } }\n\n.btn--10-zoom-level {\n  margin: 10px;\n  padding: 10px;\n  position: absolute;\n  right: 0;\n  top: 50px;\n  z-index: 1000;\n  background: #ddd;\n  cursor: pointer;\n  transition: .3s; }\n\n.btn--10-zoom-level:hover {\n  background: #ea8585; }\n\n.btn-demo {\n  background: #d2d2d2; }\n\n.handle-data-panel {\n  position: fixed;\n  z-index: 2;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  color: #000000;\n  background: rgba(189, 189, 189, 0.7);\n  border-radius: 5px;\n  padding: 10px;\n  font-size: 17px; }\n\n.handle-data-panel__text {\n  margin-bottom: 0; }\n\n.main-interface-wrapper {\n  z-index: 1;\n  position: absolute;\n  background: rgba(255, 255, 255, 0.95);\n  border-radius: 5px;\n  top: 5px;\n  left: 5px;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  max-height: 95%;\n  max-width: 420px;\n  overflow-y: auto; }\n\n.main-interface-wrapper--dark {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300; }\n\n.edit-nodes__color-text {\n  width: 70%; }\n\n.title__main {\n  color: inherit;\n  text-align: center; }\n\n/* @import \"./blocks/upload-data.scss\"; */\n.step-title {\n  margin: 0;\n  margin-bottom: 5px;\n  font-weight: 600; }\n\n.step-title--dark {\n  font-weight: 400;\n  color: #fff; }\n\n.edit-interface-wrapper .step-title:hover {\n  cursor: pointer; }\n\n.hr--dark {\n  border-top: 1px solid rgba(0, 0, 0, 0.4); }\n\n/* #other-interface-wrapper {\n  z-index: 1;\n  position: absolute;\n  visibility: hidden;\n  background: #ffffff;\n  border-radius: 5px;\n  margin-top: 5px;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  max-height: 1000px;\n  max-width: 400px;\n  right: 5px;\n} */\n.borderless td {\n  border: none; }\n\n.cargo-colors__table {\n  margin-bottom: 0; }\n\n.table thead th {\n  border: none;\n  border-bottom: 1px dotted #1b1b1b; }\n\n.color-box {\n  display: inline-block;\n  width: 20px;\n  height: 20px;\n  background: #fff; }\n\n.color-box:hover {\n  box-shadow: 0 5px 7px rgba(0, 0, 0, 0.12), 0 5px 7px rgba(0, 0, 0, 0.24);\n  cursor: pointer; }\n\n#cities-fill-color-box {\n  background: #fff; }\n\n#cities-stroke-color-box {\n  background: #000; }\n\n.color-box--info-window {\n  margin-right: 5px; }\n  .color-box--info-window:hover {\n    box-shadow: none;\n    cursor: initial; }\n\n.huebee {\n  z-index: 10;\n  top: unset !important;\n  bottom: 370px !important; }\n\n.huebee__container {\n  background: rgba(35, 35, 35, 0.95);\n  left: -180px; }\n\n.huebee__cursor {\n  width: 20px;\n  height: 20px; }\n\n.huebee__cities-color {\n  top: unset !important;\n  bottom: 355px !important; }\n\n/* @import \"./blocks/linear-scale.scss\"; */\n.noUi-target {\n  margin-left: 15px;\n  margin-right: 15px;\n  border: none;\n  box-shadow: none;\n  background: rgba(53, 53, 53, 0.93); }\n\n.noUi-connect {\n  background: #717171; }\n\n.noUi-handle {\n  background: #656565;\n  border: none;\n  box-shadow: none; }\n\n.input-row {\n  margin-top: 20px; }\n\n.input-text {\n  width: 30%;\n  border: 1px solid #616161;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  text-align: center; }\n\n.input-text:focus {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  text-align: center;\n  width: 30%;\n  border: 1px solid #616161; }\n\n.input-col {\n  display: flex;\n  width: 40%; }\n\n.input-col--left {\n  align-items: baseline;\n  float: left; }\n\n.input-col--right {\n  justify-content: flex-end;\n  align-items: baseline;\n  float: right; }\n\n#max-width-input, #max-radius-input {\n  width: 40%; }\n\n.input-label {\n  color: #797979; }\n\n.input-label--prefix {\n  margin-right: 3px; }\n\n.input-label--postfix {\n  margin-left: 2px; }\n\n.form-row {\n  margin-top: 15px; }\n\n.nodes-settings__fill-color {\n  display: flex;\n  align-items: center;\n  margin: 2% 0; }\n\n.nodes-settings__stroke-color {\n  display: flex;\n  align-items: center;\n  margin-bottom: 11px; }\n\n.nodes-settings__text {\n  width: 65%; }\n\n.checkbox {\n  margin-top: 10px; }\n\n/* @import \"./blocks/other-settings.scss\"; */\n/* @import \"./blocks/zoom-interface.scss\"; */\n.current-zoom {\n  margin: 10px;\n  padding: 10px;\n  position: absolute;\n  right: 0;\n  top: 0;\n  z-index: 1000;\n  background: #ddd; }\n\n.info-window {\n  position: absolute;\n  bottom: 25px;\n  right: 5px;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300;\n  border-radius: 5px;\n  padding: 10px;\n  display: none; }\n\n.info-window__table {\n  margin-bottom: 0; }\n\n.info-window__row--total {\n  font-weight: 400; }\n\n.table th {\n  font-weight: 400; }\n\n.info-window .table td, .info-window .table th {\n  padding: 3px; }\n", ""]);
+exports.push([module.i, "/* blocks rules */\n.loading-map-panel {\n  position: fixed;\n  z-index: 1;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  color: #fff;\n  text-align: center; }\n\n.map {\n  position: absolute;\n  z-index: -1;\n  width: 100%;\n  height: 100%;\n  padding: 0;\n  margin: 0; }\n\n.greeting-panel__wrapper {\n  position: fixed;\n  z-index: 1;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%); }\n\n.greeting-panel {\n  color: #333;\n  background-color: rgba(255, 255, 255, 0.85);\n  text-align: center;\n  width: 450px;\n  padding: 20px 25px;\n  border-radius: 5px;\n  animation: emersion 0.7s 0.5s both cubic-bezier(0.04, 0.36, 0.1, 1.06); }\n\n.greeting-panel--dark {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0; }\n\n.greeting-panel__text {\n  font-size: 17px;\n  line-height: 1.4em;\n  font-weight: 300; }\n\n.greeting-panel__btns-row {\n  margin-top: 10px;\n  margin-bottom: 30px; }\n\n@keyframes emersion {\n  0% {\n    opacity: 0;\n    transform: scale(0.8); }\n  100% {\n    opacity: 1;\n    transform: scale(1); } }\n\n.language-interface__text {\n  margin-bottom: 10px;\n  font-weight: 300; }\n\n.btn--10-zoom-level {\n  margin: 10px;\n  padding: 10px;\n  position: absolute;\n  right: 0;\n  top: 50px;\n  z-index: 1000;\n  background: #ddd;\n  cursor: pointer;\n  transition: .3s; }\n\n.btn--10-zoom-level:hover {\n  background: #ea8585; }\n\n.btn-demo {\n  background: #d2d2d2; }\n\n.handle-data-panel {\n  position: fixed;\n  z-index: 2;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  color: #000000;\n  background: rgba(189, 189, 189, 0.7);\n  border-radius: 5px;\n  padding: 10px;\n  font-size: 17px; }\n\n.handle-data-panel__text {\n  margin-bottom: 0; }\n\n.main-interface-wrapper {\n  z-index: 1;\n  position: absolute;\n  background: rgba(255, 255, 255, 0.95);\n  border-radius: 5px;\n  top: 5px;\n  left: 5px;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  max-height: 95%;\n  max-width: 420px;\n  overflow-y: auto; }\n\n.main-interface-wrapper--dark {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300; }\n\n.edit-nodes__color-text {\n  width: 70%; }\n\n.title__main {\n  color: inherit;\n  text-align: center; }\n\n/* @import \"./blocks/upload-data.scss\"; */\n.step-title {\n  margin: 0;\n  margin-bottom: 10px;\n  font-weight: 600; }\n\n.step-title--dark {\n  font-weight: 400;\n  color: #fff; }\n\n.edit-interface-wrapper .step-title:hover {\n  cursor: pointer; }\n\n.hr--dark {\n  border-top: 1px solid rgba(0, 0, 0, 0.4); }\n\n/* #other-interface-wrapper {\n  z-index: 1;\n  position: absolute;\n  visibility: hidden;\n  background: #ffffff;\n  border-radius: 5px;\n  margin-top: 5px;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  max-height: 1000px;\n  max-width: 400px;\n  right: 5px;\n} */\n.borderless td {\n  border: none; }\n\n.cargo-colors__table {\n  margin-bottom: 0; }\n\n.table thead th {\n  border: none;\n  border-bottom: 1px dotted #1b1b1b; }\n\n.color-box {\n  display: inline-block;\n  width: 20px;\n  height: 20px;\n  background: #fff; }\n\n.color-box:hover {\n  box-shadow: 0 5px 7px rgba(0, 0, 0, 0.12), 0 5px 7px rgba(0, 0, 0, 0.24);\n  cursor: pointer; }\n\n#cities-fill-color-box {\n  background: #fff; }\n\n#cities-stroke-color-box {\n  background: #000; }\n\n.color-box--info-window {\n  margin-right: 5px; }\n  .color-box--info-window:hover {\n    box-shadow: none;\n    cursor: initial; }\n\n.huebee {\n  z-index: 10;\n  top: unset !important;\n  bottom: 370px !important; }\n\n.huebee__container {\n  background: rgba(35, 35, 35, 0.95);\n  left: -180px; }\n\n.huebee__cursor {\n  width: 20px;\n  height: 20px; }\n\n.huebee__cities-color {\n  top: unset !important;\n  bottom: 355px !important; }\n\n/* @import \"./blocks/linear-scale.scss\"; */\n.noUi-target {\n  margin-left: 15px;\n  margin-right: 15px;\n  border: none;\n  box-shadow: none;\n  background: rgba(53, 53, 53, 0.93); }\n\n.noUi-connect {\n  background: #717171; }\n\n.noUi-handle {\n  background: #656565;\n  border: none;\n  box-shadow: none; }\n\n.input-row {\n  margin-top: 20px; }\n\n.input-text {\n  width: 30%;\n  border: 1px solid #616161;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  text-align: center; }\n\n.input-text:focus {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  text-align: center;\n  width: 30%;\n  border: 1px solid #616161; }\n\n.input-col {\n  display: flex;\n  width: 40%; }\n\n.input-col--left {\n  align-items: baseline;\n  float: left; }\n\n.input-col--right {\n  justify-content: flex-end;\n  align-items: baseline;\n  float: right; }\n\n#max-width-input, #max-radius-input {\n  width: 40%; }\n\n.input-label {\n  color: #797979; }\n\n.input-label--prefix {\n  margin-right: 3px; }\n\n.input-label--postfix {\n  margin-left: 2px; }\n\n.form-row {\n  margin-top: 15px; }\n\n.nodes-settings__fill-color {\n  display: flex;\n  align-items: center;\n  margin: 2% 0; }\n\n.nodes-settings__stroke-color {\n  display: flex;\n  align-items: center;\n  margin-bottom: 11px; }\n\n.nodes-settings__text {\n  width: 65%; }\n\n.checkbox {\n  display: block;\n  margin-bottom: 10px; }\n\n/* @import \"./blocks/other-settings.scss\"; */\n/* @import \"./blocks/zoom-interface.scss\"; */\n.current-zoom {\n  margin: 10px;\n  padding: 10px;\n  position: absolute;\n  right: 0;\n  top: 0;\n  z-index: 1000;\n  background: #ddd; }\n\n.info-window {\n  position: absolute;\n  bottom: 25px;\n  right: 5px;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300;\n  border-radius: 5px;\n  padding: 10px;\n  display: none; }\n\n.info-window__table {\n  margin-bottom: 0; }\n\n.info-window__row--total {\n  font-weight: 400; }\n\n.table th {\n  font-weight: 400; }\n\n.info-window .table td, .info-window .table th {\n  padding: 3px; }\n", ""]);
 
 
 

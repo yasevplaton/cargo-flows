@@ -4,8 +4,8 @@ export function showNodeData(e, infoWindowElements) {
   const nodeProps = e.features[0].properties;
   const tableBody = infoWindowElements.tableBody;
 
-  infoWindowElements.dirOne.title.textContent = 'Вход';
-  infoWindowElements.dirTwo.title.textContent = 'Выход';
+  infoWindowElements.dirOne.title.textContent = 'In';
+  infoWindowElements.dirTwo.title.textContent = 'Out';
 
   let inTotal = 0;
   let outTotal = 0;
@@ -56,8 +56,8 @@ export function hideNodeData(infoWindowElements) {
 
   const tableBody = infoWindowElements.tableBody;
 
-  infoWindowElements.dirOne.title.textContent = 'Прямо';
-  infoWindowElements.dirTwo.title.textContent = 'Обратно';
+  infoWindowElements.dirOne.title.textContent = 'Straight';
+  infoWindowElements.dirTwo.title.textContent = 'Back';
 
   const cargoValuesDirOne = tableBody.querySelectorAll('.info-window__col--dir-1');
   const cargoValuesDirTwo = tableBody.querySelectorAll('.info-window__col--dir-2');

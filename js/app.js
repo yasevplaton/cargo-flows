@@ -51,6 +51,8 @@ window.onload = () => {
         document.getElementById("greeting-panel").classList.remove('hidden');
 
         // get access to the necessary elements
+        const engBtn = document.getElementById('btn-en');
+        const ruBtn = document.getElementById('btn-ru');
         const demoBtn = document.getElementById('btn-demo');
         const uploadBtn = document.getElementById('btn-upload');
         const mainInterface = document.getElementById('main-interface-wrapper');
@@ -497,10 +499,10 @@ window.onload = () => {
         }
 
     });
-    map.on('zoomend', function () {
-        document.getElementById('zoom-level').innerHTML = 'Zoom Level: ' + map.getZoom();
-    });
+    // map.on('zoomend', function () {
+    //     document.getElementById('zoom-level').innerHTML = 'Zoom Level: ' + map.getZoom();
+    // });
 
-    const to10ZoomBtn = document.getElementById('to-10-zoom-level');
-    to10ZoomBtn.addEventListener('click', () => map.setZoom(10));
+    // const to10ZoomBtn = document.getElementById('to-10-zoom-level');
+    // to10ZoomBtn.addEventListener('click', () => map.setZoom(10));
 };

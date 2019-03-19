@@ -5,6 +5,10 @@ import { changeColorInfoWindowColorBox } from "./info-window";
 
 const Huebee = require('huebee');
 
+export function changeInterfaceLanguage(elems, data) {
+  
+}
+
 // function to create color box
 export function createColorBox(cargo) {
   let colorBox = document.createElement('span');
