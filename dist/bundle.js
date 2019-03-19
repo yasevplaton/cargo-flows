@@ -270,6 +270,7 @@ window.onload = () => {
 
             // hide greeting panel
             document.getElementById("greeting-panel").classList.add('hidden');
+            
             // show loading panel
             handleDataPanel.classList.remove('hidden');
 
@@ -398,16 +399,6 @@ window.onload = () => {
             // bind color picker to cities layers
             Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["bindColorPickerToCitiesColorBoxes"])(citiesFillColorBox, citiesStrokeColorBox, map);
 
-            // const linePopup = new mapboxgl.Popup({
-            //     closeButton: false,
-            //     closeOnClick: false
-            // });
-
-            // const nodePopup = new mapboxgl.Popup({
-            //     closeButton: false,
-            //     closeOnClick: false
-            // });
-
             const infoWindowElements = Object(_modules_info_window__WEBPACK_IMPORTED_MODULE_11__["getInfoWindowElements"])(infoWindow);
             Object(_modules_info_window__WEBPACK_IMPORTED_MODULE_11__["addCargoList"])(infoWindowElements, cargoColorArray);
 
@@ -415,23 +406,31 @@ window.onload = () => {
             infoWindow.style.display = "block";
 
 
+            // initialize variables to store id of hovered feature
             let hoveredLineId = null;
             let hoveredCityId = null;
 
             map.on('mousemove', 'lines-hover', e => {
                 map.getCanvas().style.cursor = 'pointer';
 
+                // if under cursor one or more feauteres
                 if (e.features.length > 0) {
+
+                    // and if hovered feature id is not null
                     if (hoveredLineId) {
+                        // change feature state hover to false
                         map.setFeatureState({ source: 'background-lines', id: hoveredLineId }, { hover: false });
                     }
 
+                    // take id of first feature
                     hoveredLineId = e.features[0].id;
 
+                    // set hover state for this line as true (it will change appearence of layer)
                     map.setFeatureState({ source: 'background-lines', id: hoveredLineId }, { hover: true });
                 }
 
-                Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_12__["showLineInfoWindow"])(e, infoWindowElements);
+                // show data for infoWindow
+                Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_12__["showLineData"])(e, infoWindowElements);
             });
 
             map.on('mouseleave', 'lines-hover', () => {
@@ -443,7 +442,7 @@ window.onload = () => {
 
                 hoveredLineId = null;
 
-                Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_12__["hideLineInfoWindow"])(infoWindowElements);
+                Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_12__["hideLineData"])(infoWindowElements);
             });
 
             map.on('mousemove', 'cities-hover', e => {
@@ -463,7 +462,7 @@ window.onload = () => {
                     map.setFeatureState({ source: 'nodes', id: hoveredCityId }, { hover: true });
                 }
 
-                Object(_modules_nodes_info__WEBPACK_IMPORTED_MODULE_13__["showNodeInfoWindow"])(e, infoWindowElements);
+                Object(_modules_nodes_info__WEBPACK_IMPORTED_MODULE_13__["showNodeData"])(e, infoWindowElements);
             });
 
             map.on('mouseleave', 'cities-hover', () => {
@@ -475,7 +474,7 @@ window.onload = () => {
 
                 hoveredCityId = null;
 
-                Object(_modules_nodes_info__WEBPACK_IMPORTED_MODULE_13__["hideNodeInfoWindow"])(infoWindowElements);
+                Object(_modules_nodes_info__WEBPACK_IMPORTED_MODULE_13__["hideNodeData"])(infoWindowElements);
             });
 
             // initialize render counter
@@ -2545,17 +2544,14 @@ function bindColorPickerToCitiesColorBoxes(fillColorBox, strokeColorBox, map) {
 /*!**********************************!*\
   !*** ./js/modules/lines-info.js ***!
   \**********************************/
-/*! exports provided: showLineInfoWindow, hideLineInfoWindow */
+/*! exports provided: showLineData, hideLineData */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "showLineInfoWindow", function() { return showLineInfoWindow; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hideLineInfoWindow", function() { return hideLineInfoWindow; });
-
-
-
-function showLineInfoWindow(e, infoWindowElements) {
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "showLineData", function() { return showLineData; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hideLineData", function() { return hideLineData; });
+function showLineData(e, infoWindowElements) {
   // console.log(e.features);
 
   const lineID = e.features[0].properties.lineID;
@@ -2612,7 +2608,7 @@ function showLineInfoWindow(e, infoWindowElements) {
 
 }
 
-function hideLineInfoWindow(infoWindowElements) {
+function hideLineData(infoWindowElements) {
 
   const tableBody = infoWindowElements.tableBody;
 
@@ -2779,14 +2775,14 @@ if (!("hypot" in Math)) {  // Polyfill
 /*!**********************************!*\
   !*** ./js/modules/nodes-info.js ***!
   \**********************************/
-/*! exports provided: showNodeInfoWindow, hideNodeInfoWindow */
+/*! exports provided: showNodeData, hideNodeData */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "showNodeInfoWindow", function() { return showNodeInfoWindow; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hideNodeInfoWindow", function() { return hideNodeInfoWindow; });
-function showNodeInfoWindow(e, infoWindowElements) {
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "showNodeData", function() { return showNodeData; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hideNodeData", function() { return hideNodeData; });
+function showNodeData(e, infoWindowElements) {
   // console.log(e.features);
 
   const nodeProps = e.features[0].properties;
@@ -2840,7 +2836,7 @@ function showNodeInfoWindow(e, infoWindowElements) {
 
 }
 
-function hideNodeInfoWindow(infoWindowElements) {
+function hideNodeData(infoWindowElements) {
 
   const tableBody = infoWindowElements.tableBody;
 

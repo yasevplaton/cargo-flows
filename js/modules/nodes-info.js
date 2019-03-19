@@ -1,4 +1,4 @@
-export function showNodeInfoWindow(e, infoWindowElements) {
+export function showNodeData(e, infoWindowElements) {
   // console.log(e.features);
 
   const nodeProps = e.features[0].properties;
@@ -52,7 +52,7 @@ export function showNodeInfoWindow(e, infoWindowElements) {
 
 }
 
-export function hideNodeInfoWindow(infoWindowElements) {
+export function hideNodeData(infoWindowElements) {
 
   const tableBody = infoWindowElements.tableBody;
 

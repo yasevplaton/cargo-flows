@@ -28,8 +28,8 @@ import { createColorTable, createSlider, toggleLayerVisibility, bindColorPickerT
 import { collectLinesIDs, createOrigLines, fillOrigLinesWithData } from './modules/orig-lines';
 import { addWidthAndOffsetAttr } from './modules/bg-lines';
 import { getInfoWindowElements, addCargoList } from "./modules/info-window";
-import { showLineInfoWindow, hideLineInfoWindow } from "./modules/lines-info";
-import { showNodeInfoWindow, hideNodeInfoWindow } from "./modules/nodes-info";
+import { showLineData, hideLineData } from "./modules/lines-info";
+import { showNodeData, hideNodeData } from "./modules/nodes-info";
 
 window.onload = () => {
 
@@ -140,6 +140,7 @@ window.onload = () => {
 
             // hide greeting panel
             document.getElementById("greeting-panel").classList.add('hidden');
+            
             // show loading panel
             handleDataPanel.classList.remove('hidden');
 
@@ -275,23 +276,31 @@ window.onload = () => {
             infoWindow.style.display = "block";
 
 
+            // initialize variables to store id of hovered feature
             let hoveredLineId = null;
             let hoveredCityId = null;
 
             map.on('mousemove', 'lines-hover', e => {
                 map.getCanvas().style.cursor = 'pointer';
 
+                // if under cursor one or more feauteres
                 if (e.features.length > 0) {
+
+                    // and if hovered feature id is not null
                     if (hoveredLineId) {
+                        // change feature state hover to false
                         map.setFeatureState({ source: 'background-lines', id: hoveredLineId }, { hover: false });
                     }
 
+                    // take id of first feature
                     hoveredLineId = e.features[0].id;
 
+                    // set hover state for this line as true (it will change appearence of layer)
                     map.setFeatureState({ source: 'background-lines', id: hoveredLineId }, { hover: true });
                 }
 
-                showLineInfoWindow(e, infoWindowElements);
+                // show data for infoWindow
+                showLineData(e, infoWindowElements);
             });
 
             map.on('mouseleave', 'lines-hover', () => {
@@ -303,7 +312,7 @@ window.onload = () => {
 
                 hoveredLineId = null;
 
-                hideLineInfoWindow(infoWindowElements);
+                hideLineData(infoWindowElements);
             });
 
             map.on('mousemove', 'cities-hover', e => {
@@ -323,7 +332,7 @@ window.onload = () => {
                     map.setFeatureState({ source: 'nodes', id: hoveredCityId }, { hover: true });
                 }
 
-                showNodeInfoWindow(e, infoWindowElements);
+                showNodeData(e, infoWindowElements);
             });
 
             map.on('mouseleave', 'cities-hover', () => {
@@ -335,7 +344,7 @@ window.onload = () => {
 
                 hoveredCityId = null;
 
-                hideNodeInfoWindow(infoWindowElements);
+                hideNodeData(infoWindowElements);
             });
 
             // initialize render counter

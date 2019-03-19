@@ -1,7 +1,4 @@
-
-
-
-export function showLineInfoWindow(e, infoWindowElements) {
+export function showLineData(e, infoWindowElements) {
   // console.log(e.features);
 
   const lineID = e.features[0].properties.lineID;
@@ -58,7 +55,7 @@ export function showLineInfoWindow(e, infoWindowElements) {
 
 }
 
-export function hideLineInfoWindow(infoWindowElements) {
+export function hideLineData(infoWindowElements) {
 
   const tableBody = infoWindowElements.tableBody;
 
