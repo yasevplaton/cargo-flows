@@ -107,10 +107,13 @@ window.onload = () => {
     );
 
     const infoWindow = document.querySelector(".info-window");
+    const languageInterface = document.querySelector(
+      ".language-interface--main-window"
+    );
 
     // get access to text elems to change interface language
-    const engBtn = greetingPanel.querySelector("#btn-en");
-    const ruBtn = greetingPanel.querySelector("#btn-ru");
+    const engBtns = document.querySelectorAll(".btn-lang-en");
+    const ruBtns = document.querySelectorAll(".btn-lang-ru");
 
     // get text elements of app
     const textElems = getTextElems(
@@ -131,18 +134,22 @@ window.onload = () => {
       nodeDirTwo: "Out"
     };
 
-    // change langMode when click on "en" button
-    engBtn.addEventListener('click', () => {
+    // change interface language to english when click on "en" button
+    Array.from(engBtns).forEach(btn => {
+      btn.addEventListener("click", () => {
         langMode = "en";
         fetchLanguageData(textElems, langMode);
         changeInfoWindowText(infoWindowText, langMode);
+      });
     });
 
-    // change langMode when click on "ru" button
-    ruBtn.addEventListener('click', () => {
+    // change interface language to russian when click on "ru" button
+    Array.from(ruBtns).forEach(btn => {
+      btn.addEventListener("click", () => {
         langMode = "ru";
         fetchLanguageData(textElems, langMode);
         changeInfoWindowText(infoWindowText, langMode);
+      });
     });
 
     // store server url
@@ -240,6 +247,7 @@ window.onload = () => {
       }
       // show edit interface
       editInterface.classList.remove("hidden");
+      languageInterface.classList.remove("hidden");
 
       // set original line width
       const origLineWidth = 1;

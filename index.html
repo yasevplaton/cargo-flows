@@ -268,7 +268,7 @@
                 aria-expanded="false"
                 aria-controls="other-settings__content"
               >
-                Other settings
+                Layers
                 <i class="fas fa-caret-down"></i>
               </h6>
               <div
@@ -278,14 +278,14 @@
                 <div class="pretty p-default p-curve checkbox">
                   <input type="checkbox" id="edges-checkbox" checked />
                   <div class="state p-gray">
-                    <label class="checkbox__label checkbox__label--ribbons">Show ribbons</label>
+                    <label class="checkbox__label checkbox__label--ribbons">Ribbons</label>
                   </div>
                 </div>
                 <div class="pretty p-default p-curve checkbox">
                   <input type="checkbox" id="cargo-nodes-checkbox" checked />
                   <div class="state p-gray">
                     <label class="checkbox__label checkbox__label--cargo-nodes"
-                      >Show junction circles</label
+                      >Junction circles</label
                     >
                   </div>
                 </div>
@@ -296,7 +296,7 @@
                     checked
                   />
                   <div class="state p-gray">
-                    <label class="checkbox__label checkbox__label--shadow">Show shadow</label>
+                    <label class="checkbox__label checkbox__label--shadow">Shadow</label>
                   </div>
                 </div>
               </div>
@@ -338,10 +338,10 @@
             Change language / Поменять язык
           </div>
           <div class="language-interface__btns">
-            <button type="button" class="btn btn-secondary" id="btn-en">
+            <button type="button" class="btn btn-secondary btn-lang-en">
               En
             </button>
-            <button type="button" class="btn btn-secondary" id="btn-ru">
+            <button type="button" class="btn btn-secondary btn-lang-ru">
               Ru
             </button>
           </div>
@@ -350,6 +350,16 @@
     </div>
     <div id="handle-data-panel" class="handle-data-panel hidden">
       <p class="handle-data-panel__text">Wait, data is processed...</p>
+    </div>
+    <div class="language-interface language-interface--main-window hidden">
+      <div class="language-interface__btns">
+        <button type="button" class="btn btn-secondary btn-lang-en btn--language-main-window">
+          En
+        </button>
+        <button type="button" class="btn btn-secondary btn-lang-ru btn--language-main-window">
+          Ru
+        </button>
+      </div>
     </div>
     <!-- <div class="zoom-interface">
       <div id="zoom-level" class="current-zoom">Zoom Level: 15</div>

@@ -24,11 +24,11 @@
       "citiesStrokeLabel": "Select circle stroke color",
       "nodesSettingsSliderText": "Specify minimum and maximum radius for circles of settlements using the slider or set values manually"
     },
-    "otherSettingsRow": {
-      "title": "Other settings <i class='fas fa-caret-down'></i>",
-      "ribbonsCheckboxLabel": "Show ribbons",
-      "cargoNodesCheckboxLabel": "Show junction cirlces",
-      "shadowCheckboxLabel": "Show shadow"
+    "layersRow": {
+      "title": "Layers <i class='fas fa-caret-down'></i>",
+      "ribbonsCheckboxLabel": "Ribbons",
+      "cargoNodesCheckboxLabel": "Junction cirlces",
+      "shadowCheckboxLabel": "Shadow"
     }
   },
   "loadingMapPanel": "map is loading",

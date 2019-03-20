@@ -24,11 +24,11 @@
       "citiesStrokeLabel": "Выберите цвет обводки значка",
       "nodesSettingsSliderText": "Укажите минимальный и максимальный радиус для значков населенных пунктов с помощью слайдера или введите значения вручную"
     },
-    "otherSettingsRow": {
-      "title": "Прочие настройки <i class='fas fa-caret-down'></i>",
-      "ribbonsCheckboxLabel": "Отображать ленты",
-      "cargoNodesCheckboxLabel": "Отображать соединительные кружки",
-      "shadowCheckboxLabel": "Отображать тень"
+    "layersRow": {
+      "title": "Слои <i class='fas fa-caret-down'></i>",
+      "ribbonsCheckboxLabel": "Ленты",
+      "cargoNodesCheckboxLabel": "'Соединительные' кружки",
+      "shadowCheckboxLabel": "Тень"
     }
   },
   "loadingMapPanel": "Подождите, карта загружается",

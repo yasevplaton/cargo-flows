@@ -54,15 +54,15 @@ export function getTextElems(
     ".nodes-settings__text--slider"
   );
 
-  const otherSettingsRow = mainInterface.querySelector(".other-settings");
-  const otherSettingsRowTitle = otherSettingsRow.querySelector(".step-title");
-  const ribbonsCheckboxLabel = otherSettingsRow.querySelector(
+  const layersRow = mainInterface.querySelector(".other-settings");
+  const layersRowTitle = layersRow.querySelector(".step-title");
+  const ribbonsCheckboxLabel = layersRow.querySelector(
     ".checkbox__label--ribbons"
   );
-  const cargoNodesCheckboxLabel = otherSettingsRow.querySelector(
+  const cargoNodesCheckboxLabel = layersRow.querySelector(
     ".checkbox__label--cargo-nodes"
   );
-  const shadowCheckboxLabel = otherSettingsRow.querySelector(
+  const shadowCheckboxLabel = layersRow.querySelector(
     ".checkbox__label--shadow"
   );
 
@@ -118,8 +118,8 @@ export function getTextElems(
         citiesStrokeLabel: citiesStrokeLabel,
         nodesSettingsSliderText: nodesSettingsSliderText
       },
-      otherSettingsRow: {
-        title: otherSettingsRowTitle,
+      layersRow: {
+        title: layersRowTitle,
         ribbonsCheckboxLabel: ribbonsCheckboxLabel,
         cargoNodesCheckboxLabel: cargoNodesCheckboxLabel,
         shadowCheckboxLabel: shadowCheckboxLabel
@@ -216,20 +216,20 @@ function changeInterfaceLanguage(elems, data) {
     dataNodesSettingsRow.nodesSettingsSliderText
   );
 
-  const otherSettingsRow = elems.mainInterface.otherSettingsRow;
-  const dataOtherSettingsRow = data.mainInterface.otherSettingsRow;
-  changeInnerHtml(otherSettingsRow.title, dataOtherSettingsRow.title);
+  const layersRow = elems.mainInterface.layersRow;
+  const dataLayersRow = data.mainInterface.layersRow;
+  changeInnerHtml(layersRow.title, dataLayersRow.title);
   changeInnerHtml(
-    otherSettingsRow.ribbonsCheckboxLabel,
-    dataOtherSettingsRow.ribbonsCheckboxLabel
+    layersRow.ribbonsCheckboxLabel,
+    dataLayersRow.ribbonsCheckboxLabel
   );
   changeInnerHtml(
-    otherSettingsRow.cargoNodesCheckboxLabel,
-    dataOtherSettingsRow.cargoNodesCheckboxLabel
+    layersRow.cargoNodesCheckboxLabel,
+    dataLayersRow.cargoNodesCheckboxLabel
   );
   changeInnerHtml(
-    otherSettingsRow.shadowCheckboxLabel,
-    dataOtherSettingsRow.shadowCheckboxLabel
+    layersRow.shadowCheckboxLabel,
+    dataLayersRow.shadowCheckboxLabel
   );
 
   const greetingPanel = elems.greetingPanel;
