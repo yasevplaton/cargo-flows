@@ -6,8 +6,8 @@ made by Platon Yasev and Timofey Samsonov, Lomonosov MSU, Faculty of Geography, 
 
 ##  To deploy project on your local machine:
 ```sh
-$ git clone https://github.com/yasevplaton/linear-cartodiagram.git
-$ cd linear-cartodiagram
+$ git clone https://github.com/yasevplaton/cargo-flows.git
+$ cd cargo-flows
 $ yarn или npm i
 $ yarn build или npm run build
 ```
