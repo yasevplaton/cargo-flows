@@ -50,6 +50,7 @@ import { addWidthAndOffsetAttr } from "./modules/bg-lines";
 import { getInfoWindowElements, addCargoList } from "./modules/info-window";
 import { showLineData, hideLineData } from "./modules/lines-info";
 import { showNodeData, hideNodeData } from "./modules/nodes-info";
+import { createHighlightLines, fillHighlightLines } from "./modules/highlight";
 
 window.onload = () => {
   // get access to mapbox api
@@ -65,6 +66,7 @@ window.onload = () => {
   });
 
   map.on("load", () => {
+
     // remove greeting panel and make interface elements visible
     document.getElementById("loading-map-panel").remove();
 
@@ -270,6 +272,7 @@ window.onload = () => {
 
       // create a blank object for storage original lines
       const origLines = { type: "FeatureCollection", features: [] };
+      
 
       // collect ids of lines
       let linesIDArray = collectLinesIDs(edges);
@@ -307,6 +310,9 @@ window.onload = () => {
       fillOrigLinesWithData(origLines, edges);
       addWidthAndOffsetAttr(origLines, edges);
 
+      const highlightLines = createHighlightLines(origLines);
+      fillHighlightLines(highlightLines);
+
       const nodeTrafficArray = [];
 
       // calculate node radius
@@ -338,7 +344,7 @@ window.onload = () => {
       // render background lines
       renderBackgroundLines(map, origLines);
       // render edges
-      renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject);
+      renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject, highlightLines);
       // render original lines
       renderOrigLines(map, origLines, origLineWidth);
       // render nodes

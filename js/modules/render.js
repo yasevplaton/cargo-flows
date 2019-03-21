@@ -56,28 +56,28 @@ export function renderBackgroundLines(map, origLines) {
                 ],
                 'line-offset': [
                     'interpolate', ['linear'], ['zoom'],
-                    1, ['/', ['get', 'offset'], 512],
-                    2, ['/', ['get', 'offset'], 256],
-                    3, ['/', ['get', 'offset'], 128],
-                    4, ['/', ['get', 'offset'], 64],
-                    5, ['/', ['get', 'offset'], 32],
-                    6, ['/', ['get', 'offset'], 16],
-                    7, ['/', ['get', 'offset'], 8],
-                    8, ['/', ['get', 'offset'], 4],
-                    9, ['/', ['get', 'offset'], 2],
-                    10, ['get', 'offset'],
-                    11, ['*', ['get', 'offset'], 2],
-                    12, ['*', ['get', 'offset'], 4],
-                    13, ['*', ['get', 'offset'], 8],
-                    14, ['*', ['get', 'offset'], 16],
-                    15, ['*', ['get', 'offset'], 32],
-                    16, ['*', ['get', 'offset'], 64],
-                    17, ['*', ['get', 'offset'], 128],
-                    18, ['*', ['get', 'offset'], 256],
-                    19, ['*', ['get', 'offset'], 512],
-                    20, ['*', ['get', 'offset'], 1024],
-                    21, ['*', ['get', 'offset'], 2048],
-                    22, ['*', ['get', 'offset'], 4096]
+                    1, ['/', ['get', 'bgLineOffset'], 512],
+                    2, ['/', ['get', 'bgLineOffset'], 256],
+                    3, ['/', ['get', 'bgLineOffset'], 128],
+                    4, ['/', ['get', 'bgLineOffset'], 64],
+                    5, ['/', ['get', 'bgLineOffset'], 32],
+                    6, ['/', ['get', 'bgLineOffset'], 16],
+                    7, ['/', ['get', 'bgLineOffset'], 8],
+                    8, ['/', ['get', 'bgLineOffset'], 4],
+                    9, ['/', ['get', 'bgLineOffset'], 2],
+                    10, ['get', 'bgLineOffset'],
+                    11, ['*', ['get', 'bgLineOffset'], 2],
+                    12, ['*', ['get', 'bgLineOffset'], 4],
+                    13, ['*', ['get', 'bgLineOffset'], 8],
+                    14, ['*', ['get', 'bgLineOffset'], 16],
+                    15, ['*', ['get', 'bgLineOffset'], 32],
+                    16, ['*', ['get', 'bgLineOffset'], 64],
+                    17, ['*', ['get', 'bgLineOffset'], 128],
+                    18, ['*', ['get', 'bgLineOffset'], 256],
+                    19, ['*', ['get', 'bgLineOffset'], 512],
+                    20, ['*', ['get', 'bgLineOffset'], 1024],
+                    21, ['*', ['get', 'bgLineOffset'], 2048],
+                    22, ['*', ['get', 'bgLineOffset'], 4096]
                 ],
             }
         });
@@ -86,13 +86,15 @@ export function renderBackgroundLines(map, origLines) {
 }
 
 // function to render edges
-export function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject) {
+export function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject, highlightLines) {
 
     const reverseCargoArray = cargoColorArray.slice().reverse();
     const maxCargoId = getMaxCargoId(cargoColorArray);
 
     if (map.getSource('edges')) {
         map.getSource('edges').setData(edges);
+        map.getSource('highlightLines').setData(highlightLines);
+
 
         reverseCargoArray.forEach(cargoObj => {
             map.getSource(`${cargoObj.type}-nodes`).setData(multipleCargoNodesObject[cargoObj.type]);
@@ -102,6 +104,7 @@ export function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObjec
     } else {
 
         map.addSource("edges", { type: "geojson", data: edges });
+        map.addSource("highlight-lines", { type: "geojson", data: highlightLines });
 
         // add array of layers to map (one for each type of cargo)
         reverseCargoArray.forEach(cargoObj => {
@@ -278,7 +281,7 @@ export function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObjec
         // add lines hover layer
         map.addLayer({
             "id": "lines-hover",
-            "source": "background-lines",
+            "source": "highlight-lines",
             "filter": [
                 "all",
                 ["!=", "totalWidth", 0]
@@ -286,36 +289,13 @@ export function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObjec
             "type": "line",
             "paint": {
                 'line-color': "#fff",
-                "line-opacity": ["case",
-                    ["boolean", ["feature-state", "hover"], false],
-                    1,
-                    0
-                ],
-                'line-width': [
-                    'interpolate', ['linear'], ['zoom'],
-                    1, ['/', ['get', 'totalWidth'], 512],
-                    2, ['/', ['get', 'totalWidth'], 256],
-                    3, ['/', ['get', 'totalWidth'], 128],
-                    4, ['/', ['get', 'totalWidth'], 64],
-                    5, ['/', ['get', 'totalWidth'], 32],
-                    6, ['/', ['get', 'totalWidth'], 16],
-                    7, ['/', ['get', 'totalWidth'], 8],
-                    8, ['/', ['get', 'totalWidth'], 4],
-                    9, ['/', ['get', 'totalWidth'], 2],
-                    10, ['get', 'totalWidth'],
-                    11, ['*', ['get', 'totalWidth'], 2],
-                    12, ['*', ['get', 'totalWidth'], 4],
-                    13, ['*', ['get', 'totalWidth'], 8],
-                    14, ['*', ['get', 'totalWidth'], 16],
-                    15, ['*', ['get', 'totalWidth'], 32],
-                    16, ['*', ['get', 'totalWidth'], 64],
-                    17, ['*', ['get', 'totalWidth'], 128],
-                    18, ['*', ['get', 'totalWidth'], 256],
-                    19, ['*', ['get', 'totalWidth'], 512],
-                    20, ['*', ['get', 'totalWidth'], 1024],
-                    21, ['*', ['get', 'totalWidth'], 2048],
-                    22, ['*', ['get', 'totalWidth'], 4096]
-                ],
+                'line-opacity': 1,
+                // "line-opacity": ["case",
+                //     ["boolean", ["feature-state", "hover"], false],
+                //     1,
+                //     0
+                // ],
+                'line-width': 5,
                 'line-offset': [
                     'interpolate', ['linear'], ['zoom'],
                     1, ['/', ['get', 'offset'], 512],

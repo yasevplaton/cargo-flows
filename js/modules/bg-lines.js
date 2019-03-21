@@ -23,15 +23,17 @@ export function addWidthAndOffsetAttr(origLines, edges) {
     line.properties.totalWidth = totalWidth;
 
     const offset = getBgLineOffset(totalWidthOneDir, totalWidthTwoDir);
-    line.properties.offset = offset;
+    line.properties.bgLineOffset = offset;
 
   });
 
 }
 
 function getBgLineOffset(totalWidthOneDir, totalWidthTwoDir) {
-  const offsetValue = totalWidthOneDir - totalWidthTwoDir;
+  const widthDiff = totalWidthOneDir - totalWidthTwoDir;
 
-  return offsetValue * (-1) / 2;
+  const offsetValue = widthDiff * (-1) / 2;
+
+  return offsetValue;
 
 }

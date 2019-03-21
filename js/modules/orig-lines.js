@@ -66,6 +66,7 @@ export function fillOrigLinesWithData(origLines, edges) {
       values: {},
       totalVolume: 0
     };
+    
     const dataTwoDir = {
       values: {},
       totalVolume: 0

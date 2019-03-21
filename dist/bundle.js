@@ -142,7 +142,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_info_window__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./modules/info-window */ "./js/modules/info-window.js");
 /* harmony import */ var _modules_lines_info__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./modules/lines-info */ "./js/modules/lines-info.js");
 /* harmony import */ var _modules_nodes_info__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./modules/nodes-info */ "./js/modules/nodes-info.js");
+/* harmony import */ var _modules_highlight__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./modules/highlight */ "./js/modules/highlight.js");
 // import js modules
+
 
 
 
@@ -175,6 +177,7 @@ window.onload = () => {
   });
 
   map.on("load", () => {
+
     // remove greeting panel and make interface elements visible
     document.getElementById("loading-map-panel").remove();
 
@@ -380,6 +383,7 @@ window.onload = () => {
 
       // create a blank object for storage original lines
       const origLines = { type: "FeatureCollection", features: [] };
+      
 
       // collect ids of lines
       let linesIDArray = Object(_modules_orig_lines__WEBPACK_IMPORTED_MODULE_9__["collectLinesIDs"])(edges);
@@ -417,6 +421,9 @@ window.onload = () => {
       Object(_modules_orig_lines__WEBPACK_IMPORTED_MODULE_9__["fillOrigLinesWithData"])(origLines, edges);
       Object(_modules_bg_lines__WEBPACK_IMPORTED_MODULE_10__["addWidthAndOffsetAttr"])(origLines, edges);
 
+      const highlightLines = Object(_modules_highlight__WEBPACK_IMPORTED_MODULE_14__["createHighlightLines"])(origLines);
+      Object(_modules_highlight__WEBPACK_IMPORTED_MODULE_14__["fillHighlightLines"])(highlightLines);
+
       const nodeTrafficArray = [];
 
       // calculate node radius
@@ -448,7 +455,7 @@ window.onload = () => {
       // render background lines
       Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderBackgroundLines"])(map, origLines);
       // render edges
-      Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderEdges"])(map, edges, cargoColorArray, multipleCargoNodesObject);
+      Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderEdges"])(map, edges, cargoColorArray, multipleCargoNodesObject, highlightLines);
       // render original lines
       Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderOrigLines"])(map, origLines, origLineWidth);
       // render nodes
@@ -782,16 +789,18 @@ function addWidthAndOffsetAttr(origLines, edges) {
     line.properties.totalWidth = totalWidth;
 
     const offset = getBgLineOffset(totalWidthOneDir, totalWidthTwoDir);
-    line.properties.offset = offset;
+    line.properties.bgLineOffset = offset;
 
   });
 
 }
 
 function getBgLineOffset(totalWidthOneDir, totalWidthTwoDir) {
-  const offsetValue = totalWidthOneDir - totalWidthTwoDir;
+  const widthDiff = totalWidthOneDir - totalWidthTwoDir;
 
-  return offsetValue * (-1) / 2;
+  const offsetValue = widthDiff * (-1) / 2;
+
+  return offsetValue;
 
 }
 
@@ -970,7 +979,7 @@ function createMultipleCargoNodesObject(cargoTypes, nodes) {
 /*!******************************!*\
   !*** ./js/modules/common.js ***!
   \******************************/
-/*! exports provided: getBoundingBox, getRandomColor, classifyArray, changeCargoColor, isInRange, getMaxCargoId */
+/*! exports provided: getBoundingBox, getRandomColor, classifyArray, changeCargoColor, isInRange, getMaxCargoId, isEven */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -981,6 +990,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "changeCargoColor", function() { return changeCargoColor; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isInRange", function() { return isInRange; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getMaxCargoId", function() { return getMaxCargoId; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isEven", function() { return isEven; });
 const geostats = __webpack_require__(/*! ./geostats */ "./js/modules/geostats.js");
 
 // function to get bounding box of nodes layer
@@ -1062,6 +1072,10 @@ function getMaxCargoId(cargoColorArray) {
   });
 
   return maxCargoId;
+}
+
+function isEven(n) {
+  return n % 2 == 0;
 }
 
 /***/ }),
@@ -2410,6 +2424,95 @@ return geostats;
 
 /***/ }),
 
+/***/ "./js/modules/highlight.js":
+/*!*********************************!*\
+  !*** ./js/modules/highlight.js ***!
+  \*********************************/
+/*! exports provided: createHighlightLines, fillHighlightLines */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createHighlightLines", function() { return createHighlightLines; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fillHighlightLines", function() { return fillHighlightLines; });
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./common */ "./js/modules/common.js");
+
+
+function createHighlightLines(origLines) {
+  const highlightLines = { type: "FeatureCollection", features: [] };
+  const hllFeatures = highlightLines.features;
+  let counter = 0;
+
+  origLines.features.forEach(origLine => {
+    
+    hllFeatures.push({
+      id: origLine.id,
+      uniqueId: counter,
+      properties: origLine.properties,
+      geometry: origLine.geometry
+    });
+
+    hllFeatures.push({
+      id: origLine.id,
+      uniqueId: counter + 1,
+      properties: origLine.properties,
+      geometry: origLine.geometry
+    });
+
+    counter += 2;
+
+  });
+
+  return highlightLines;
+}
+
+function fillHighlightLines(highlightLines) {
+
+  let origLineId;
+
+  highlightLines.features.forEach(line => {
+
+    const isSecondSideLine = origLineId === line.id ? true : false;
+
+    origLineId = line.id;
+
+    const props = line.properties;
+    const oneDirProps = props.dataOneDir;
+    const twoDirProps = props.dataTwoDir;
+    const isFirstSideMax = oneDirProps.totalWidth - twoDirProps.totalWidth >= 0 ? true : false;
+
+    let offset;
+
+    if (!isSecondSideLine) {
+      if (isFirstSideMax) {
+        offset = oneDirProps.totalWidth;
+      } else {
+        offset = oneDirProps.totalWidth * (-1);
+      }
+
+    } else {
+      if (isFirstSideMax) {
+        offset = twoDirProps.totalWidth * (-1);
+      } else {
+        offset = twoDirProps.totalWidth;
+      }
+    }
+
+    line.properties.offset = offset;
+
+  });
+
+}
+
+function getHlLineOffset(totalWidthOneDir, totalWidthTwoDir) {
+  const widthDiff = totalWidthOneDir - totalWidthTwoDir;
+  
+
+  return offsetValue;
+}
+
+/***/ }),
+
 /***/ "./js/modules/info-window.js":
 /*!***********************************!*\
   !*** ./js/modules/info-window.js ***!
@@ -3517,6 +3620,7 @@ function fillOrigLinesWithData(origLines, edges) {
       values: {},
       totalVolume: 0
     };
+    
     const dataTwoDir = {
       values: {},
       totalVolume: 0
@@ -3629,28 +3733,28 @@ function renderBackgroundLines(map, origLines) {
                 ],
                 'line-offset': [
                     'interpolate', ['linear'], ['zoom'],
-                    1, ['/', ['get', 'offset'], 512],
-                    2, ['/', ['get', 'offset'], 256],
-                    3, ['/', ['get', 'offset'], 128],
-                    4, ['/', ['get', 'offset'], 64],
-                    5, ['/', ['get', 'offset'], 32],
-                    6, ['/', ['get', 'offset'], 16],
-                    7, ['/', ['get', 'offset'], 8],
-                    8, ['/', ['get', 'offset'], 4],
-                    9, ['/', ['get', 'offset'], 2],
-                    10, ['get', 'offset'],
-                    11, ['*', ['get', 'offset'], 2],
-                    12, ['*', ['get', 'offset'], 4],
-                    13, ['*', ['get', 'offset'], 8],
-                    14, ['*', ['get', 'offset'], 16],
-                    15, ['*', ['get', 'offset'], 32],
-                    16, ['*', ['get', 'offset'], 64],
-                    17, ['*', ['get', 'offset'], 128],
-                    18, ['*', ['get', 'offset'], 256],
-                    19, ['*', ['get', 'offset'], 512],
-                    20, ['*', ['get', 'offset'], 1024],
-                    21, ['*', ['get', 'offset'], 2048],
-                    22, ['*', ['get', 'offset'], 4096]
+                    1, ['/', ['get', 'bgLineOffset'], 512],
+                    2, ['/', ['get', 'bgLineOffset'], 256],
+                    3, ['/', ['get', 'bgLineOffset'], 128],
+                    4, ['/', ['get', 'bgLineOffset'], 64],
+                    5, ['/', ['get', 'bgLineOffset'], 32],
+                    6, ['/', ['get', 'bgLineOffset'], 16],
+                    7, ['/', ['get', 'bgLineOffset'], 8],
+                    8, ['/', ['get', 'bgLineOffset'], 4],
+                    9, ['/', ['get', 'bgLineOffset'], 2],
+                    10, ['get', 'bgLineOffset'],
+                    11, ['*', ['get', 'bgLineOffset'], 2],
+                    12, ['*', ['get', 'bgLineOffset'], 4],
+                    13, ['*', ['get', 'bgLineOffset'], 8],
+                    14, ['*', ['get', 'bgLineOffset'], 16],
+                    15, ['*', ['get', 'bgLineOffset'], 32],
+                    16, ['*', ['get', 'bgLineOffset'], 64],
+                    17, ['*', ['get', 'bgLineOffset'], 128],
+                    18, ['*', ['get', 'bgLineOffset'], 256],
+                    19, ['*', ['get', 'bgLineOffset'], 512],
+                    20, ['*', ['get', 'bgLineOffset'], 1024],
+                    21, ['*', ['get', 'bgLineOffset'], 2048],
+                    22, ['*', ['get', 'bgLineOffset'], 4096]
                 ],
             }
         });
@@ -3659,13 +3763,15 @@ function renderBackgroundLines(map, origLines) {
 }
 
 // function to render edges
-function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject) {
+function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject, highlightLines) {
 
     const reverseCargoArray = cargoColorArray.slice().reverse();
     const maxCargoId = Object(_common__WEBPACK_IMPORTED_MODULE_0__["getMaxCargoId"])(cargoColorArray);
 
     if (map.getSource('edges')) {
         map.getSource('edges').setData(edges);
+        map.getSource('highlightLines').setData(highlightLines);
+
 
         reverseCargoArray.forEach(cargoObj => {
             map.getSource(`${cargoObj.type}-nodes`).setData(multipleCargoNodesObject[cargoObj.type]);
@@ -3675,6 +3781,7 @@ function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject) {
     } else {
 
         map.addSource("edges", { type: "geojson", data: edges });
+        map.addSource("highlight-lines", { type: "geojson", data: highlightLines });
 
         // add array of layers to map (one for each type of cargo)
         reverseCargoArray.forEach(cargoObj => {
@@ -3851,7 +3958,7 @@ function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject) {
         // add lines hover layer
         map.addLayer({
             "id": "lines-hover",
-            "source": "background-lines",
+            "source": "highlight-lines",
             "filter": [
                 "all",
                 ["!=", "totalWidth", 0]
@@ -3859,36 +3966,13 @@ function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject) {
             "type": "line",
             "paint": {
                 'line-color': "#fff",
-                "line-opacity": ["case",
-                    ["boolean", ["feature-state", "hover"], false],
-                    1,
-                    0
-                ],
-                'line-width': [
-                    'interpolate', ['linear'], ['zoom'],
-                    1, ['/', ['get', 'totalWidth'], 512],
-                    2, ['/', ['get', 'totalWidth'], 256],
-                    3, ['/', ['get', 'totalWidth'], 128],
-                    4, ['/', ['get', 'totalWidth'], 64],
-                    5, ['/', ['get', 'totalWidth'], 32],
-                    6, ['/', ['get', 'totalWidth'], 16],
-                    7, ['/', ['get', 'totalWidth'], 8],
-                    8, ['/', ['get', 'totalWidth'], 4],
-                    9, ['/', ['get', 'totalWidth'], 2],
-                    10, ['get', 'totalWidth'],
-                    11, ['*', ['get', 'totalWidth'], 2],
-                    12, ['*', ['get', 'totalWidth'], 4],
-                    13, ['*', ['get', 'totalWidth'], 8],
-                    14, ['*', ['get', 'totalWidth'], 16],
-                    15, ['*', ['get', 'totalWidth'], 32],
-                    16, ['*', ['get', 'totalWidth'], 64],
-                    17, ['*', ['get', 'totalWidth'], 128],
-                    18, ['*', ['get', 'totalWidth'], 256],
-                    19, ['*', ['get', 'totalWidth'], 512],
-                    20, ['*', ['get', 'totalWidth'], 1024],
-                    21, ['*', ['get', 'totalWidth'], 2048],
-                    22, ['*', ['get', 'totalWidth'], 4096]
-                ],
+                'line-opacity': 1,
+                // "line-opacity": ["case",
+                //     ["boolean", ["feature-state", "hover"], false],
+                //     1,
+                //     0
+                // ],
+                'line-width': 5,
                 'line-offset': [
                     'interpolate', ['linear'], ['zoom'],
                     1, ['/', ['get', 'offset'], 512],
@@ -8375,7 +8459,7 @@ function changeCitiesStrokeColor(map, color) {
 
 exports = module.exports = __webpack_require__(/*! ../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
 // Module
-exports.push([module.i, "/* blocks rules */\n.loading-map-panel {\n  position: fixed;\n  z-index: 1;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  color: #fff;\n  text-align: center; }\n\n.map {\n  position: absolute;\n  z-index: -1;\n  width: 100%;\n  height: 100%;\n  padding: 0;\n  margin: 0; }\n\n.greeting-panel__wrapper {\n  position: fixed;\n  z-index: 1;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%); }\n\n.greeting-panel {\n  color: #333;\n  background-color: rgba(255, 255, 255, 0.85);\n  text-align: center;\n  width: 450px;\n  padding: 20px 25px;\n  border-radius: 5px;\n  animation: emersion 0.7s 0.5s both cubic-bezier(0.04, 0.36, 0.1, 1.06); }\n\n.greeting-panel--dark {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0; }\n\n.greeting-panel__text {\n  font-size: 17px;\n  line-height: 1.4em;\n  font-weight: 300; }\n\n.greeting-panel__btns-row {\n  margin-top: 10px;\n  margin-bottom: 30px; }\n\n@keyframes emersion {\n  0% {\n    opacity: 0;\n    transform: scale(0.8); }\n  100% {\n    opacity: 1;\n    transform: scale(1); } }\n\n.language-interface--main-window {\n  position: absolute;\n  left: 50%;\n  bottom: 10px;\n  transform: translateX(-50%); }\n\n.language-interface__text {\n  margin-bottom: 10px;\n  font-weight: 300; }\n\n.btn--10-zoom-level {\n  margin: 10px;\n  padding: 10px;\n  position: absolute;\n  right: 0;\n  top: 50px;\n  z-index: 1000;\n  background: #ddd;\n  cursor: pointer;\n  transition: .3s; }\n\n.btn--10-zoom-level:hover {\n  background: #ea8585; }\n\n.btn-demo {\n  background: #d2d2d2; }\n\n.btn--language-main-window {\n  border: none;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300; }\n\n.handle-data-panel {\n  position: fixed;\n  z-index: 2;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  color: #000000;\n  background: rgba(189, 189, 189, 0.7);\n  border-radius: 5px;\n  padding: 10px;\n  font-size: 17px; }\n\n.handle-data-panel__text {\n  margin-bottom: 0; }\n\n.main-interface-wrapper {\n  z-index: 1;\n  position: absolute;\n  background: rgba(255, 255, 255, 0.95);\n  border-radius: 5px;\n  top: 5px;\n  left: 5px;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  max-height: 95%;\n  max-width: 420px;\n  overflow-y: auto; }\n\n.main-interface-wrapper--dark {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300; }\n\n.edit-nodes__color-text {\n  width: 70%; }\n\n.title__main {\n  color: inherit;\n  text-align: center; }\n\n/* @import \"./blocks/upload-data.scss\"; */\n.step-title {\n  margin: 0;\n  margin-bottom: 10px;\n  font-weight: 600; }\n\n.step-title--dark {\n  font-weight: 400;\n  color: #fff; }\n\n.edit-interface-wrapper .step-title:hover {\n  cursor: pointer; }\n\n.hr--dark {\n  border-top: 1px solid rgba(0, 0, 0, 0.4); }\n\n/* #other-interface-wrapper {\n  z-index: 1;\n  position: absolute;\n  visibility: hidden;\n  background: #ffffff;\n  border-radius: 5px;\n  margin-top: 5px;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  max-height: 1000px;\n  max-width: 400px;\n  right: 5px;\n} */\n.borderless td {\n  border: none; }\n\n.cargo-colors__table {\n  margin-bottom: 0; }\n\n.table thead th {\n  border: none;\n  border-bottom: 1px dotted #1b1b1b; }\n\n.color-box {\n  display: inline-block;\n  width: 20px;\n  height: 20px;\n  background: #fff; }\n\n.color-box:hover {\n  box-shadow: 0 5px 7px rgba(0, 0, 0, 0.12), 0 5px 7px rgba(0, 0, 0, 0.24);\n  cursor: pointer; }\n\n#cities-fill-color-box {\n  background: #fff; }\n\n#cities-stroke-color-box {\n  background: #000; }\n\n.color-box--info-window {\n  margin-right: 5px; }\n  .color-box--info-window:hover {\n    box-shadow: none;\n    cursor: initial; }\n\n.huebee {\n  z-index: 10;\n  top: unset !important;\n  bottom: 370px !important; }\n\n.huebee__container {\n  background: rgba(35, 35, 35, 0.95);\n  left: -180px; }\n\n.huebee__cursor {\n  width: 20px;\n  height: 20px; }\n\n.huebee__cities-color {\n  top: unset !important;\n  bottom: 355px !important; }\n\n/* @import \"./blocks/linear-scale.scss\"; */\n.noUi-target {\n  margin-left: 15px;\n  margin-right: 15px;\n  border: none;\n  box-shadow: none;\n  background: rgba(53, 53, 53, 0.93); }\n\n.noUi-connect {\n  background: #717171; }\n\n.noUi-handle {\n  background: #656565;\n  border: none;\n  box-shadow: none; }\n\n.input-row {\n  margin-top: 20px; }\n\n.input-text {\n  width: 30%;\n  border: 1px solid #616161;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  text-align: center; }\n\n.input-text:focus {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  text-align: center;\n  width: 30%;\n  border: 1px solid #616161; }\n\n.input-col {\n  display: flex;\n  width: 40%; }\n\n.input-col--left {\n  align-items: baseline;\n  float: left; }\n\n.input-col--right {\n  justify-content: flex-end;\n  align-items: baseline;\n  float: right; }\n\n#max-width-input, #max-radius-input {\n  width: 40%; }\n\n.input-label {\n  color: #797979; }\n\n.input-label--prefix {\n  margin-right: 3px; }\n\n.input-label--postfix {\n  margin-left: 2px; }\n\n.form-row {\n  margin-top: 15px; }\n\n.nodes-settings__content {\n  padding-top: 5px; }\n\n.nodes-settings__fill-color {\n  display: flex;\n  align-items: center;\n  margin: 2% 0; }\n\n.nodes-settings__stroke-color {\n  display: flex;\n  align-items: center;\n  margin-bottom: 11px; }\n\n.nodes-settings__text {\n  width: 65%; }\n\n.checkbox {\n  display: block;\n  margin-bottom: 10px; }\n\n.other-settings__content {\n  padding-top: 5px; }\n\n/* @import \"./blocks/zoom-interface.scss\"; */\n.current-zoom {\n  margin: 10px;\n  padding: 10px;\n  position: absolute;\n  right: 0;\n  top: 0;\n  z-index: 1000;\n  background: #ddd; }\n\n.info-window {\n  position: absolute;\n  bottom: 25px;\n  right: 5px;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300;\n  border-radius: 5px;\n  padding: 10px;\n  display: none; }\n\n.info-window__table {\n  margin-bottom: 0; }\n\n.info-window__row--total {\n  font-weight: 400; }\n\n.table th {\n  font-weight: 400; }\n\n.info-window .table td, .info-window .table th {\n  padding: 3px; }\n", ""]);
+exports.push([module.i, "/* blocks rules */\n.loading-map-panel {\n  position: fixed;\n  z-index: 1;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  color: #fff;\n  text-align: center; }\n\n.map {\n  position: absolute;\n  z-index: -1;\n  width: 100%;\n  height: 100%;\n  padding: 0;\n  margin: 0; }\n\n.greeting-panel__wrapper {\n  position: fixed;\n  z-index: 1;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%); }\n\n.greeting-panel {\n  color: #333;\n  background-color: rgba(255, 255, 255, 0.85);\n  text-align: center;\n  width: 450px;\n  padding: 20px 25px;\n  border-radius: 5px;\n  animation: emersion 0.7s 0.5s both cubic-bezier(0.04, 0.36, 0.1, 1.06); }\n\n.greeting-panel--dark {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0; }\n\n.greeting-panel__text {\n  font-size: 17px;\n  line-height: 1.4em;\n  font-weight: 300; }\n\n.greeting-panel__btns-row {\n  margin-top: 10px;\n  margin-bottom: 30px; }\n\n@keyframes emersion {\n  0% {\n    opacity: 0;\n    transform: scale(0.8); }\n  100% {\n    opacity: 1;\n    transform: scale(1); } }\n\n.language-interface--main-window {\n  position: absolute;\n  left: 50%;\n  bottom: 10px;\n  transform: translateX(-50%); }\n\n.language-interface__text {\n  margin-bottom: 10px;\n  font-weight: 300; }\n\n.btn--10-zoom-level {\n  margin: 10px;\n  padding: 10px;\n  position: absolute;\n  right: 0;\n  top: 50px;\n  z-index: 1000;\n  background: #ddd;\n  cursor: pointer;\n  transition: .3s; }\n\n.btn--10-zoom-level:hover {\n  background: #ea8585; }\n\n.btn-demo {\n  background: #d2d2d2; }\n\n.btn--language-main-window {\n  border: none;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300; }\n\n.handle-data-panel {\n  position: fixed;\n  z-index: 2;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  color: #000000;\n  background: rgba(189, 189, 189, 0.7);\n  border-radius: 5px;\n  padding: 10px;\n  font-size: 17px; }\n\n.handle-data-panel__text {\n  margin-bottom: 0; }\n\n.main-interface-wrapper {\n  z-index: 1;\n  position: absolute;\n  background: rgba(255, 255, 255, 0.95);\n  border-radius: 5px;\n  top: 5px;\n  left: 5px;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  max-height: 95%;\n  max-width: 420px;\n  overflow-y: auto; }\n\n.main-interface-wrapper--dark {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300; }\n\n.edit-nodes__color-text {\n  width: 70%; }\n\n.title__main {\n  color: inherit;\n  text-align: center; }\n\n/* @import \"./blocks/upload-data.scss\"; */\n.step-title {\n  margin: 0;\n  margin-bottom: 10px;\n  font-weight: 600; }\n\n.step-title--dark {\n  font-weight: 400;\n  color: #fff; }\n\n.edit-interface-wrapper .step-title:hover {\n  cursor: pointer; }\n\n.hr--dark {\n  border-top: 1px solid rgba(0, 0, 0, 0.4); }\n\n/* #other-interface-wrapper {\r\n  z-index: 1;\r\n  position: absolute;\r\n  visibility: hidden;\r\n  background: #ffffff;\r\n  border-radius: 5px;\r\n  margin-top: 5px;\r\n  padding-top: 10px;\r\n  padding-bottom: 10px;\r\n  max-height: 1000px;\r\n  max-width: 400px;\r\n  right: 5px;\r\n} */\n.borderless td {\n  border: none; }\n\n.cargo-colors__table {\n  margin-bottom: 0; }\n\n.table thead th {\n  border: none;\n  border-bottom: 1px dotted #1b1b1b; }\n\n.color-box {\n  display: inline-block;\n  width: 20px;\n  height: 20px;\n  background: #fff; }\n\n.color-box:hover {\n  box-shadow: 0 5px 7px rgba(0, 0, 0, 0.12), 0 5px 7px rgba(0, 0, 0, 0.24);\n  cursor: pointer; }\n\n#cities-fill-color-box {\n  background: #fff; }\n\n#cities-stroke-color-box {\n  background: #000; }\n\n.color-box--info-window {\n  margin-right: 5px; }\n  .color-box--info-window:hover {\n    box-shadow: none;\n    cursor: initial; }\n\n.huebee {\n  z-index: 10;\n  top: unset !important;\n  bottom: 370px !important; }\n\n.huebee__container {\n  background: rgba(35, 35, 35, 0.95);\n  left: -180px; }\n\n.huebee__cursor {\n  width: 20px;\n  height: 20px; }\n\n.huebee__cities-color {\n  top: unset !important;\n  bottom: 355px !important; }\n\n/* @import \"./blocks/linear-scale.scss\"; */\n.noUi-target {\n  margin-left: 15px;\n  margin-right: 15px;\n  border: none;\n  box-shadow: none;\n  background: rgba(53, 53, 53, 0.93); }\n\n.noUi-connect {\n  background: #717171; }\n\n.noUi-handle {\n  background: #656565;\n  border: none;\n  box-shadow: none; }\n\n.input-row {\n  margin-top: 20px; }\n\n.input-text {\n  width: 30%;\n  border: 1px solid #616161;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  text-align: center; }\n\n.input-text:focus {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  text-align: center;\n  width: 30%;\n  border: 1px solid #616161; }\n\n.input-col {\n  display: flex;\n  width: 40%; }\n\n.input-col--left {\n  align-items: baseline;\n  float: left; }\n\n.input-col--right {\n  justify-content: flex-end;\n  align-items: baseline;\n  float: right; }\n\n#max-width-input, #max-radius-input {\n  width: 40%; }\n\n.input-label {\n  color: #797979; }\n\n.input-label--prefix {\n  margin-right: 3px; }\n\n.input-label--postfix {\n  margin-left: 2px; }\n\n.form-row {\n  margin-top: 15px; }\n\n.nodes-settings__content {\n  padding-top: 5px; }\n\n.nodes-settings__fill-color {\n  display: flex;\n  align-items: center;\n  margin: 2% 0; }\n\n.nodes-settings__stroke-color {\n  display: flex;\n  align-items: center;\n  margin-bottom: 11px; }\n\n.nodes-settings__text {\n  width: 65%; }\n\n.checkbox {\n  display: block;\n  margin-bottom: 10px; }\n\n.other-settings__content {\n  padding-top: 5px; }\n\n/* @import \"./blocks/zoom-interface.scss\"; */\n.current-zoom {\n  margin: 10px;\n  padding: 10px;\n  position: absolute;\n  right: 0;\n  top: 0;\n  z-index: 1000;\n  background: #ddd; }\n\n.info-window {\n  position: absolute;\n  bottom: 25px;\n  right: 5px;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300;\n  border-radius: 5px;\n  padding: 10px;\n  display: none; }\n\n.info-window__table {\n  margin-bottom: 0; }\n\n.info-window__row--total {\n  font-weight: 400; }\n\n.table th {\n  font-weight: 400; }\n\n.info-window .table td, .info-window .table th {\n  padding: 3px; }\n", ""]);
 
 
 
