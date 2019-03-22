@@ -45,6 +45,7 @@ export function calculateWidth(edges, widthArray, jenks) {
 
 // function to calculate offset of edge
 export function calculateOffset(edges, origLineWidth) {
+
   for (var i = 0, max = edges.features.length; i < max; i++) {
       if (edges.features[i].properties.order === 0) {
           edges.features[i].properties.offset = (origLineWidth / 2) + (edges.features[i].properties.width / 2);

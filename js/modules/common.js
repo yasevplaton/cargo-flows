@@ -68,6 +68,7 @@ export function isInRange(num, min, max) {
   return num > min && num <= max;
 }
 
+// function to get maximum id of cargos array
 export function getMaxCargoId(cargoColorArray) {
   let maxCargoId = 0;
 
@@ -79,8 +80,4 @@ export function getMaxCargoId(cargoColorArray) {
   });
 
   return maxCargoId;
-}
-
-export function isEven(n) {
-  return n % 2 == 0;
 }

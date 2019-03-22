@@ -311,7 +311,7 @@ window.onload = () => {
       addWidthAndOffsetAttr(origLines, edges);
 
       const highlightLines = createHighlightLines(origLines);
-      fillHighlightLines(highlightLines);
+      // fillHighlightLines(highlightLines);
 
       const nodeTrafficArray = [];
 
@@ -381,7 +381,7 @@ window.onload = () => {
       let hoveredLineId = null;
       let hoveredCityId = null;
 
-      map.on("mousemove", "lines-hover", e => {
+      map.on("mousemove", "background-lines", e => {
         map.getCanvas().style.cursor = "pointer";
 
         // if under cursor one or more feauteres
@@ -390,7 +390,7 @@ window.onload = () => {
           if (hoveredLineId) {
             // change feature state hover to false
             map.setFeatureState(
-              { source: "background-lines", id: hoveredLineId },
+              { source: "highlight-lines", id: hoveredLineId },
               { hover: false }
             );
           }
@@ -400,7 +400,7 @@ window.onload = () => {
 
           // set hover state for this line as true (it will change appearence of layer)
           map.setFeatureState(
-            { source: "background-lines", id: hoveredLineId },
+            { source: "highlight-lines", id: hoveredLineId },
             { hover: true }
           );
         }
@@ -409,12 +409,12 @@ window.onload = () => {
         showLineData(e, infoWindowElements, infoWindowText);
       });
 
-      map.on("mouseleave", "lines-hover", () => {
+      map.on("mouseleave", "background-lines", () => {
         map.getCanvas().style.cursor = "";
 
         if (hoveredLineId) {
           map.setFeatureState(
-            { source: "background-lines", id: hoveredLineId },
+            { source: "highlight-lines", id: hoveredLineId },
             { hover: false }
           );
         }
@@ -429,7 +429,7 @@ window.onload = () => {
 
         if (hoveredLineId) {
           map.setFeatureState(
-            { source: "background-lines", id: hoveredLineId },
+            { source: "highlight-lines", id: hoveredLineId },
             { hover: false }
           );
         }
@@ -631,10 +631,10 @@ window.onload = () => {
       );
     }
   });
-  // map.on('zoomend', function () {
-  //     document.getElementById('zoom-level').innerHTML = 'Zoom Level: ' + map.getZoom();
-  // });
+  map.on('zoomend', function () {
+      document.getElementById('zoom-level').innerHTML = 'Zoom Level: ' + map.getZoom();
+  });
 
-  // const to10ZoomBtn = document.getElementById('to-10-zoom-level');
-  // to10ZoomBtn.addEventListener('click', () => map.setZoom(10));
+  const to10ZoomBtn = document.getElementById('to-10-zoom-level');
+  to10ZoomBtn.addEventListener('click', () => map.setZoom(10));
 };

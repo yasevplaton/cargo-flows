@@ -82,12 +82,15 @@ export function fillOrigLinesWithData(origLines, edges) {
         dataOneDir.dest = edgeProps.dest;
         dataOneDir.values[edgeProps.type] = edgeProps.value;
         dataOneDir.totalVolume += edgeProps.value;
+
       } else {
+
         dataTwoDir.dir = edgeProps.dir;
         dataTwoDir.src = edgeProps.src;
         dataTwoDir.dest = edgeProps.dest;
         dataTwoDir.values[edgeProps.type] = edgeProps.value;
         dataTwoDir.totalVolume += edgeProps.value;
+        
       }
 
     });

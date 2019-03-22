@@ -422,7 +422,7 @@ window.onload = () => {
       Object(_modules_bg_lines__WEBPACK_IMPORTED_MODULE_10__["addWidthAndOffsetAttr"])(origLines, edges);
 
       const highlightLines = Object(_modules_highlight__WEBPACK_IMPORTED_MODULE_14__["createHighlightLines"])(origLines);
-      Object(_modules_highlight__WEBPACK_IMPORTED_MODULE_14__["fillHighlightLines"])(highlightLines);
+      // fillHighlightLines(highlightLines);
 
       const nodeTrafficArray = [];
 
@@ -492,7 +492,7 @@ window.onload = () => {
       let hoveredLineId = null;
       let hoveredCityId = null;
 
-      map.on("mousemove", "lines-hover", e => {
+      map.on("mousemove", "background-lines", e => {
         map.getCanvas().style.cursor = "pointer";
 
         // if under cursor one or more feauteres
@@ -501,7 +501,7 @@ window.onload = () => {
           if (hoveredLineId) {
             // change feature state hover to false
             map.setFeatureState(
-              { source: "background-lines", id: hoveredLineId },
+              { source: "highlight-lines", id: hoveredLineId },
               { hover: false }
             );
           }
@@ -511,7 +511,7 @@ window.onload = () => {
 
           // set hover state for this line as true (it will change appearence of layer)
           map.setFeatureState(
-            { source: "background-lines", id: hoveredLineId },
+            { source: "highlight-lines", id: hoveredLineId },
             { hover: true }
           );
         }
@@ -520,12 +520,12 @@ window.onload = () => {
         Object(_modules_lines_info__WEBPACK_IMPORTED_MODULE_12__["showLineData"])(e, infoWindowElements, infoWindowText);
       });
 
-      map.on("mouseleave", "lines-hover", () => {
+      map.on("mouseleave", "background-lines", () => {
         map.getCanvas().style.cursor = "";
 
         if (hoveredLineId) {
           map.setFeatureState(
-            { source: "background-lines", id: hoveredLineId },
+            { source: "highlight-lines", id: hoveredLineId },
             { hover: false }
           );
         }
@@ -540,7 +540,7 @@ window.onload = () => {
 
         if (hoveredLineId) {
           map.setFeatureState(
-            { source: "background-lines", id: hoveredLineId },
+            { source: "highlight-lines", id: hoveredLineId },
             { hover: false }
           );
         }
@@ -742,12 +742,12 @@ window.onload = () => {
       );
     }
   });
-  // map.on('zoomend', function () {
-  //     document.getElementById('zoom-level').innerHTML = 'Zoom Level: ' + map.getZoom();
-  // });
+  map.on('zoomend', function () {
+      document.getElementById('zoom-level').innerHTML = 'Zoom Level: ' + map.getZoom();
+  });
 
-  // const to10ZoomBtn = document.getElementById('to-10-zoom-level');
-  // to10ZoomBtn.addEventListener('click', () => map.setZoom(10));
+  const to10ZoomBtn = document.getElementById('to-10-zoom-level');
+  to10ZoomBtn.addEventListener('click', () => map.setZoom(10));
 };
 
 
@@ -979,7 +979,7 @@ function createMultipleCargoNodesObject(cargoTypes, nodes) {
 /*!******************************!*\
   !*** ./js/modules/common.js ***!
   \******************************/
-/*! exports provided: getBoundingBox, getRandomColor, classifyArray, changeCargoColor, isInRange, getMaxCargoId, isEven */
+/*! exports provided: getBoundingBox, getRandomColor, classifyArray, changeCargoColor, isInRange, getMaxCargoId */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -990,7 +990,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "changeCargoColor", function() { return changeCargoColor; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isInRange", function() { return isInRange; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getMaxCargoId", function() { return getMaxCargoId; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isEven", function() { return isEven; });
 const geostats = __webpack_require__(/*! ./geostats */ "./js/modules/geostats.js");
 
 // function to get bounding box of nodes layer
@@ -1061,6 +1060,7 @@ function isInRange(num, min, max) {
   return num > min && num <= max;
 }
 
+// function to get maximum id of cargos array
 function getMaxCargoId(cargoColorArray) {
   let maxCargoId = 0;
 
@@ -1072,10 +1072,6 @@ function getMaxCargoId(cargoColorArray) {
   });
 
   return maxCargoId;
-}
-
-function isEven(n) {
-  return n % 2 == 0;
 }
 
 /***/ }),
@@ -1144,6 +1140,7 @@ function calculateWidth(edges, widthArray, jenks) {
 
 // function to calculate offset of edge
 function calculateOffset(edges, origLineWidth) {
+
   for (var i = 0, max = edges.features.length; i < max; i++) {
       if (edges.features[i].properties.order === 0) {
           edges.features[i].properties.offset = (origLineWidth / 2) + (edges.features[i].properties.width / 2);
@@ -2428,17 +2425,15 @@ return geostats;
 /*!*********************************!*\
   !*** ./js/modules/highlight.js ***!
   \*********************************/
-/*! exports provided: createHighlightLines, fillHighlightLines */
+/*! exports provided: createHighlightLines, fillHighLightLines */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createHighlightLines", function() { return createHighlightLines; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fillHighlightLines", function() { return fillHighlightLines; });
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./common */ "./js/modules/common.js");
-
-
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fillHighLightLines", function() { return fillHighLightLines; });
 function createHighlightLines(origLines) {
+
   const highlightLines = { type: "FeatureCollection", features: [] };
   const hllFeatures = highlightLines.features;
   let counter = 0;
@@ -2448,14 +2443,17 @@ function createHighlightLines(origLines) {
     hllFeatures.push({
       id: origLine.id,
       uniqueId: counter,
-      properties: origLine.properties,
-      geometry: origLine.geometry
+      isSecondLine: false,
+      geometry: {
+        type: "LineString",
+        coordinates: reverseLineGeometry(origLine.geometry.coordinates)
+      },
     });
 
     hllFeatures.push({
       id: origLine.id,
       uniqueId: counter + 1,
-      properties: origLine.properties,
+      isSecondLine: true,
       geometry: origLine.geometry
     });
 
@@ -2466,49 +2464,30 @@ function createHighlightLines(origLines) {
   return highlightLines;
 }
 
-function fillHighlightLines(highlightLines) {
+function fillHighLightLines(hlLines, origLine) {
+  const sameHlLines = collectSameOrigLineHlLines(origLine.id, hlLines);
 
-  let origLineId;
-
-  highlightLines.features.forEach(line => {
-
-    const isSecondSideLine = origLineId === line.id ? true : false;
-
-    origLineId = line.id;
-
-    const props = line.properties;
-    const oneDirProps = props.dataOneDir;
-    const twoDirProps = props.dataTwoDir;
-    const isFirstSideMax = oneDirProps.totalWidth - twoDirProps.totalWidth >= 0 ? true : false;
-
-    let offset;
-
-    if (!isSecondSideLine) {
-      if (isFirstSideMax) {
-        offset = oneDirProps.totalWidth;
-      } else {
-        offset = oneDirProps.totalWidth * (-1);
-      }
-
-    } else {
-      if (isFirstSideMax) {
-        offset = twoDirProps.totalWidth * (-1);
-      } else {
-        offset = twoDirProps.totalWidth;
-      }
-    }
-
-    line.properties.offset = offset;
-
+  sameHlLines.forEach(line => {
+    
   });
-
 }
 
-function getHlLineOffset(totalWidthOneDir, totalWidthTwoDir) {
-  const widthDiff = totalWidthOneDir - totalWidthTwoDir;
-  
+function collectSameOrigLineHlLines(origLineId, hlLines) {
+  const sameHlLines = [];
 
-  return offsetValue;
+  hlLines.features.forEach(line => {
+    if (line.id === origLineId) {
+      sameHlLines.push(line);
+    }
+  });
+
+  return sameHlLines;
+}
+
+function reverseLineGeometry(coordinates) {
+  const reverseCoordinates = coordinates.slice().reverse();
+
+  return reverseCoordinates;
 }
 
 /***/ }),
@@ -3636,12 +3615,15 @@ function fillOrigLinesWithData(origLines, edges) {
         dataOneDir.dest = edgeProps.dest;
         dataOneDir.values[edgeProps.type] = edgeProps.value;
         dataOneDir.totalVolume += edgeProps.value;
+
       } else {
+
         dataTwoDir.dir = edgeProps.dir;
         dataTwoDir.src = edgeProps.src;
         dataTwoDir.dest = edgeProps.dest;
         dataTwoDir.values[edgeProps.type] = edgeProps.value;
         dataTwoDir.totalVolume += edgeProps.value;
+        
       }
 
     });
@@ -3965,38 +3947,38 @@ function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject, high
             ],
             "type": "line",
             "paint": {
-                'line-color': "#fff",
+                'line-color': "#e9ff00",
                 'line-opacity': 1,
-                // "line-opacity": ["case",
-                //     ["boolean", ["feature-state", "hover"], false],
-                //     1,
-                //     0
-                // ],
-                'line-width': 5,
+                "line-opacity": ["case",
+                    ["boolean", ["feature-state", "hover"], false],
+                    1,
+                    0
+                ],
+                'line-width': 4,
                 'line-offset': [
                     'interpolate', ['linear'], ['zoom'],
-                    1, ['/', ['get', 'offset'], 512],
-                    2, ['/', ['get', 'offset'], 256],
-                    3, ['/', ['get', 'offset'], 128],
-                    4, ['/', ['get', 'offset'], 64],
-                    5, ['/', ['get', 'offset'], 32],
-                    6, ['/', ['get', 'offset'], 16],
-                    7, ['/', ['get', 'offset'], 8],
-                    8, ['/', ['get', 'offset'], 4],
-                    9, ['/', ['get', 'offset'], 2],
-                    10, ['get', 'offset'],
-                    11, ['*', ['get', 'offset'], 2],
-                    12, ['*', ['get', 'offset'], 4],
-                    13, ['*', ['get', 'offset'], 8],
-                    14, ['*', ['get', 'offset'], 16],
-                    15, ['*', ['get', 'offset'], 32],
-                    16, ['*', ['get', 'offset'], 64],
-                    17, ['*', ['get', 'offset'], 128],
-                    18, ['*', ['get', 'offset'], 256],
-                    19, ['*', ['get', 'offset'], 512],
-                    20, ['*', ['get', 'offset'], 1024],
-                    21, ['*', ['get', 'offset'], 2048],
-                    22, ['*', ['get', 'offset'], 4096]
+                    1, ['/', ['get', 'totalWidth'], 512],
+                    2, ['/', ['get', 'totalWidth'], 256],
+                    3, ['/', ['get', 'totalWidth'], 128],
+                    4, ['/', ['get', 'totalWidth'], 64],
+                    5, ['/', ['get', 'totalWidth'], 32],
+                    6, ['/', ['get', 'totalWidth'], 16],
+                    7, ['/', ['get', 'totalWidth'], 8],
+                    8, ['/', ['get', 'totalWidth'], 4],
+                    9, ['/', ['get', 'totalWidth'], 2],
+                    10, ['get', 'totalWidth'],
+                    11, ['*', ['get', 'totalWidth'], 2],
+                    12, ['*', ['get', 'totalWidth'], 4],
+                    13, ['*', ['get', 'totalWidth'], 8],
+                    14, ['*', ['get', 'totalWidth'], 16],
+                    15, ['*', ['get', 'totalWidth'], 32],
+                    16, ['*', ['get', 'totalWidth'], 64],
+                    17, ['*', ['get', 'totalWidth'], 128],
+                    18, ['*', ['get', 'totalWidth'], 256],
+                    19, ['*', ['get', 'totalWidth'], 512],
+                    20, ['*', ['get', 'totalWidth'], 1024],
+                    21, ['*', ['get', 'totalWidth'], 2048],
+                    22, ['*', ['get', 'totalWidth'], 4096]
                 ],
             }
         });

@@ -1,6 +1,5 @@
-import { isEven } from "./common"
-
 export function createHighlightLines(origLines) {
+
   const highlightLines = { type: "FeatureCollection", features: [] };
   const hllFeatures = highlightLines.features;
   let counter = 0;
@@ -10,14 +9,17 @@ export function createHighlightLines(origLines) {
     hllFeatures.push({
       id: origLine.id,
       uniqueId: counter,
-      properties: origLine.properties,
-      geometry: origLine.geometry
+      isSecondLine: false,
+      geometry: {
+        type: "LineString",
+        coordinates: reverseLineGeometry(origLine.geometry.coordinates)
+      },
     });
 
     hllFeatures.push({
       id: origLine.id,
       uniqueId: counter + 1,
-      properties: origLine.properties,
+      isSecondLine: true,
       geometry: origLine.geometry
     });
 
@@ -28,47 +30,28 @@ export function createHighlightLines(origLines) {
   return highlightLines;
 }
 
-export function fillHighlightLines(highlightLines) {
+export function fillHighLightLines(hlLines, origLine) {
+  const sameHlLines = collectSameOrigLineHlLines(origLine.id, hlLines);
 
-  let origLineId;
-
-  highlightLines.features.forEach(line => {
-
-    const isSecondSideLine = origLineId === line.id ? true : false;
-
-    origLineId = line.id;
-
-    const props = line.properties;
-    const oneDirProps = props.dataOneDir;
-    const twoDirProps = props.dataTwoDir;
-    const isFirstSideMax = oneDirProps.totalWidth - twoDirProps.totalWidth >= 0 ? true : false;
-
-    let offset;
-
-    if (!isSecondSideLine) {
-      if (isFirstSideMax) {
-        offset = oneDirProps.totalWidth;
-      } else {
-        offset = oneDirProps.totalWidth * (-1);
-      }
-
-    } else {
-      if (isFirstSideMax) {
-        offset = twoDirProps.totalWidth * (-1);
-      } else {
-        offset = twoDirProps.totalWidth;
-      }
-    }
-
-    line.properties.offset = offset;
-
+  sameHlLines.forEach(line => {
+    
   });
-
 }
 
-function getHlLineOffset(totalWidthOneDir, totalWidthTwoDir) {
-  const widthDiff = totalWidthOneDir - totalWidthTwoDir;
-  
+function collectSameOrigLineHlLines(origLineId, hlLines) {
+  const sameHlLines = [];
 
-  return offsetValue;
+  hlLines.features.forEach(line => {
+    if (line.id === origLineId) {
+      sameHlLines.push(line);
+    }
+  });
+
+  return sameHlLines;
+}
+
+function reverseLineGeometry(coordinates) {
+  const reverseCoordinates = coordinates.slice().reverse();
+
+  return reverseCoordinates;
 }
