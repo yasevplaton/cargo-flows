@@ -92,8 +92,10 @@ export function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObjec
     const maxCargoId = getMaxCargoId(cargoColorArray);
 
     if (map.getSource('edges')) {
+
+        
         map.getSource('edges').setData(edges);
-        map.getSource('highlightLines').setData(highlightLines);
+        map.getSource('highlight-lines').setData(highlightLines);
 
 
         reverseCargoArray.forEach(cargoObj => {
@@ -228,7 +230,6 @@ export function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObjec
                         20, ['*', ['get', 'width'], 1024],
                         21, ['*', ['get', 'width'], 2048],
                         22, ['*', ['get', 'width'], 4096],
-                        // 22, ['*', ['get', 'width'], 1],
                     ]
                 }
             });
@@ -282,10 +283,10 @@ export function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObjec
         map.addLayer({
             "id": "lines-hover",
             "source": "highlight-lines",
-            "filter": [
-                "all",
-                ["!=", "totalWidth", 0]
-            ],
+            // "filter": [
+            //     "all",
+            //     ["!=", "totalWidth", 0]
+            // ],
             "type": "line",
             "paint": {
                 'line-color': "#e9ff00",
@@ -298,28 +299,28 @@ export function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObjec
                 'line-width': 4,
                 'line-offset': [
                     'interpolate', ['linear'], ['zoom'],
-                    1, ['/', ['get', 'totalWidth'], 512],
-                    2, ['/', ['get', 'totalWidth'], 256],
-                    3, ['/', ['get', 'totalWidth'], 128],
-                    4, ['/', ['get', 'totalWidth'], 64],
-                    5, ['/', ['get', 'totalWidth'], 32],
-                    6, ['/', ['get', 'totalWidth'], 16],
-                    7, ['/', ['get', 'totalWidth'], 8],
-                    8, ['/', ['get', 'totalWidth'], 4],
-                    9, ['/', ['get', 'totalWidth'], 2],
-                    10, ['get', 'totalWidth'],
-                    11, ['*', ['get', 'totalWidth'], 2],
-                    12, ['*', ['get', 'totalWidth'], 4],
-                    13, ['*', ['get', 'totalWidth'], 8],
-                    14, ['*', ['get', 'totalWidth'], 16],
-                    15, ['*', ['get', 'totalWidth'], 32],
-                    16, ['*', ['get', 'totalWidth'], 64],
-                    17, ['*', ['get', 'totalWidth'], 128],
-                    18, ['*', ['get', 'totalWidth'], 256],
-                    19, ['*', ['get', 'totalWidth'], 512],
-                    20, ['*', ['get', 'totalWidth'], 1024],
-                    21, ['*', ['get', 'totalWidth'], 2048],
-                    22, ['*', ['get', 'totalWidth'], 4096]
+                    1, ['/', ['get', 'offset'], 512],
+                    2, ['/', ['get', 'offset'], 256],
+                    3, ['/', ['get', 'offset'], 128],
+                    4, ['/', ['get', 'offset'], 64],
+                    5, ['/', ['get', 'offset'], 32],
+                    6, ['/', ['get', 'offset'], 16],
+                    7, ['/', ['get', 'offset'], 8],
+                    8, ['/', ['get', 'offset'], 4],
+                    9, ['/', ['get', 'offset'], 2],
+                    10, ['get', 'offset'],
+                    11, ['*', ['get', 'offset'], 2],
+                    12, ['*', ['get', 'offset'], 4],
+                    13, ['*', ['get', 'offset'], 8],
+                    14, ['*', ['get', 'offset'], 16],
+                    15, ['*', ['get', 'offset'], 32],
+                    16, ['*', ['get', 'offset'], 64],
+                    17, ['*', ['get', 'offset'], 128],
+                    18, ['*', ['get', 'offset'], 256],
+                    19, ['*', ['get', 'offset'], 512],
+                    20, ['*', ['get', 'offset'], 1024],
+                    21, ['*', ['get', 'offset'], 2048],
+                    22, ['*', ['get', 'offset'], 4096]
                 ],
             }
         });

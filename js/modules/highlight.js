@@ -9,7 +9,7 @@ export function createHighlightLines(origLines) {
     hllFeatures.push({
       id: origLine.id,
       uniqueId: counter,
-      isSecondLine: false,
+      properties: origLine.properties.dataOneDir,
       geometry: {
         type: "LineString",
         coordinates: reverseLineGeometry(origLine.geometry.coordinates)
@@ -19,7 +19,7 @@ export function createHighlightLines(origLines) {
     hllFeatures.push({
       id: origLine.id,
       uniqueId: counter + 1,
-      isSecondLine: true,
+      properties: origLine.properties.dataTwoDir,
       geometry: origLine.geometry
     });
 
@@ -30,11 +30,25 @@ export function createHighlightLines(origLines) {
   return highlightLines;
 }
 
-export function fillHighLightLines(hlLines, origLine) {
+// function to fill highlight lines
+export function fillHighlightLines(hlLines, origLine) {
+
   const sameHlLines = collectSameOrigLineHlLines(origLine.id, hlLines);
+  let offset;
 
   sameHlLines.forEach(line => {
-    
+
+    if (line.properties.dir === 1) {
+
+      offset = origLine.properties.dataOneDir.totalWidth;
+
+    } else {
+
+      offset = origLine.properties.dataTwoDir.totalWidth;
+    }
+
+    line.properties.offset = offset;
+
   });
 }
 

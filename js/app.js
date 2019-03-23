@@ -310,8 +310,13 @@ window.onload = () => {
       fillOrigLinesWithData(origLines, edges);
       addWidthAndOffsetAttr(origLines, edges);
 
+      // create highlight lines
       const highlightLines = createHighlightLines(origLines);
-      // fillHighlightLines(highlightLines);
+
+      // fill highlight lines with attributes
+      origLines.features.forEach(line => {
+        fillHighlightLines(highlightLines, line);
+      });
 
       const nodeTrafficArray = [];
 
@@ -590,6 +595,11 @@ window.onload = () => {
         calculateWidth(edges, widthArray, jenks);
         calculateOffset(edges, origLineWidth);
         addWidthAndOffsetAttr(origLines, edges);
+
+        origLines.features.forEach(line => {
+          fillHighlightLines(highlightLines, line);
+        });
+
         map.setZoom(10);
 
         nodes.features.forEach(node => {
@@ -602,7 +612,7 @@ window.onload = () => {
           nodes
         );
         renderBackgroundLines(map, origLines);
-        renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject);
+        renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject, highlightLines);
 
         map.setZoom(currZoom);
       }

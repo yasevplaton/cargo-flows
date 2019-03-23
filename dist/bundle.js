@@ -421,8 +421,13 @@ window.onload = () => {
       Object(_modules_orig_lines__WEBPACK_IMPORTED_MODULE_9__["fillOrigLinesWithData"])(origLines, edges);
       Object(_modules_bg_lines__WEBPACK_IMPORTED_MODULE_10__["addWidthAndOffsetAttr"])(origLines, edges);
 
+      // create highlight lines
       const highlightLines = Object(_modules_highlight__WEBPACK_IMPORTED_MODULE_14__["createHighlightLines"])(origLines);
-      // fillHighlightLines(highlightLines);
+
+      // fill highlight lines with attributes
+      origLines.features.forEach(line => {
+        Object(_modules_highlight__WEBPACK_IMPORTED_MODULE_14__["fillHighlightLines"])(highlightLines, line);
+      });
 
       const nodeTrafficArray = [];
 
@@ -701,6 +706,11 @@ window.onload = () => {
         Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["calculateWidth"])(edges, widthArray, jenks);
         Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["calculateOffset"])(edges, origLineWidth);
         Object(_modules_bg_lines__WEBPACK_IMPORTED_MODULE_10__["addWidthAndOffsetAttr"])(origLines, edges);
+
+        origLines.features.forEach(line => {
+          Object(_modules_highlight__WEBPACK_IMPORTED_MODULE_14__["fillHighlightLines"])(highlightLines, line);
+        });
+
         map.setZoom(10);
 
         nodes.features.forEach(node => {
@@ -713,7 +723,7 @@ window.onload = () => {
           nodes
         );
         Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderBackgroundLines"])(map, origLines);
-        Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderEdges"])(map, edges, cargoColorArray, multipleCargoNodesObject);
+        Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderEdges"])(map, edges, cargoColorArray, multipleCargoNodesObject, highlightLines);
 
         map.setZoom(currZoom);
       }
@@ -2425,13 +2435,13 @@ return geostats;
 /*!*********************************!*\
   !*** ./js/modules/highlight.js ***!
   \*********************************/
-/*! exports provided: createHighlightLines, fillHighLightLines */
+/*! exports provided: createHighlightLines, fillHighlightLines */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createHighlightLines", function() { return createHighlightLines; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fillHighLightLines", function() { return fillHighLightLines; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fillHighlightLines", function() { return fillHighlightLines; });
 function createHighlightLines(origLines) {
 
   const highlightLines = { type: "FeatureCollection", features: [] };
@@ -2443,7 +2453,7 @@ function createHighlightLines(origLines) {
     hllFeatures.push({
       id: origLine.id,
       uniqueId: counter,
-      isSecondLine: false,
+      properties: origLine.properties.dataOneDir,
       geometry: {
         type: "LineString",
         coordinates: reverseLineGeometry(origLine.geometry.coordinates)
@@ -2453,7 +2463,7 @@ function createHighlightLines(origLines) {
     hllFeatures.push({
       id: origLine.id,
       uniqueId: counter + 1,
-      isSecondLine: true,
+      properties: origLine.properties.dataTwoDir,
       geometry: origLine.geometry
     });
 
@@ -2464,11 +2474,25 @@ function createHighlightLines(origLines) {
   return highlightLines;
 }
 
-function fillHighLightLines(hlLines, origLine) {
+// function to fill highlight lines
+function fillHighlightLines(hlLines, origLine) {
+
   const sameHlLines = collectSameOrigLineHlLines(origLine.id, hlLines);
+  let offset;
 
   sameHlLines.forEach(line => {
-    
+
+    if (line.properties.dir === 1) {
+
+      offset = origLine.properties.dataOneDir.totalWidth;
+
+    } else {
+
+      offset = origLine.properties.dataTwoDir.totalWidth;
+    }
+
+    line.properties.offset = offset;
+
   });
 }
 
@@ -3751,8 +3775,10 @@ function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject, high
     const maxCargoId = Object(_common__WEBPACK_IMPORTED_MODULE_0__["getMaxCargoId"])(cargoColorArray);
 
     if (map.getSource('edges')) {
+
+        
         map.getSource('edges').setData(edges);
-        map.getSource('highlightLines').setData(highlightLines);
+        map.getSource('highlight-lines').setData(highlightLines);
 
 
         reverseCargoArray.forEach(cargoObj => {
@@ -3887,7 +3913,6 @@ function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject, high
                         20, ['*', ['get', 'width'], 1024],
                         21, ['*', ['get', 'width'], 2048],
                         22, ['*', ['get', 'width'], 4096],
-                        // 22, ['*', ['get', 'width'], 1],
                     ]
                 }
             });
@@ -3941,10 +3966,10 @@ function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject, high
         map.addLayer({
             "id": "lines-hover",
             "source": "highlight-lines",
-            "filter": [
-                "all",
-                ["!=", "totalWidth", 0]
-            ],
+            // "filter": [
+            //     "all",
+            //     ["!=", "totalWidth", 0]
+            // ],
             "type": "line",
             "paint": {
                 'line-color': "#e9ff00",
@@ -3957,28 +3982,28 @@ function renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject, high
                 'line-width': 4,
                 'line-offset': [
                     'interpolate', ['linear'], ['zoom'],
-                    1, ['/', ['get', 'totalWidth'], 512],
-                    2, ['/', ['get', 'totalWidth'], 256],
-                    3, ['/', ['get', 'totalWidth'], 128],
-                    4, ['/', ['get', 'totalWidth'], 64],
-                    5, ['/', ['get', 'totalWidth'], 32],
-                    6, ['/', ['get', 'totalWidth'], 16],
-                    7, ['/', ['get', 'totalWidth'], 8],
-                    8, ['/', ['get', 'totalWidth'], 4],
-                    9, ['/', ['get', 'totalWidth'], 2],
-                    10, ['get', 'totalWidth'],
-                    11, ['*', ['get', 'totalWidth'], 2],
-                    12, ['*', ['get', 'totalWidth'], 4],
-                    13, ['*', ['get', 'totalWidth'], 8],
-                    14, ['*', ['get', 'totalWidth'], 16],
-                    15, ['*', ['get', 'totalWidth'], 32],
-                    16, ['*', ['get', 'totalWidth'], 64],
-                    17, ['*', ['get', 'totalWidth'], 128],
-                    18, ['*', ['get', 'totalWidth'], 256],
-                    19, ['*', ['get', 'totalWidth'], 512],
-                    20, ['*', ['get', 'totalWidth'], 1024],
-                    21, ['*', ['get', 'totalWidth'], 2048],
-                    22, ['*', ['get', 'totalWidth'], 4096]
+                    1, ['/', ['get', 'offset'], 512],
+                    2, ['/', ['get', 'offset'], 256],
+                    3, ['/', ['get', 'offset'], 128],
+                    4, ['/', ['get', 'offset'], 64],
+                    5, ['/', ['get', 'offset'], 32],
+                    6, ['/', ['get', 'offset'], 16],
+                    7, ['/', ['get', 'offset'], 8],
+                    8, ['/', ['get', 'offset'], 4],
+                    9, ['/', ['get', 'offset'], 2],
+                    10, ['get', 'offset'],
+                    11, ['*', ['get', 'offset'], 2],
+                    12, ['*', ['get', 'offset'], 4],
+                    13, ['*', ['get', 'offset'], 8],
+                    14, ['*', ['get', 'offset'], 16],
+                    15, ['*', ['get', 'offset'], 32],
+                    16, ['*', ['get', 'offset'], 64],
+                    17, ['*', ['get', 'offset'], 128],
+                    18, ['*', ['get', 'offset'], 256],
+                    19, ['*', ['get', 'offset'], 512],
+                    20, ['*', ['get', 'offset'], 1024],
+                    21, ['*', ['get', 'offset'], 2048],
+                    22, ['*', ['get', 'offset'], 4096]
                 ],
             }
         });
