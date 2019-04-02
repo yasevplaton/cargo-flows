@@ -65,8 +65,14 @@ window.onload = () => {
     zoom: 10
   });
 
-  map.on("load", () => {
+  // add scale bar
+  const scaleBar = new mapboxgl.ScaleControl({
+    maxWidth: 100,
+    unit: "metric"
+  });
+  map.addControl(scaleBar);
 
+  map.on("load", () => {
     // remove greeting panel and make interface elements visible
     document.getElementById("loading-map-panel").remove();
 
@@ -272,7 +278,6 @@ window.onload = () => {
 
       // create a blank object for storage original lines
       const origLines = { type: "FeatureCollection", features: [] };
-      
 
       // collect ids of lines
       let linesIDArray = collectLinesIDs(edges);
@@ -349,7 +354,13 @@ window.onload = () => {
       // render background lines
       renderBackgroundLines(map, origLines);
       // render edges
-      renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject, highlightLines);
+      renderEdges(
+        map,
+        edges,
+        cargoColorArray,
+        multipleCargoNodesObject,
+        highlightLines
+      );
       // render original lines
       renderOrigLines(map, origLines, origLineWidth);
       // render nodes
@@ -612,7 +623,13 @@ window.onload = () => {
           nodes
         );
         renderBackgroundLines(map, origLines);
-        renderEdges(map, edges, cargoColorArray, multipleCargoNodesObject, highlightLines);
+        renderEdges(
+          map,
+          edges,
+          cargoColorArray,
+          multipleCargoNodesObject,
+          highlightLines
+        );
 
         map.setZoom(currZoom);
       }
@@ -641,10 +658,11 @@ window.onload = () => {
       );
     }
   });
-  map.on('zoomend', function () {
-      document.getElementById('zoom-level').innerHTML = 'Zoom Level: ' + map.getZoom();
+  map.on("zoomend", function() {
+    document.getElementById("zoom-level").innerHTML =
+      "Zoom Level: " + map.getZoom();
   });
 
-  const to10ZoomBtn = document.getElementById('to-10-zoom-level');
-  to10ZoomBtn.addEventListener('click', () => map.setZoom(10));
+  const to10ZoomBtn = document.getElementById("to-10-zoom-level");
+  to10ZoomBtn.addEventListener("click", () => map.setZoom(10));
 };

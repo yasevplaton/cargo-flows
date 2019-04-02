@@ -176,8 +176,14 @@ window.onload = () => {
     zoom: 10
   });
 
-  map.on("load", () => {
+  // add scale bar
+  const scaleBar = new mapbox_gl__WEBPACK_IMPORTED_MODULE_2___default.a.ScaleControl({
+    maxWidth: 100,
+    unit: "metric"
+  });
+  map.addControl(scaleBar);
 
+  map.on("load", () => {
     // remove greeting panel and make interface elements visible
     document.getElementById("loading-map-panel").remove();
 
@@ -383,7 +389,6 @@ window.onload = () => {
 
       // create a blank object for storage original lines
       const origLines = { type: "FeatureCollection", features: [] };
-      
 
       // collect ids of lines
       let linesIDArray = Object(_modules_orig_lines__WEBPACK_IMPORTED_MODULE_9__["collectLinesIDs"])(edges);
@@ -460,7 +465,13 @@ window.onload = () => {
       // render background lines
       Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderBackgroundLines"])(map, origLines);
       // render edges
-      Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderEdges"])(map, edges, cargoColorArray, multipleCargoNodesObject, highlightLines);
+      Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderEdges"])(
+        map,
+        edges,
+        cargoColorArray,
+        multipleCargoNodesObject,
+        highlightLines
+      );
       // render original lines
       Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderOrigLines"])(map, origLines, origLineWidth);
       // render nodes
@@ -723,7 +734,13 @@ window.onload = () => {
           nodes
         );
         Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderBackgroundLines"])(map, origLines);
-        Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderEdges"])(map, edges, cargoColorArray, multipleCargoNodesObject, highlightLines);
+        Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderEdges"])(
+          map,
+          edges,
+          cargoColorArray,
+          multipleCargoNodesObject,
+          highlightLines
+        );
 
         map.setZoom(currZoom);
       }
@@ -752,12 +769,13 @@ window.onload = () => {
       );
     }
   });
-  map.on('zoomend', function () {
-      document.getElementById('zoom-level').innerHTML = 'Zoom Level: ' + map.getZoom();
+  map.on("zoomend", function() {
+    document.getElementById("zoom-level").innerHTML =
+      "Zoom Level: " + map.getZoom();
   });
 
-  const to10ZoomBtn = document.getElementById('to-10-zoom-level');
-  to10ZoomBtn.addEventListener('click', () => map.setZoom(10));
+  const to10ZoomBtn = document.getElementById("to-10-zoom-level");
+  to10ZoomBtn.addEventListener("click", () => map.setZoom(10));
 };
 
 
@@ -8466,7 +8484,7 @@ function changeCitiesStrokeColor(map, color) {
 
 exports = module.exports = __webpack_require__(/*! ../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
 // Module
-exports.push([module.i, "/* blocks rules */\n.loading-map-panel {\n  position: fixed;\n  z-index: 1;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  color: #fff;\n  text-align: center; }\n\n.map {\n  position: absolute;\n  z-index: -1;\n  width: 100%;\n  height: 100%;\n  padding: 0;\n  margin: 0; }\n\n.greeting-panel__wrapper {\n  position: fixed;\n  z-index: 1;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%); }\n\n.greeting-panel {\n  color: #333;\n  background-color: rgba(255, 255, 255, 0.85);\n  text-align: center;\n  width: 450px;\n  padding: 20px 25px;\n  border-radius: 5px;\n  animation: emersion 0.7s 0.5s both cubic-bezier(0.04, 0.36, 0.1, 1.06); }\n\n.greeting-panel--dark {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0; }\n\n.greeting-panel__text {\n  font-size: 17px;\n  line-height: 1.4em;\n  font-weight: 300; }\n\n.greeting-panel__btns-row {\n  margin-top: 10px;\n  margin-bottom: 30px; }\n\n@keyframes emersion {\n  0% {\n    opacity: 0;\n    transform: scale(0.8); }\n  100% {\n    opacity: 1;\n    transform: scale(1); } }\n\n.language-interface--main-window {\n  position: absolute;\n  left: 50%;\n  bottom: 10px;\n  transform: translateX(-50%); }\n\n.language-interface__text {\n  margin-bottom: 10px;\n  font-weight: 300; }\n\n.btn--10-zoom-level {\n  margin: 10px;\n  padding: 10px;\n  position: absolute;\n  right: 0;\n  top: 50px;\n  z-index: 1000;\n  background: #ddd;\n  cursor: pointer;\n  transition: .3s; }\n\n.btn--10-zoom-level:hover {\n  background: #ea8585; }\n\n.btn-demo {\n  background: #d2d2d2; }\n\n.btn--language-main-window {\n  border: none;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300; }\n\n.handle-data-panel {\n  position: fixed;\n  z-index: 2;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  color: #000000;\n  background: rgba(189, 189, 189, 0.7);\n  border-radius: 5px;\n  padding: 10px;\n  font-size: 17px; }\n\n.handle-data-panel__text {\n  margin-bottom: 0; }\n\n.main-interface-wrapper {\n  z-index: 1;\n  position: absolute;\n  background: rgba(255, 255, 255, 0.95);\n  border-radius: 5px;\n  top: 5px;\n  left: 5px;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  max-height: 95%;\n  max-width: 420px;\n  overflow-y: auto; }\n\n.main-interface-wrapper--dark {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300; }\n\n.edit-nodes__color-text {\n  width: 70%; }\n\n.title__main {\n  color: inherit;\n  text-align: center; }\n\n/* @import \"./blocks/upload-data.scss\"; */\n.step-title {\n  margin: 0;\n  margin-bottom: 10px;\n  font-weight: 600; }\n\n.step-title--dark {\n  font-weight: 400;\n  color: #fff; }\n\n.edit-interface-wrapper .step-title:hover {\n  cursor: pointer; }\n\n.hr--dark {\n  border-top: 1px solid rgba(0, 0, 0, 0.4); }\n\n/* #other-interface-wrapper {\r\n  z-index: 1;\r\n  position: absolute;\r\n  visibility: hidden;\r\n  background: #ffffff;\r\n  border-radius: 5px;\r\n  margin-top: 5px;\r\n  padding-top: 10px;\r\n  padding-bottom: 10px;\r\n  max-height: 1000px;\r\n  max-width: 400px;\r\n  right: 5px;\r\n} */\n.borderless td {\n  border: none; }\n\n.cargo-colors__table {\n  margin-bottom: 0; }\n\n.table thead th {\n  border: none;\n  border-bottom: 1px dotted #1b1b1b; }\n\n.color-box {\n  display: inline-block;\n  width: 20px;\n  height: 20px;\n  background: #fff; }\n\n.color-box:hover {\n  box-shadow: 0 5px 7px rgba(0, 0, 0, 0.12), 0 5px 7px rgba(0, 0, 0, 0.24);\n  cursor: pointer; }\n\n#cities-fill-color-box {\n  background: #fff; }\n\n#cities-stroke-color-box {\n  background: #000; }\n\n.color-box--info-window {\n  margin-right: 5px; }\n  .color-box--info-window:hover {\n    box-shadow: none;\n    cursor: initial; }\n\n.huebee {\n  z-index: 10;\n  top: unset !important;\n  bottom: 370px !important; }\n\n.huebee__container {\n  background: rgba(35, 35, 35, 0.95);\n  left: -180px; }\n\n.huebee__cursor {\n  width: 20px;\n  height: 20px; }\n\n.huebee__cities-color {\n  top: unset !important;\n  bottom: 355px !important; }\n\n/* @import \"./blocks/linear-scale.scss\"; */\n.noUi-target {\n  margin-left: 15px;\n  margin-right: 15px;\n  border: none;\n  box-shadow: none;\n  background: rgba(53, 53, 53, 0.93); }\n\n.noUi-connect {\n  background: #717171; }\n\n.noUi-handle {\n  background: #656565;\n  border: none;\n  box-shadow: none; }\n\n.input-row {\n  margin-top: 20px; }\n\n.input-text {\n  width: 30%;\n  border: 1px solid #616161;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  text-align: center; }\n\n.input-text:focus {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  text-align: center;\n  width: 30%;\n  border: 1px solid #616161; }\n\n.input-col {\n  display: flex;\n  width: 40%; }\n\n.input-col--left {\n  align-items: baseline;\n  float: left; }\n\n.input-col--right {\n  justify-content: flex-end;\n  align-items: baseline;\n  float: right; }\n\n#max-width-input, #max-radius-input {\n  width: 40%; }\n\n.input-label {\n  color: #797979; }\n\n.input-label--prefix {\n  margin-right: 3px; }\n\n.input-label--postfix {\n  margin-left: 2px; }\n\n.form-row {\n  margin-top: 15px; }\n\n.nodes-settings__content {\n  padding-top: 5px; }\n\n.nodes-settings__fill-color {\n  display: flex;\n  align-items: center;\n  margin: 2% 0; }\n\n.nodes-settings__stroke-color {\n  display: flex;\n  align-items: center;\n  margin-bottom: 11px; }\n\n.nodes-settings__text {\n  width: 65%; }\n\n.checkbox {\n  display: block;\n  margin-bottom: 10px; }\n\n.other-settings__content {\n  padding-top: 5px; }\n\n/* @import \"./blocks/zoom-interface.scss\"; */\n.current-zoom {\n  margin: 10px;\n  padding: 10px;\n  position: absolute;\n  right: 0;\n  top: 0;\n  z-index: 1000;\n  background: #ddd; }\n\n.info-window {\n  position: absolute;\n  bottom: 25px;\n  right: 5px;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300;\n  border-radius: 5px;\n  padding: 10px;\n  display: none; }\n\n.info-window__table {\n  margin-bottom: 0; }\n\n.info-window__row--total {\n  font-weight: 400; }\n\n.table th {\n  font-weight: 400; }\n\n.info-window .table td, .info-window .table th {\n  padding: 3px; }\n", ""]);
+exports.push([module.i, "/* blocks rules */\n.loading-map-panel {\n  position: fixed;\n  z-index: 1;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  color: #fff;\n  text-align: center; }\n\n.map {\n  position: absolute;\n  z-index: -1;\n  width: 100%;\n  height: 100%;\n  padding: 0;\n  margin: 0; }\n\n.greeting-panel__wrapper {\n  position: fixed;\n  z-index: 1;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%); }\n\n.greeting-panel {\n  color: #333;\n  background-color: rgba(255, 255, 255, 0.85);\n  text-align: center;\n  width: 450px;\n  padding: 20px 25px;\n  border-radius: 5px;\n  animation: emersion 0.7s 0.5s both cubic-bezier(0.04, 0.36, 0.1, 1.06); }\n\n.greeting-panel--dark {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0; }\n\n.greeting-panel__text {\n  font-size: 17px;\n  line-height: 1.4em;\n  font-weight: 300; }\n\n.greeting-panel__btns-row {\n  margin-top: 10px;\n  margin-bottom: 30px; }\n\n@keyframes emersion {\n  0% {\n    opacity: 0;\n    transform: scale(0.8); }\n  100% {\n    opacity: 1;\n    transform: scale(1); } }\n\n.language-interface--main-window {\n  position: absolute;\n  left: 50%;\n  bottom: 10px;\n  transform: translateX(-50%); }\n\n.language-interface__text {\n  margin-bottom: 10px;\n  font-weight: 300; }\n\n.btn--10-zoom-level {\n  margin: 10px;\n  padding: 10px;\n  position: absolute;\n  right: 0;\n  top: 50px;\n  z-index: 1000;\n  background: #ddd;\n  cursor: pointer;\n  transition: .3s; }\n\n.btn--10-zoom-level:hover {\n  background: #ea8585; }\n\n.btn-demo {\n  background: #d2d2d2; }\n\n.btn--language-main-window {\n  border: none;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300; }\n\n.handle-data-panel {\n  position: fixed;\n  z-index: 2;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  color: #000000;\n  background: rgba(189, 189, 189, 0.7);\n  border-radius: 5px;\n  padding: 10px;\n  font-size: 17px; }\n\n.handle-data-panel__text {\n  margin-bottom: 0; }\n\n.main-interface-wrapper {\n  z-index: 1;\n  position: absolute;\n  background: rgba(255, 255, 255, 0.95);\n  border-radius: 5px;\n  top: 5px;\n  left: 5px;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  max-height: 95%;\n  max-width: 420px;\n  overflow-y: auto; }\n\n.main-interface-wrapper--dark {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300; }\n\n.edit-nodes__color-text {\n  width: 70%; }\n\n.title__main {\n  color: inherit;\n  text-align: center; }\n\n/* @import \"./blocks/upload-data.scss\"; */\n.step-title {\n  margin: 0;\n  margin-bottom: 10px;\n  font-weight: 600; }\n\n.step-title--dark {\n  font-weight: 400;\n  color: #fff; }\n\n.edit-interface-wrapper .step-title:hover {\n  cursor: pointer; }\n\n.hr--dark {\n  border-top: 1px solid rgba(0, 0, 0, 0.4); }\n\n/* #other-interface-wrapper {\r\n  z-index: 1;\r\n  position: absolute;\r\n  visibility: hidden;\r\n  background: #ffffff;\r\n  border-radius: 5px;\r\n  margin-top: 5px;\r\n  padding-top: 10px;\r\n  padding-bottom: 10px;\r\n  max-height: 1000px;\r\n  max-width: 400px;\r\n  right: 5px;\r\n} */\n.borderless td {\n  border: none; }\n\n.cargo-colors__table {\n  margin-bottom: 0; }\n\n.table thead th {\n  border: none;\n  border-bottom: 1px dotted #1b1b1b; }\n\n.color-box {\n  display: inline-block;\n  width: 20px;\n  height: 20px;\n  background: #fff; }\n\n.color-box:hover {\n  box-shadow: 0 5px 7px rgba(0, 0, 0, 0.12), 0 5px 7px rgba(0, 0, 0, 0.24);\n  cursor: pointer; }\n\n#cities-fill-color-box {\n  background: #fff; }\n\n#cities-stroke-color-box {\n  background: #000; }\n\n.color-box--info-window {\n  margin-right: 5px; }\n  .color-box--info-window:hover {\n    box-shadow: none;\n    cursor: initial; }\n\n.huebee {\n  z-index: 10;\n  top: unset !important;\n  bottom: 370px !important; }\n\n.huebee__container {\n  background: rgba(35, 35, 35, 0.95);\n  left: -180px; }\n\n.huebee__cursor {\n  width: 20px;\n  height: 20px; }\n\n.huebee__cities-color {\n  top: unset !important;\n  bottom: 355px !important; }\n\n/* @import \"./blocks/linear-scale.scss\"; */\n.noUi-target {\n  margin-left: 15px;\n  margin-right: 15px;\n  border: none;\n  box-shadow: none;\n  background: rgba(53, 53, 53, 0.93); }\n\n.noUi-connect {\n  background: #717171; }\n\n.noUi-handle {\n  background: #656565;\n  border: none;\n  box-shadow: none; }\n\n.input-row {\n  margin-top: 20px; }\n\n.input-text {\n  width: 30%;\n  border: 1px solid #616161;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  text-align: center; }\n\n.input-text:focus {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  text-align: center;\n  width: 30%;\n  border: 1px solid #616161; }\n\n.input-col {\n  display: flex;\n  width: 40%; }\n\n.input-col--left {\n  align-items: baseline;\n  float: left; }\n\n.input-col--right {\n  justify-content: flex-end;\n  align-items: baseline;\n  float: right; }\n\n#max-width-input, #max-radius-input {\n  width: 40%; }\n\n.input-label {\n  color: #797979; }\n\n.input-label--prefix {\n  margin-right: 3px; }\n\n.input-label--postfix {\n  margin-left: 2px; }\n\n.form-row {\n  margin-top: 15px; }\n\n.nodes-settings__content {\n  padding-top: 5px; }\n\n.nodes-settings__fill-color {\n  display: flex;\n  align-items: center;\n  margin: 2% 0; }\n\n.nodes-settings__stroke-color {\n  display: flex;\n  align-items: center;\n  margin-bottom: 11px; }\n\n.nodes-settings__text {\n  width: 65%; }\n\n.checkbox {\n  display: block;\n  margin-bottom: 10px; }\n\n.other-settings__content {\n  padding-top: 5px; }\n\n/* @import \"./blocks/zoom-interface.scss\"; */\n.current-zoom {\n  margin: 10px;\n  padding: 10px;\n  position: absolute;\n  right: 0;\n  top: 0;\n  z-index: 1000;\n  background: #ddd; }\n\n.info-window {\n  position: absolute;\n  bottom: 25px;\n  right: 5px;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300;\n  border-radius: 5px;\n  padding: 10px;\n  display: none; }\n\n.info-window__table {\n  margin-bottom: 0; }\n\n.info-window__row--total {\n  font-weight: 400; }\n\n.table th {\n  font-weight: 400; }\n\n.info-window .table td, .info-window .table th {\n  padding: 3px; }\n\n.mapboxgl-ctrl-scale {\n  position: fixed;\n  bottom: 7px;\n  left: 100px;\n  margin: 0 !important;\n  font-size: 12px;\n  font-family: \"Open Sans\", sans-serif;\n  font-weight: 300;\n  border: none;\n  border-bottom-width: 1px;\n  border-bottom-style: solid;\n  border-color: #e0e0e0;\n  padding: 0 5px;\n  box-sizing: border-box;\n  background: none;\n  color: #e0e0e0; }\n", ""]);
 
 
 
