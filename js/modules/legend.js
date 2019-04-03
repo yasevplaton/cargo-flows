@@ -239,3 +239,11 @@ export function changeColorLegendColorBox(color, cargoId, legend) {
   const reqColorBox = reqCargoItem.querySelector(".color-box--legend");
   reqColorBox.style.background = color;
 }
+
+export function updateLegendLineWidthByZoom(zoom, elemsArray) {
+  
+}
+
+export function updateLegendCityRadiusByZoom(zoom, elemsArray) {
+
+}

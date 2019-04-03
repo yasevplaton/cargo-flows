@@ -134,7 +134,8 @@ window.onload = () => {
       greetingPanel,
       handleDataPanel,
       mainInterface,
-      infoWindow
+      infoWindow,
+      legend
     );
 
     // set language mode as english by default
@@ -618,7 +619,7 @@ window.onload = () => {
       function updateWidthSliderHandler() {
         const currZoom = map.getZoom();
         widthArray = getWidthArray(+minWidthInput.value, +maxWidthInput.value);
-        cargoVolumeClassArray = createCargoVolumeClassArray(widthArray, nodeJenks);
+        cargoVolumeClassArray = createCargoVolumeClassArray(widthArray, edgeJenks);
         updateCargoVolume(legendLists, cargoVolumeClassArray);
         calculateWidth(edges, widthArray, edgeJenks);
         calculateOffset(edges, origLineWidth);
@@ -676,6 +677,11 @@ window.onload = () => {
         ],
         { linear: false, speed: 0.3 }
       );
+
+      // update legend when user zooms map
+      map.on("zoomend", e => {
+        console.log(map.getZoom());
+      });
     }
   });
   map.on("zoomend", function() {

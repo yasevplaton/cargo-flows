@@ -15,7 +15,8 @@ export function getTextElems(
   greetingPanel,
   handleDataPanel,
   mainInterface,
-  infoWindow
+  infoWindow,
+  legend
 ) {
   const greetingRow = mainInterface.querySelector(".greeting-row");
   const greetingRowTitle = greetingRow.querySelector(".title");
@@ -93,6 +94,16 @@ export function getTextElems(
     ".info-window__col--total-title"
   );
 
+  const legendCargoTypesGroup = legend.querySelector(".legend__group--cargo-types");
+  const legendCargoTypesTitle = legendCargoTypesGroup.querySelector(".legend__group-title");
+  
+  const legendCargoVolumeGroup = legend.querySelector(".legend__group--cargo-volume");
+  const legendCargoVolumeTitle = legendCargoVolumeGroup.querySelector(".legend__group-title");
+
+  const legendCityVolumeGroup = legend.querySelector(".legend__group--city-volume");
+  const legendCityVolumeTitle = legendCityVolumeGroup.querySelector(".legend__group-title");
+
+
   const textElems = {
     mainInterface: {
       greetingRow: {
@@ -140,6 +151,12 @@ export function getTextElems(
       dirOneText: infoWindowDirOneColText,
       dirTwoText: infoWindowDirTwoColText,
       totalText: infoWindowTotalColText
+    },
+    
+    legend: {
+      cargoTypesTitle: legendCargoTypesTitle,
+      cargoVolumeTitle: legendCargoVolumeTitle,
+      cityVolumeTitle: legendCityVolumeTitle
     }
   };
 
@@ -252,6 +269,12 @@ function changeInterfaceLanguage(elems, data) {
   changeInnerHtml(infoWindow.dirOneText, dataInfoWindow.dirOneText);
   changeInnerHtml(infoWindow.dirTwoText, dataInfoWindow.dirTwoText);
   changeInnerHtml(infoWindow.totalText, dataInfoWindow.totalText);
+
+  const legend = elems.legend;
+  const dataLegend = data.legend;
+  changeInnerHtml(legend.cargoTypesTitle, dataLegend.cargoTypesTitle);
+  changeInnerHtml(legend.cargoVolumeTitle, dataLegend.cargoVolumeTitle);
+  changeInnerHtml(legend.cityVolumeTitle, dataLegend.cityVolumeTitle);
 }
 
 // function to change inner html of an element

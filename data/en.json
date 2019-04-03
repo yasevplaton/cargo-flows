@@ -43,5 +43,10 @@
     "dirOneText": "Straight",
     "dirTwoText": "Back",
     "totalText": "Summary"
+  },
+  "legend": {
+    "cargoTypesTitle": "Cargo types",
+    "cargoVolumeTitle": "Cargo flows",
+    "cityVolumeTitle": "Traffic loading"
   }
 }

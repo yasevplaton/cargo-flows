@@ -43,5 +43,10 @@
     "dirOneText": "Прямо",
     "dirTwoText": "Обратно",
     "totalText": "Суммарно"
+  },
+  "legend": {
+    "cargoTypesTitle": "Типы грузов",
+    "cargoVolumeTitle": "Грузопотоки",
+    "cityVolumeTitle": "Грузонапряженность"
   }
 }
