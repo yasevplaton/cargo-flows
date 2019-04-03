@@ -51,7 +51,7 @@ import { getInfoWindowElements, addCargoList } from "./modules/info-window";
 import { showLineData, hideLineData } from "./modules/lines-info";
 import { showNodeData, hideNodeData } from "./modules/nodes-info";
 import { createHighlightLines, fillHighlightLines } from "./modules/highlight";
-import { getLegendLists, fillLegend, createCargoVolumeClassArray, createCityVolumeClassArray, updateCargoVolume, updateCityVolume } from "./modules/legend";
+import { getLegendLists, fillLegend, createCargoVolumeClassArray, createCityVolumeClassArray, updateCargoVolume, updateCityVolume, updateLegendLineWidthByZoom, updateLegendCityRadiusByZoom, getCargoVolumeLines, getCityVolumeCircles } from "./modules/legend";
 
 window.onload = () => {
   // get access to mapbox api
@@ -63,7 +63,8 @@ window.onload = () => {
     style: "mapbox://styles/mapbox/dark-v9", // mapbox tiles location
     // style: 'https://maps.tilehosting.com/styles/darkmatter/style.json?key=9jsySrA6E6EKeAPy7tod', // tiles from tilehosting.com
     center: [37.64, 55.75],
-    zoom: 10
+    zoom: 10,
+    maxZoom: 10
   });
 
   // when map loads
@@ -302,7 +303,7 @@ window.onload = () => {
 
       
       let minDefaultCityRadius = 5,
-        maxDefaultCityRadius = 15,
+        maxDefaultCityRadius = 20,
         maxCityRadius = 40;
 
       minWidthInput.value = minWidthDefault;
@@ -407,8 +408,11 @@ window.onload = () => {
       let cargoVolumeClassArray = createCargoVolumeClassArray(widthArray, edgeJenks);
       let cityVolumeClassArray = createCityVolumeClassArray(cityRadiusArray, nodeJenks);
       fillLegend(legendLists, cargoColorArray, cargoVolumeClassArray, cityVolumeClassArray);
+
+      let legendCargoVolumeLines = getCargoVolumeLines(legendLists);
+      let legendCityVolumeCircles = getCityVolumeCircles(legendLists);
       
-      legend.style.display = "flex";
+      legend.style.display = "block";
       // initialize variables to store id of hovered feature
       let hoveredLineId = null;
       let hoveredCityId = null;
@@ -621,6 +625,10 @@ window.onload = () => {
         widthArray = getWidthArray(+minWidthInput.value, +maxWidthInput.value);
         cargoVolumeClassArray = createCargoVolumeClassArray(widthArray, edgeJenks);
         updateCargoVolume(legendLists, cargoVolumeClassArray);
+        legendCargoVolumeLines = getCargoVolumeLines(legendLists);
+        updateLegendLineWidthByZoom(currZoom, legendCargoVolumeLines);
+
+
         calculateWidth(edges, widthArray, edgeJenks);
         calculateOffset(edges, origLineWidth);
         addWidthAndOffsetAttr(origLines, edges);
@@ -661,6 +669,8 @@ window.onload = () => {
 
         cityVolumeClassArray = createCityVolumeClassArray(cityRadiusArray, nodeJenks);
         updateCityVolume(legendLists, cityVolumeClassArray);
+        legendCityVolumeCircles = getCityVolumeCircles(legendLists);
+        updateLegendCityRadiusByZoom(map.getZoom(), legendCityVolumeCircles);
 
         nodes.features.forEach(node => {
           addCityRadiusAttr(node, cityRadiusArray);
@@ -679,11 +689,14 @@ window.onload = () => {
       );
 
       // update legend when user zooms map
-      map.on("zoomend", e => {
-        console.log(map.getZoom());
+      map.on("zoom", e => {
+        const currZoom = map.getZoom();
+        updateLegendLineWidthByZoom(currZoom, legendCargoVolumeLines);
+        updateLegendCityRadiusByZoom(currZoom, legendCityVolumeCircles);
       });
     }
   });
+
   map.on("zoomend", function() {
     document.getElementById("zoom-level").innerHTML =
       "Zoom Level: " + map.getZoom();

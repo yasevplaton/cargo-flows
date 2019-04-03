@@ -1,3 +1,5 @@
+import { interpolateNumber } from "d3-interpolate";
+
 // funciton to get legend lists (cargo types, cargo volume, city volume)
 export function getLegendLists(legend) {
   const cargoTypesList = legend.querySelector(".legend__cargo-types-list");
@@ -240,10 +242,95 @@ export function changeColorLegendColorBox(color, cargoId, legend) {
   reqColorBox.style.background = color;
 }
 
-export function updateLegendLineWidthByZoom(zoom, elemsArray) {
-  
+// get legend cargo volume lines
+export function getCargoVolumeLines(legendLists) {
+  const lineCollection = legendLists.cargoVolumeList.querySelectorAll(".legend__cargo-volume-line");
+
+  const linesArray = Array.from(lineCollection);
+
+  const cargoVolumeLines = [];
+
+  let counter = 0;
+
+  linesArray.forEach(line => {
+    const cargoVolumeLine = {
+      id: counter,
+      initWidth: parseInt(line.style.height),
+      elem: line
+    };
+
+    counter++;
+
+    cargoVolumeLines.push(cargoVolumeLine);
+  })
+
+  return cargoVolumeLines;
 }
 
-export function updateLegendCityRadiusByZoom(zoom, elemsArray) {
+// get legend city volume circles
+export function getCityVolumeCircles(legendLists) {
+  const circleCollection = legendLists.cityVolumeTable.querySelectorAll(".legend__city-volume-circle");
+
+  const circlesArray = Array.from(circleCollection);
+
+  const cityVolumeCircles = [];
+
+  let counter = 0;
+
+  circlesArray.forEach(circle => {
+    const cityVolumeCircle = {
+      id: counter,
+      initRadius: parseInt(circle.style.height) / 2,
+      elem: circle
+    };
+
+    counter++;
+
+    cityVolumeCircles.push(cityVolumeCircle);
+  })
+
+  return cityVolumeCircles;
+}
+
+// function to update legend cargo volume lines depending on the zoom
+export function updateLegendLineWidthByZoom(zoom, lines) {
+
+  const zoomLevels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
+  const operators = [512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096];
+
+  for (let i = 0, max = zoomLevels.length; i < max; i++) {
+    if (zoom > zoomLevels[i] && zoom <= zoomLevels[i + 1]) {
+      const interpolator = interpolateNumber(operators[i], operators[i + 1]);
+      const zoomDiff = zoom - zoomLevels[i];
+      lines.forEach(line => {
+        if (zoom < 10) {
+          line.elem.style.height = `${line.initWidth / interpolator(zoomDiff)}px`;
+        } else {
+          line.elem.style.height = `${line.initWidth * interpolator(zoomDiff)}px`;
+        }
+      });
+    }
+  }
+}
+
+export function updateLegendCityRadiusByZoom(zoom, circles) {
+  const zoomLevels = [2, 3, 4, 5, 6, 7, 8, 9, 10];
+  const operators = [4, 3.5, 3, 2.5, 2, 1.75, 1.5, 1.25, 1];
+
+  for (let i = 0, max = zoomLevels.length; i < max; i++) {
+    if (zoom > zoomLevels[i] && zoom <= zoomLevels[i + 1]) {
+      const interpolator = interpolateNumber(operators[i], operators[i + 1]);
+      const zoomDiff = zoom - zoomLevels[i];
+      circles.forEach(circle => {
+        if (zoom < 10) {
+          circle.elem.style.height = `${circle.initRadius / interpolator(zoomDiff) * 2}px`;
+          circle.elem.style.width = `${circle.initRadius / interpolator(zoomDiff) * 2}px`;
+        } else {
+          circle.elem.style.height = `${circle.initRadius * interpolator(zoomDiff) * 2}px`;
+          circle.elem.style.width = `${circle.initRadius * interpolator(zoomDiff) * 2}px`;
+        }
+      });
+    }
+  }
 
 }

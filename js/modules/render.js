@@ -380,6 +380,13 @@ export function renderNodes(map, nodes, loadingClassArray) {
                     ['linear'],
                     ['zoom'],
                     2, ['/', ['get', 'cityRadius'], 4],
+                    3, ['/', ['get', 'cityRadius'], 3.5],
+                    4, ['/', ['get', 'cityRadius'], 3],
+                    5, ['/', ['get', 'cityRadius'], 2.5],
+                    6, ['/', ['get', 'cityRadius'], 2],
+                    7, ['/', ['get', 'cityRadius'], 1.75],
+                    8, ['/', ['get', 'cityRadius'], 1.5],
+                    9, ['/', ['get', 'cityRadius'], 1.25],
                     10, ['get', 'cityRadius']
                 ],
                 // "circle-radius": ['get', 'cityRadius'],

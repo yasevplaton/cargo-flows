@@ -175,7 +175,8 @@ window.onload = () => {
     style: "mapbox://styles/mapbox/dark-v9", // mapbox tiles location
     // style: 'https://maps.tilehosting.com/styles/darkmatter/style.json?key=9jsySrA6E6EKeAPy7tod', // tiles from tilehosting.com
     center: [37.64, 55.75],
-    zoom: 10
+    zoom: 10,
+    maxZoom: 10
   });
 
   // when map loads
@@ -414,7 +415,7 @@ window.onload = () => {
 
       
       let minDefaultCityRadius = 5,
-        maxDefaultCityRadius = 15,
+        maxDefaultCityRadius = 20,
         maxCityRadius = 40;
 
       minWidthInput.value = minWidthDefault;
@@ -519,8 +520,11 @@ window.onload = () => {
       let cargoVolumeClassArray = Object(_modules_legend__WEBPACK_IMPORTED_MODULE_15__["createCargoVolumeClassArray"])(widthArray, edgeJenks);
       let cityVolumeClassArray = Object(_modules_legend__WEBPACK_IMPORTED_MODULE_15__["createCityVolumeClassArray"])(cityRadiusArray, nodeJenks);
       Object(_modules_legend__WEBPACK_IMPORTED_MODULE_15__["fillLegend"])(legendLists, cargoColorArray, cargoVolumeClassArray, cityVolumeClassArray);
+
+      let legendCargoVolumeLines = Object(_modules_legend__WEBPACK_IMPORTED_MODULE_15__["getCargoVolumeLines"])(legendLists);
+      let legendCityVolumeCircles = Object(_modules_legend__WEBPACK_IMPORTED_MODULE_15__["getCityVolumeCircles"])(legendLists);
       
-      legend.style.display = "flex";
+      legend.style.display = "block";
       // initialize variables to store id of hovered feature
       let hoveredLineId = null;
       let hoveredCityId = null;
@@ -733,6 +737,10 @@ window.onload = () => {
         widthArray = Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["getWidthArray"])(+minWidthInput.value, +maxWidthInput.value);
         cargoVolumeClassArray = Object(_modules_legend__WEBPACK_IMPORTED_MODULE_15__["createCargoVolumeClassArray"])(widthArray, edgeJenks);
         Object(_modules_legend__WEBPACK_IMPORTED_MODULE_15__["updateCargoVolume"])(legendLists, cargoVolumeClassArray);
+        legendCargoVolumeLines = Object(_modules_legend__WEBPACK_IMPORTED_MODULE_15__["getCargoVolumeLines"])(legendLists);
+        Object(_modules_legend__WEBPACK_IMPORTED_MODULE_15__["updateLegendLineWidthByZoom"])(currZoom, legendCargoVolumeLines);
+
+
         Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["calculateWidth"])(edges, widthArray, edgeJenks);
         Object(_modules_edges__WEBPACK_IMPORTED_MODULE_4__["calculateOffset"])(edges, origLineWidth);
         Object(_modules_bg_lines__WEBPACK_IMPORTED_MODULE_10__["addWidthAndOffsetAttr"])(origLines, edges);
@@ -773,6 +781,8 @@ window.onload = () => {
 
         cityVolumeClassArray = Object(_modules_legend__WEBPACK_IMPORTED_MODULE_15__["createCityVolumeClassArray"])(cityRadiusArray, nodeJenks);
         Object(_modules_legend__WEBPACK_IMPORTED_MODULE_15__["updateCityVolume"])(legendLists, cityVolumeClassArray);
+        legendCityVolumeCircles = Object(_modules_legend__WEBPACK_IMPORTED_MODULE_15__["getCityVolumeCircles"])(legendLists);
+        Object(_modules_legend__WEBPACK_IMPORTED_MODULE_15__["updateLegendCityRadiusByZoom"])(map.getZoom(), legendCityVolumeCircles);
 
         nodes.features.forEach(node => {
           Object(_modules_nodes__WEBPACK_IMPORTED_MODULE_5__["addCityRadiusAttr"])(node, cityRadiusArray);
@@ -791,11 +801,14 @@ window.onload = () => {
       );
 
       // update legend when user zooms map
-      map.on("zoomend", e => {
-        console.log(map.getZoom());
+      map.on("zoom", e => {
+        const currZoom = map.getZoom();
+        Object(_modules_legend__WEBPACK_IMPORTED_MODULE_15__["updateLegendLineWidthByZoom"])(currZoom, legendCargoVolumeLines);
+        Object(_modules_legend__WEBPACK_IMPORTED_MODULE_15__["updateLegendCityRadiusByZoom"])(currZoom, legendCityVolumeCircles);
       });
     }
   });
+
   map.on("zoomend", function() {
     document.getElementById("zoom-level").innerHTML =
       "Zoom Level: " + map.getZoom();
@@ -3098,7 +3111,7 @@ function bindColorPickerToCitiesColorBoxes(
 /*!******************************!*\
   !*** ./js/modules/legend.js ***!
   \******************************/
-/*! exports provided: getLegendLists, fillLegend, updateCargoVolume, updateCityVolume, createCargoVolumeClassArray, createCityVolumeClassArray, changeColorLegendColorBox, updateLegendLineWidthByZoom, updateLegendCityRadiusByZoom */
+/*! exports provided: getLegendLists, fillLegend, updateCargoVolume, updateCityVolume, createCargoVolumeClassArray, createCityVolumeClassArray, changeColorLegendColorBox, getCargoVolumeLines, getCityVolumeCircles, updateLegendLineWidthByZoom, updateLegendCityRadiusByZoom */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3110,8 +3123,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createCargoVolumeClassArray", function() { return createCargoVolumeClassArray; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createCityVolumeClassArray", function() { return createCityVolumeClassArray; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "changeColorLegendColorBox", function() { return changeColorLegendColorBox; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getCargoVolumeLines", function() { return getCargoVolumeLines; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getCityVolumeCircles", function() { return getCityVolumeCircles; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateLegendLineWidthByZoom", function() { return updateLegendLineWidthByZoom; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateLegendCityRadiusByZoom", function() { return updateLegendCityRadiusByZoom; });
+/* harmony import */ var d3_interpolate__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3-interpolate */ "./node_modules/d3-interpolate/src/index.js");
+
+
 // funciton to get legend lists (cargo types, cargo volume, city volume)
 function getLegendLists(legend) {
   const cargoTypesList = legend.querySelector(".legend__cargo-types-list");
@@ -3354,11 +3372,96 @@ function changeColorLegendColorBox(color, cargoId, legend) {
   reqColorBox.style.background = color;
 }
 
-function updateLegendLineWidthByZoom(zoom, elemsArray) {
-  
+// get legend cargo volume lines
+function getCargoVolumeLines(legendLists) {
+  const lineCollection = legendLists.cargoVolumeList.querySelectorAll(".legend__cargo-volume-line");
+
+  const linesArray = Array.from(lineCollection);
+
+  const cargoVolumeLines = [];
+
+  let counter = 0;
+
+  linesArray.forEach(line => {
+    const cargoVolumeLine = {
+      id: counter,
+      initWidth: parseInt(line.style.height),
+      elem: line
+    };
+
+    counter++;
+
+    cargoVolumeLines.push(cargoVolumeLine);
+  })
+
+  return cargoVolumeLines;
 }
 
-function updateLegendCityRadiusByZoom(zoom, elemsArray) {
+// get legend city volume circles
+function getCityVolumeCircles(legendLists) {
+  const circleCollection = legendLists.cityVolumeTable.querySelectorAll(".legend__city-volume-circle");
+
+  const circlesArray = Array.from(circleCollection);
+
+  const cityVolumeCircles = [];
+
+  let counter = 0;
+
+  circlesArray.forEach(circle => {
+    const cityVolumeCircle = {
+      id: counter,
+      initRadius: parseInt(circle.style.height) / 2,
+      elem: circle
+    };
+
+    counter++;
+
+    cityVolumeCircles.push(cityVolumeCircle);
+  })
+
+  return cityVolumeCircles;
+}
+
+// function to update legend cargo volume lines depending on the zoom
+function updateLegendLineWidthByZoom(zoom, lines) {
+
+  const zoomLevels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
+  const operators = [512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096];
+
+  for (let i = 0, max = zoomLevels.length; i < max; i++) {
+    if (zoom > zoomLevels[i] && zoom <= zoomLevels[i + 1]) {
+      const interpolator = Object(d3_interpolate__WEBPACK_IMPORTED_MODULE_0__["interpolateNumber"])(operators[i], operators[i + 1]);
+      const zoomDiff = zoom - zoomLevels[i];
+      lines.forEach(line => {
+        if (zoom < 10) {
+          line.elem.style.height = `${line.initWidth / interpolator(zoomDiff)}px`;
+        } else {
+          line.elem.style.height = `${line.initWidth * interpolator(zoomDiff)}px`;
+        }
+      });
+    }
+  }
+}
+
+function updateLegendCityRadiusByZoom(zoom, circles) {
+  const zoomLevels = [2, 3, 4, 5, 6, 7, 8, 9, 10];
+  const operators = [4, 3.5, 3, 2.5, 2, 1.75, 1.5, 1.25, 1];
+
+  for (let i = 0, max = zoomLevels.length; i < max; i++) {
+    if (zoom > zoomLevels[i] && zoom <= zoomLevels[i + 1]) {
+      const interpolator = Object(d3_interpolate__WEBPACK_IMPORTED_MODULE_0__["interpolateNumber"])(operators[i], operators[i + 1]);
+      const zoomDiff = zoom - zoomLevels[i];
+      circles.forEach(circle => {
+        if (zoom < 10) {
+          circle.elem.style.height = `${circle.initRadius / interpolator(zoomDiff) * 2}px`;
+          circle.elem.style.width = `${circle.initRadius / interpolator(zoomDiff) * 2}px`;
+        } else {
+          circle.elem.style.height = `${circle.initRadius * interpolator(zoomDiff) * 2}px`;
+          circle.elem.style.width = `${circle.initRadius * interpolator(zoomDiff) * 2}px`;
+        }
+      });
+    }
+  }
 
 }
 
@@ -4404,6 +4507,13 @@ function renderNodes(map, nodes, loadingClassArray) {
                     ['linear'],
                     ['zoom'],
                     2, ['/', ['get', 'cityRadius'], 4],
+                    3, ['/', ['get', 'cityRadius'], 3.5],
+                    4, ['/', ['get', 'cityRadius'], 3],
+                    5, ['/', ['get', 'cityRadius'], 2.5],
+                    6, ['/', ['get', 'cityRadius'], 2],
+                    7, ['/', ['get', 'cityRadius'], 1.75],
+                    8, ['/', ['get', 'cityRadius'], 1.5],
+                    9, ['/', ['get', 'cityRadius'], 1.25],
                     10, ['get', 'cityRadius']
                 ],
                 // "circle-radius": ['get', 'cityRadius'],
@@ -8807,7 +8917,7 @@ function changeCitiesStrokeColor(map, color) {
 
 exports = module.exports = __webpack_require__(/*! ../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
 // Module
-exports.push([module.i, "/* blocks rules */\n.loading-map-panel {\n  position: fixed;\n  z-index: 1;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  color: #fff;\n  text-align: center; }\n\n.map {\n  position: absolute;\n  z-index: -1;\n  width: 100%;\n  height: 100%;\n  padding: 0;\n  margin: 0; }\n\n.greeting-panel__wrapper {\n  position: fixed;\n  z-index: 1;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%); }\n\n.greeting-panel {\n  color: #333;\n  background-color: rgba(255, 255, 255, 0.85);\n  text-align: center;\n  width: 450px;\n  padding: 20px 25px;\n  border-radius: 5px;\n  animation: emersion 0.7s 0.5s both cubic-bezier(0.04, 0.36, 0.1, 1.06); }\n\n.greeting-panel--dark {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0; }\n\n.greeting-panel__text {\n  font-size: 17px;\n  line-height: 1.4em;\n  font-weight: 300; }\n\n.greeting-panel__btns-row {\n  margin-top: 10px;\n  margin-bottom: 30px; }\n\n@keyframes emersion {\n  0% {\n    opacity: 0;\n    transform: scale(0.8); }\n  100% {\n    opacity: 1;\n    transform: scale(1); } }\n\n.language-interface--main-window {\n  position: absolute;\n  left: 50%;\n  bottom: 10px;\n  transform: translateX(-50%); }\n\n.language-interface__text {\n  margin-bottom: 10px;\n  font-weight: 300; }\n\n.btn--10-zoom-level {\n  margin: 10px;\n  padding: 10px;\n  z-index: 1000;\n  background: #ddd;\n  cursor: pointer;\n  transition: .3s; }\n\n.btn--10-zoom-level:hover {\n  background: #ea8585; }\n\n.btn-demo {\n  background: #d2d2d2; }\n\n.btn--language-main-window {\n  border: none;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300; }\n\n.handle-data-panel {\n  position: fixed;\n  z-index: 2;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  color: #000000;\n  background: rgba(189, 189, 189, 0.7);\n  border-radius: 5px;\n  padding: 10px;\n  font-size: 17px; }\n\n.handle-data-panel__text {\n  margin-bottom: 0; }\n\n.main-interface-wrapper {\n  z-index: 1;\n  position: absolute;\n  background: rgba(255, 255, 255, 0.95);\n  border-radius: 5px;\n  top: 5px;\n  left: 5px;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  max-height: 95%;\n  max-width: 420px;\n  overflow-y: auto; }\n\n.main-interface-wrapper--dark {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300; }\n\n.edit-nodes__color-text {\n  width: 70%; }\n\n.title__main {\n  color: inherit;\n  text-align: center; }\n\n/* @import \"./blocks/upload-data.scss\"; */\n.step-title {\n  margin: 0;\n  margin-bottom: 10px;\n  font-weight: 600; }\n\n.step-title--dark {\n  font-weight: 400;\n  color: #fff; }\n\n.edit-interface-wrapper .step-title:hover {\n  cursor: pointer; }\n\n.hr--dark {\n  border-top: 1px solid rgba(0, 0, 0, 0.4); }\n\n/* #other-interface-wrapper {\r\n  z-index: 1;\r\n  position: absolute;\r\n  visibility: hidden;\r\n  background: #ffffff;\r\n  border-radius: 5px;\r\n  margin-top: 5px;\r\n  padding-top: 10px;\r\n  padding-bottom: 10px;\r\n  max-height: 1000px;\r\n  max-width: 400px;\r\n  right: 5px;\r\n} */\n.borderless td {\n  border: none; }\n\n.cargo-colors__table {\n  margin-bottom: 0; }\n\n.table thead th {\n  border: none;\n  border-bottom: 1px dotted #1b1b1b; }\n\n.color-box {\n  display: inline-block;\n  width: 20px;\n  height: 20px;\n  background: #fff; }\n  .color-box:hover {\n    box-shadow: 0 5px 7px rgba(0, 0, 0, 0.12), 0 5px 7px rgba(0, 0, 0, 0.24);\n    cursor: pointer; }\n  .color-box--info-window {\n    margin-right: 5px; }\n    .color-box--info-window:hover {\n      box-shadow: none;\n      cursor: initial; }\n  .color-box--legend {\n    margin-right: 7px;\n    width: 50px; }\n    .color-box--legend:hover {\n      box-shadow: none;\n      cursor: initial; }\n\n#cities-fill-color-box {\n  background: #fff; }\n\n#cities-stroke-color-box {\n  background: #000; }\n\n.huebee {\n  z-index: 10;\n  top: unset !important;\n  bottom: 370px !important; }\n\n.huebee__container {\n  background: rgba(35, 35, 35, 0.95);\n  left: -180px; }\n\n.huebee__cursor {\n  width: 20px;\n  height: 20px; }\n\n.huebee__cities-color {\n  top: unset !important;\n  bottom: 355px !important; }\n\n/* @import \"./blocks/linear-scale.scss\"; */\n.noUi-target {\n  margin-left: 15px;\n  margin-right: 15px;\n  border: none;\n  box-shadow: none;\n  background: rgba(53, 53, 53, 0.93); }\n\n.noUi-connect {\n  background: #717171; }\n\n.noUi-handle {\n  background: #656565;\n  border: none;\n  box-shadow: none; }\n\n.input-row {\n  margin-top: 20px; }\n\n.input-text {\n  width: 30%;\n  border: 1px solid #616161;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  text-align: center; }\n\n.input-text:focus {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  text-align: center;\n  width: 30%;\n  border: 1px solid #616161; }\n\n.input-col {\n  display: flex;\n  width: 40%; }\n\n.input-col--left {\n  align-items: baseline;\n  float: left; }\n\n.input-col--right {\n  justify-content: flex-end;\n  align-items: baseline;\n  float: right; }\n\n#max-width-input, #max-radius-input {\n  width: 40%; }\n\n.input-label {\n  color: #797979; }\n\n.input-label--prefix {\n  margin-right: 3px; }\n\n.input-label--postfix {\n  margin-left: 2px; }\n\n.form-row {\n  margin-top: 15px; }\n\n.nodes-settings__content {\n  padding-top: 5px; }\n\n.nodes-settings__fill-color {\n  display: flex;\n  align-items: center;\n  margin: 2% 0; }\n\n.nodes-settings__stroke-color {\n  display: flex;\n  align-items: center;\n  margin-bottom: 11px; }\n\n.nodes-settings__text {\n  width: 65%; }\n\n.checkbox {\n  display: block;\n  margin-bottom: 10px; }\n\n.other-settings__content {\n  padding-top: 5px; }\n\n.zoom-interface {\n  position: fixed;\n  left: 50%;\n  top: 0;\n  transform: translateX(-50%);\n  display: none; }\n\n.current-zoom {\n  margin: 10px;\n  padding: 10px;\n  background: #ddd; }\n\n.info-window {\n  position: absolute;\n  bottom: 25px;\n  right: 5px;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300;\n  border-radius: 5px;\n  padding: 10px;\n  display: none; }\n\n.info-window__table {\n  margin-bottom: 0; }\n\n.info-window__row--total {\n  font-weight: 400; }\n\n.table th {\n  font-weight: 400; }\n\n.info-window .table td, .info-window .table th {\n  padding: 3px; }\n\n.mapboxgl-ctrl-scale {\n  position: fixed;\n  bottom: 7px;\n  left: 100px;\n  margin: 0 !important;\n  font-size: 12px;\n  font-family: \"Open Sans\", sans-serif;\n  font-weight: 300;\n  border: none;\n  border-bottom-width: 1px;\n  border-bottom-style: solid;\n  border-color: #e0e0e0;\n  padding: 0 5px;\n  box-sizing: border-box;\n  background: none;\n  color: #e0e0e0; }\n\n.legend {\n  position: fixed;\n  right: 5px;\n  top: 5px;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300;\n  border-radius: 5px;\n  padding: 10px;\n  display: none; }\n\n.legend__group {\n  margin-right: 10px; }\n  .legend__group:last-child {\n    margin-right: 0; }\n  .legend__group--cargo-types {\n    display: none; }\n\n.legend__group-title {\n  font-size: 15px;\n  font-weight: 400;\n  margin-bottom: 7px; }\n\n.legend__cargo-types-item {\n  display: flex;\n  align-items: center;\n  margin-bottom: 5px; }\n\n.legend__cargo-volume-item {\n  display: flex;\n  align-items: center;\n  margin-bottom: 5px; }\n\n.legend__city-volume-col {\n  padding-right: 5px; }\n  .legend__city-volume-col--circle {\n    text-align: center; }\n\n.legend__cargo-volume-line {\n  display: inline-block;\n  width: 50px;\n  height: 20px;\n  background: rgba(0, 0, 0, 0.4);\n  margin-right: 7px; }\n\n.legend__city-volume-circle {\n  width: 50px;\n  height: 50px;\n  border-radius: 50%;\n  display: inline-block;\n  background: rgba(0, 0, 0, 0.4); }\n", ""]);
+exports.push([module.i, "/* blocks rules */\n.loading-map-panel {\n  position: fixed;\n  z-index: 1;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  color: #fff;\n  text-align: center; }\n\n.map {\n  position: absolute;\n  z-index: -1;\n  width: 100%;\n  height: 100%;\n  padding: 0;\n  margin: 0; }\n\n.greeting-panel__wrapper {\n  position: fixed;\n  z-index: 1;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%); }\n\n.greeting-panel {\n  color: #333;\n  background-color: rgba(255, 255, 255, 0.85);\n  text-align: center;\n  width: 450px;\n  padding: 20px 25px;\n  border-radius: 5px;\n  animation: emersion 0.7s 0.5s both cubic-bezier(0.04, 0.36, 0.1, 1.06); }\n\n.greeting-panel--dark {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0; }\n\n.greeting-panel__text {\n  font-size: 17px;\n  line-height: 1.4em;\n  font-weight: 300; }\n\n.greeting-panel__btns-row {\n  margin-top: 10px;\n  margin-bottom: 30px; }\n\n@keyframes emersion {\n  0% {\n    opacity: 0;\n    transform: scale(0.8); }\n  100% {\n    opacity: 1;\n    transform: scale(1); } }\n\n.language-interface--main-window {\n  position: absolute;\n  left: 50%;\n  bottom: 10px;\n  transform: translateX(-50%); }\n\n.language-interface__text {\n  margin-bottom: 10px;\n  font-weight: 300; }\n\n.btn--10-zoom-level {\n  margin: 10px;\n  padding: 10px;\n  z-index: 1000;\n  background: #ddd;\n  cursor: pointer;\n  transition: .3s; }\n\n.btn--10-zoom-level:hover {\n  background: #ea8585; }\n\n.btn-demo {\n  background: #d2d2d2; }\n\n.btn--language-main-window {\n  border: none;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300; }\n\n.handle-data-panel {\n  position: fixed;\n  z-index: 2;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  color: #000000;\n  background: rgba(189, 189, 189, 0.7);\n  border-radius: 5px;\n  padding: 10px;\n  font-size: 17px; }\n\n.handle-data-panel__text {\n  margin-bottom: 0; }\n\n.main-interface-wrapper {\n  z-index: 1;\n  position: absolute;\n  background: rgba(255, 255, 255, 0.95);\n  border-radius: 5px;\n  top: 5px;\n  left: 5px;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  max-height: 95%;\n  max-width: 420px;\n  overflow-y: auto; }\n\n.main-interface-wrapper--dark {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300; }\n\n.edit-nodes__color-text {\n  width: 70%; }\n\n.title__main {\n  color: inherit;\n  text-align: center; }\n\n/* @import \"./blocks/upload-data.scss\"; */\n.step-title {\n  margin: 0;\n  margin-bottom: 10px;\n  font-weight: 600; }\n\n.step-title--dark {\n  font-weight: 400;\n  color: #fff; }\n\n.edit-interface-wrapper .step-title:hover {\n  cursor: pointer; }\n\n.hr--dark {\n  border-top: 1px solid rgba(0, 0, 0, 0.4); }\n\n/* #other-interface-wrapper {\r\n  z-index: 1;\r\n  position: absolute;\r\n  visibility: hidden;\r\n  background: #ffffff;\r\n  border-radius: 5px;\r\n  margin-top: 5px;\r\n  padding-top: 10px;\r\n  padding-bottom: 10px;\r\n  max-height: 1000px;\r\n  max-width: 400px;\r\n  right: 5px;\r\n} */\n.borderless td {\n  border: none; }\n\n.cargo-colors__table {\n  margin-bottom: 0; }\n\n.table thead th {\n  border: none;\n  border-bottom: 1px dotted #1b1b1b; }\n\n.color-box {\n  display: inline-block;\n  width: 20px;\n  height: 20px;\n  background: #fff; }\n  .color-box:hover {\n    box-shadow: 0 5px 7px rgba(0, 0, 0, 0.12), 0 5px 7px rgba(0, 0, 0, 0.24);\n    cursor: pointer; }\n  .color-box--info-window {\n    margin-right: 5px; }\n    .color-box--info-window:hover {\n      box-shadow: none;\n      cursor: initial; }\n  .color-box--legend {\n    margin-right: 7px;\n    width: 50px; }\n    .color-box--legend:hover {\n      box-shadow: none;\n      cursor: initial; }\n\n#cities-fill-color-box {\n  background: #fff; }\n\n#cities-stroke-color-box {\n  background: #000; }\n\n.huebee {\n  z-index: 10;\n  top: unset !important;\n  bottom: 370px !important; }\n\n.huebee__container {\n  background: rgba(35, 35, 35, 0.95);\n  left: -180px; }\n\n.huebee__cursor {\n  width: 20px;\n  height: 20px; }\n\n.huebee__cities-color {\n  top: unset !important;\n  bottom: 355px !important; }\n\n/* @import \"./blocks/linear-scale.scss\"; */\n.noUi-target {\n  margin-left: 15px;\n  margin-right: 15px;\n  border: none;\n  box-shadow: none;\n  background: rgba(53, 53, 53, 0.93); }\n\n.noUi-connect {\n  background: #717171; }\n\n.noUi-handle {\n  background: #656565;\n  border: none;\n  box-shadow: none; }\n\n.input-row {\n  margin-top: 20px; }\n\n.input-text {\n  width: 30%;\n  border: 1px solid #616161;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  text-align: center; }\n\n.input-text:focus {\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  text-align: center;\n  width: 30%;\n  border: 1px solid #616161; }\n\n.input-col {\n  display: flex;\n  width: 40%; }\n\n.input-col--left {\n  align-items: baseline;\n  float: left; }\n\n.input-col--right {\n  justify-content: flex-end;\n  align-items: baseline;\n  float: right; }\n\n#max-width-input, #max-radius-input {\n  width: 40%; }\n\n.input-label {\n  color: #797979; }\n\n.input-label--prefix {\n  margin-right: 3px; }\n\n.input-label--postfix {\n  margin-left: 2px; }\n\n.form-row {\n  margin-top: 15px; }\n\n.nodes-settings__content {\n  padding-top: 5px; }\n\n.nodes-settings__fill-color {\n  display: flex;\n  align-items: center;\n  margin: 2% 0; }\n\n.nodes-settings__stroke-color {\n  display: flex;\n  align-items: center;\n  margin-bottom: 11px; }\n\n.nodes-settings__text {\n  width: 65%; }\n\n.checkbox {\n  display: block;\n  margin-bottom: 10px; }\n\n.other-settings__content {\n  padding-top: 5px; }\n\n.zoom-interface {\n  position: fixed;\n  left: 50%;\n  top: 0;\n  transform: translateX(-50%);\n  display: none; }\n\n.current-zoom {\n  margin: 10px;\n  padding: 10px;\n  background: #ddd; }\n\n.info-window {\n  position: absolute;\n  bottom: 25px;\n  right: 5px;\n  background: rgba(41, 41, 41, 0.95);\n  color: #e0e0e0;\n  font-weight: 300;\n  border-radius: 5px;\n  padding: 10px;\n  display: none; }\n\n.info-window__table {\n  margin-bottom: 0; }\n\n.info-window__row--total {\n  font-weight: 400; }\n\n.table th {\n  font-weight: 400; }\n\n.info-window .table td, .info-window .table th {\n  padding: 3px; }\n\n.mapboxgl-ctrl-scale {\n  position: fixed;\n  bottom: 7px;\n  left: 100px;\n  margin: 0 !important;\n  font-size: 12px;\n  font-family: \"Open Sans\", sans-serif;\n  font-weight: 300;\n  border: none;\n  border-bottom-width: 1px;\n  border-bottom-style: solid;\n  border-color: #e0e0e0;\n  padding: 0 5px;\n  box-sizing: border-box;\n  background: none;\n  color: #e0e0e0; }\n\n.legend {\n  position: fixed;\n  right: 5px;\n  top: 5px;\n  color: #e0e0e0;\n  font-weight: 300;\n  border-radius: 5px;\n  padding: 10px;\n  display: none; }\n\n.legend__group {\n  margin-bottom: 10px; }\n  .legend__group:last-child {\n    margin-bottom: 0; }\n  .legend__group--cargo-types {\n    display: none; }\n\n.legend__group-title {\n  font-size: 15px;\n  font-weight: 400;\n  margin-bottom: 7px; }\n\n.legend__cargo-types-item {\n  display: flex;\n  align-items: center;\n  margin-bottom: 5px; }\n\n.legend__cargo-volume-item {\n  display: flex;\n  align-items: center;\n  margin-bottom: 5px; }\n\n.legend__city-volume-col {\n  padding-right: 5px; }\n  .legend__city-volume-col--circle {\n    text-align: center; }\n\n.legend__cargo-volume-line {\n  display: inline-block;\n  width: 50px;\n  height: 20px;\n  background: rgba(0, 0, 0, 0.4);\n  margin-right: 7px;\n  min-height: 1px; }\n\n.legend__city-volume-circle {\n  width: 50px;\n  height: 50px;\n  border-radius: 50%;\n  display: inline-block;\n  background: rgba(0, 0, 0, 0.4); }\n", ""]);
 
 
 
