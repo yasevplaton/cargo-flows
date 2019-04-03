@@ -51,6 +51,7 @@ import { getInfoWindowElements, addCargoList } from "./modules/info-window";
 import { showLineData, hideLineData } from "./modules/lines-info";
 import { showNodeData, hideNodeData } from "./modules/nodes-info";
 import { createHighlightLines, fillHighlightLines } from "./modules/highlight";
+import { getLegendLists, fillLegend, createCargoVolumeClassArray, createCityVolumeClassArray } from "./modules/legend";
 
 window.onload = () => {
   // get access to mapbox api
@@ -65,14 +66,17 @@ window.onload = () => {
     zoom: 10
   });
 
-  // add scale bar
-  const scaleBar = new mapboxgl.ScaleControl({
-    maxWidth: 100,
-    unit: "metric"
-  });
-  map.addControl(scaleBar);
-
+  // when map loads
   map.on("load", () => {
+
+
+    // add scale bar
+    const scaleBar = new mapboxgl.ScaleControl({
+      maxWidth: 100,
+      unit: "metric"
+    });
+    map.addControl(scaleBar);
+
     // remove greeting panel and make interface elements visible
     document.getElementById("loading-map-panel").remove();
 
@@ -118,6 +122,8 @@ window.onload = () => {
     const languageInterface = document.querySelector(
       ".language-interface--main-window"
     );
+
+    const legend = document.querySelector("#legend");
 
     // get access to text elems to change interface language
     const engBtns = document.querySelectorAll(".btn-lang-en");
@@ -268,7 +274,7 @@ window.onload = () => {
       let flowValues = getFlowValues(edges);
 
       // get marks of classes for flow values
-      let jenks = classifyArray(flowValues, 4);
+      let edgeJenks = classifyArray(flowValues, 4);
 
       // get cargo types
       let cargoTypes = getCargoTypes(edges);
@@ -288,10 +294,12 @@ window.onload = () => {
       // fill original lines object with data
       createOrigLines(linesIDArray, origLines, edges);
 
-      // set default values for width of edges
+      // set default values for width of edges and for city radius
       let minWidthDefault = 20,
         maxWidthDefault = 100,
         maxEdgeWidth = 200;
+
+      
       let minDefaultCityRadius = 5,
         maxDefaultCityRadius = 15,
         maxCityRadius = 40;
@@ -306,7 +314,7 @@ window.onload = () => {
       let widthArray = getWidthArray(minWidthDefault, maxWidthDefault);
 
       // calculate width for edges
-      calculateWidth(edges, widthArray, jenks);
+      calculateWidth(edges, widthArray, edgeJenks);
 
       // calculate offset for edges
       calculateOffset(edges, origLineWidth);
@@ -392,6 +400,12 @@ window.onload = () => {
 
       // show info window
       infoWindow.style.display = "block";
+
+      // legend treatment
+      const legendLists = getLegendLists(legend);
+      const cargoVolumeClassArray = createCargoVolumeClassArray(widthArray, edgeJenks);
+      const cityVolumeClassArray = createCityVolumeClassArray(cityRadiusArray, nodeJenks);
+      fillLegend(legendLists, cargoColorArray, cargoVolumeClassArray, cityVolumeClassArray);
 
       // initialize variables to store id of hovered feature
       let hoveredLineId = null;
@@ -603,7 +617,7 @@ window.onload = () => {
       function updateWidthSliderHandler() {
         const currZoom = map.getZoom();
         widthArray = getWidthArray(+minWidthInput.value, +maxWidthInput.value);
-        calculateWidth(edges, widthArray, jenks);
+        calculateWidth(edges, widthArray, edgeJenks);
         calculateOffset(edges, origLineWidth);
         addWidthAndOffsetAttr(origLines, edges);
 

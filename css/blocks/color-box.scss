@@ -3,11 +3,30 @@
   width: 20px;
   height: 20px;
   background: #fff;
-}
 
-.color-box:hover {
-  box-shadow: 0 5px 7px rgba(0, 0, 0, 0.12), 0 5px 7px rgba(0, 0, 0, 0.24);
-  cursor: pointer;
+  &:hover {
+    box-shadow: 0 5px 7px rgba(0, 0, 0, 0.12), 0 5px 7px rgba(0, 0, 0, 0.24);
+    cursor: pointer;
+  }
+
+  &--info-window {
+    margin-right: 5px;
+
+    &:hover {
+      box-shadow: none;
+      cursor: initial;
+    }
+  }
+
+  &--legend {
+    margin-right: 7px;
+    width: 50px;
+
+    &:hover {
+      box-shadow: none;
+      cursor: initial;
+    }
+  }
 }
 
 #cities-fill-color-box {
@@ -16,13 +35,4 @@
 
 #cities-stroke-color-box {
   background: #000;
-}
-
-.color-box--info-window {
-  margin-right: 5px;
-
-  &:hover {
-    box-shadow: none;
-    cursor: initial;
-  }
 }

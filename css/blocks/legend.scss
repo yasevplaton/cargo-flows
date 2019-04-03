@@ -1,0 +1,62 @@
+.legend {
+  position: fixed;
+  right: 5px;
+  top: 5px;
+  background: rgba(41, 41, 41, 0.95);
+  color: rgb(224, 224, 224);
+  font-weight: 300;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.legend__group {
+  margin-bottom: 10px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.legend__group-title {
+  font-size: 15px;
+  font-weight: 400;
+  margin-bottom: 7px;
+}
+
+.legend__cargo-types-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.legend__cargo-volume-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.legend__city-volume-col {
+  padding-right: 5px;
+
+  &--circle {
+    text-align: center;
+  }
+}
+
+.legend__cargo-volume-line {
+  display: inline-block;
+  width: 50px;
+  height: 20px;
+  background: #000;
+  margin-right: 7px;
+}
+
+.legend__city-volume-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 1px solid #000;
+  background: none;
+}
+
