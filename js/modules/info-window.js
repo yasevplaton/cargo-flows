@@ -74,6 +74,6 @@ export function changeColorInfoWindowColorBox(color, cargoId, infoWindow) {
   reqColorBox.style.background = color;
 }
 
-export function getInfoWindowMarkup(infoWindow) {
-  return infoWindow.outerHTML;
-}
+// export function getInfoWindowMarkup(infoWindow) {
+//   return infoWindow.outerHTML;
+// }

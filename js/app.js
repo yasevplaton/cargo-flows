@@ -51,7 +51,7 @@ import { getInfoWindowElements, addCargoList } from "./modules/info-window";
 import { showLineData, hideLineData } from "./modules/lines-info";
 import { showNodeData, hideNodeData } from "./modules/nodes-info";
 import { createHighlightLines, fillHighlightLines } from "./modules/highlight";
-import { getLegendLists, fillLegend, createCargoVolumeClassArray, createCityVolumeClassArray } from "./modules/legend";
+import { getLegendLists, fillLegend, createCargoVolumeClassArray, createCityVolumeClassArray, updateCargoVolume, updateCityVolume } from "./modules/legend";
 
 window.onload = () => {
   // get access to mapbox api
@@ -375,7 +375,7 @@ window.onload = () => {
       renderNodes(map, nodes, loadingClassArray);
 
       // create color table
-      createColorTable(colorTableBody, cargoColorArray, map, infoWindow);
+      createColorTable(colorTableBody, cargoColorArray, map, infoWindow, legend);
 
       // create width slider
       createSlider(widthSlider, minWidthDefault, maxWidthDefault, maxEdgeWidth);
@@ -403,10 +403,11 @@ window.onload = () => {
 
       // legend treatment
       const legendLists = getLegendLists(legend);
-      const cargoVolumeClassArray = createCargoVolumeClassArray(widthArray, edgeJenks);
-      const cityVolumeClassArray = createCityVolumeClassArray(cityRadiusArray, nodeJenks);
+      let cargoVolumeClassArray = createCargoVolumeClassArray(widthArray, edgeJenks);
+      let cityVolumeClassArray = createCityVolumeClassArray(cityRadiusArray, nodeJenks);
       fillLegend(legendLists, cargoColorArray, cargoVolumeClassArray, cityVolumeClassArray);
-
+      
+      legend.style.display = "flex";
       // initialize variables to store id of hovered feature
       let hoveredLineId = null;
       let hoveredCityId = null;
@@ -617,6 +618,8 @@ window.onload = () => {
       function updateWidthSliderHandler() {
         const currZoom = map.getZoom();
         widthArray = getWidthArray(+minWidthInput.value, +maxWidthInput.value);
+        cargoVolumeClassArray = createCargoVolumeClassArray(widthArray, nodeJenks);
+        updateCargoVolume(legendLists, cargoVolumeClassArray);
         calculateWidth(edges, widthArray, edgeJenks);
         calculateOffset(edges, origLineWidth);
         addWidthAndOffsetAttr(origLines, edges);
@@ -654,6 +657,9 @@ window.onload = () => {
           +minCityRadiusInput.value,
           +maxCityRadiusInput.value
         );
+
+        cityVolumeClassArray = createCityVolumeClassArray(cityRadiusArray, nodeJenks);
+        updateCityVolume(legendLists, cityVolumeClassArray);
 
         nodes.features.forEach(node => {
           addCityRadiusAttr(node, cityRadiusArray);
