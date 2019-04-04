@@ -45,10 +45,16 @@
 
 .legend__city-volume-col {
   padding-right: 5px;
+  padding-bottom: 3px;
 
   &--circle {
     text-align: center;
   }
+}
+
+.legend__city-volume-caption {
+  display: inline;
+  vertical-align: middle;
 }
 
 .legend__cargo-volume-line {
@@ -66,5 +72,6 @@
   border-radius: 50%;
   display: inline-block;
   background: rgba(255, 255, 255, 0.64);
+  vertical-align: middle;
 }
 
