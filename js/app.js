@@ -52,6 +52,8 @@ import { showLineData, hideLineData } from "./modules/lines-info";
 import { showNodeData, hideNodeData } from "./modules/nodes-info";
 import { createHighlightLines, fillHighlightLines } from "./modules/highlight";
 import { getLegendLists, fillLegend, createCargoVolumeClassArray, createCityVolumeClassArray, updateCargoVolume, updateCityVolume, updateLegendLineWidthByZoom, updateLegendCityRadiusByZoom, getCargoVolumeLines, getCityVolumeCircles } from "./modules/legend";
+import * as clipperLib from "js-angusj-clipper";
+
 
 window.onload = () => {
   // get access to mapbox api
@@ -413,6 +415,9 @@ window.onload = () => {
       let legendCityVolumeCircles = getCityVolumeCircles(legendLists);
       
       legend.style.display = "block";
+
+
+      /* 
       // initialize variables to store id of hovered feature
       let hoveredLineId = null;
       let hoveredCityId = null;
@@ -503,6 +508,7 @@ window.onload = () => {
 
         hideNodeData(infoWindowElements, infoWindowText);
       });
+      
 
       // initialize render counter
       let startWidthSliderCounter = 0;
@@ -678,6 +684,9 @@ window.onload = () => {
 
         renderNodes(map, nodes, loadingClassArray);
       }
+
+      */
+      
 
       // center and zoom map to data
       map.fitBounds(
