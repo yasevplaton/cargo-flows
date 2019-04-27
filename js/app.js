@@ -51,9 +51,19 @@ import { getInfoWindowElements, addCargoList } from "./modules/info-window";
 import { showLineData, hideLineData } from "./modules/lines-info";
 import { showNodeData, hideNodeData } from "./modules/nodes-info";
 import { createHighlightLines, fillHighlightLines } from "./modules/highlight";
-import { getLegendLists, fillLegend, createCargoVolumeClassArray, createCityVolumeClassArray, updateCargoVolume, updateCityVolume, updateLegendLineWidthByZoom, updateLegendCityRadiusByZoom, getCargoVolumeLines, getCityVolumeCircles } from "./modules/legend";
+import {
+  getLegendLists,
+  fillLegend,
+  createCargoVolumeClassArray,
+  createCityVolumeClassArray,
+  updateCargoVolume,
+  updateCityVolume,
+  updateLegendLineWidthByZoom,
+  updateLegendCityRadiusByZoom,
+  getCargoVolumeLines,
+  getCityVolumeCircles
+} from "./modules/legend";
 import * as clipperLib from "js-angusj-clipper";
-
 
 window.onload = () => {
   // get access to mapbox api
@@ -71,8 +81,6 @@ window.onload = () => {
 
   // when map loads
   map.on("load", () => {
-
-
     // add scale bar
     const scaleBar = new mapboxgl.ScaleControl({
       maxWidth: 100,
@@ -245,14 +253,48 @@ window.onload = () => {
         "./data/pointsVolgaRus.geojson?ass=" + Math.random()
       ).then(response => response.json());
 
+      const clipperPromise = clipperLib
+        .loadNativeClipperLibInstanceAsync(
+          clipperLib.NativeClipperLibRequestedFormat.WasmWithAsmJsFallback
+        )
+        .then(response => response);
+
       // if all promises are resolved invoke main function
-      Promise.all([edgesPromise, nodesPromise])
-        .then(([edges, nodes]) => main(edges, nodes))
+      Promise.all([edgesPromise, nodesPromise, clipperPromise])
+        .then(([edges, nodes, clipper]) => main(edges, nodes, clipper))
         .catch(error => console.error("Error with loading of data:", error));
     });
 
     // main function
-    function main(edges, nodes) {
+    function main(edges, nodes, clipper) {
+      console.log(clipper);
+
+      const poly1 = [
+        { x: 0, y: 0 },
+        { x: 10, y: 0 },
+        { x: 10, y: 10 },
+        { x: 0, y: 10 }
+      ];
+
+      const poly2 = [
+        { x: 10, y: 0 },
+        { x: 20, y: 0 },
+        { x: 20, y: 10 },
+        { x: 10, y: 10 }
+      ];
+
+      // get their union
+      const polyResult = clipper.clipToPaths({
+        clipType: clipperLib.ClipType.Union,
+
+        subjectInputs: [{ data: poly1, closed: true }],
+
+        clipInputs: [{ data: poly2 }],
+
+        subjectFillType: clipperLib.PolyFillType.EvenOdd
+      });
+
+      console.log(polyResult);
       // store input file in variable
       cargoTable = inputFileElement.files[0];
 
@@ -303,7 +345,6 @@ window.onload = () => {
         maxWidthDefault = 100,
         maxEdgeWidth = 200;
 
-      
       let minDefaultCityRadius = 5,
         maxDefaultCityRadius = 20,
         maxCityRadius = 40;
@@ -379,7 +420,13 @@ window.onload = () => {
       renderNodes(map, nodes, loadingClassArray);
 
       // create color table
-      createColorTable(colorTableBody, cargoColorArray, map, infoWindow, legend);
+      createColorTable(
+        colorTableBody,
+        cargoColorArray,
+        map,
+        infoWindow,
+        legend
+      );
 
       // create width slider
       createSlider(widthSlider, minWidthDefault, maxWidthDefault, maxEdgeWidth);
@@ -407,15 +454,25 @@ window.onload = () => {
 
       // legend treatment
       const legendLists = getLegendLists(legend);
-      let cargoVolumeClassArray = createCargoVolumeClassArray(widthArray, edgeJenks);
-      let cityVolumeClassArray = createCityVolumeClassArray(cityRadiusArray, nodeJenks);
-      fillLegend(legendLists, cargoColorArray, cargoVolumeClassArray, cityVolumeClassArray);
+      let cargoVolumeClassArray = createCargoVolumeClassArray(
+        widthArray,
+        edgeJenks
+      );
+      let cityVolumeClassArray = createCityVolumeClassArray(
+        cityRadiusArray,
+        nodeJenks
+      );
+      fillLegend(
+        legendLists,
+        cargoColorArray,
+        cargoVolumeClassArray,
+        cityVolumeClassArray
+      );
 
       let legendCargoVolumeLines = getCargoVolumeLines(legendLists);
       let legendCityVolumeCircles = getCityVolumeCircles(legendLists);
-      
-      legend.style.display = "block";
 
+      legend.style.display = "block";
 
       /* 
       // initialize variables to store id of hovered feature
@@ -686,7 +743,6 @@ window.onload = () => {
       }
 
       */
-      
 
       // center and zoom map to data
       map.fitBounds(

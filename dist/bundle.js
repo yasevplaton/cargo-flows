@@ -168,7 +168,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 window.onload = () => {
   // get access to mapbox api
   mapbox_gl__WEBPACK_IMPORTED_MODULE_2___default.a.accessToken =
@@ -185,8 +184,6 @@ window.onload = () => {
 
   // when map loads
   map.on("load", () => {
-
-
     // add scale bar
     const scaleBar = new mapbox_gl__WEBPACK_IMPORTED_MODULE_2___default.a.ScaleControl({
       maxWidth: 100,
@@ -359,14 +356,47 @@ window.onload = () => {
         "./data/pointsVolgaRus.geojson?ass=" + Math.random()
       ).then(response => response.json());
 
+      const clipperPromise = js_angusj_clipper__WEBPACK_IMPORTED_MODULE_16__["loadNativeClipperLibInstanceAsync"](
+          js_angusj_clipper__WEBPACK_IMPORTED_MODULE_16__["NativeClipperLibRequestedFormat"].WasmWithAsmJsFallback
+        )
+        .then(response => response);
+
       // if all promises are resolved invoke main function
-      Promise.all([edgesPromise, nodesPromise])
-        .then(([edges, nodes]) => main(edges, nodes))
+      Promise.all([edgesPromise, nodesPromise, clipperPromise])
+        .then(([edges, nodes, clipper]) => main(edges, nodes, clipper))
         .catch(error => console.error("Error with loading of data:", error));
     });
 
     // main function
-    function main(edges, nodes) {
+    function main(edges, nodes, clipper) {
+      console.log(clipper);
+
+      const poly1 = [
+        { x: 0, y: 0 },
+        { x: 10, y: 0 },
+        { x: 10, y: 10 },
+        { x: 0, y: 10 }
+      ];
+
+      const poly2 = [
+        { x: 10, y: 0 },
+        { x: 20, y: 0 },
+        { x: 20, y: 10 },
+        { x: 10, y: 10 }
+      ];
+
+      // get their union
+      const polyResult = clipper.clipToPaths({
+        clipType: js_angusj_clipper__WEBPACK_IMPORTED_MODULE_16__["ClipType"].Union,
+
+        subjectInputs: [{ data: poly1, closed: true }],
+
+        clipInputs: [{ data: poly2 }],
+
+        subjectFillType: js_angusj_clipper__WEBPACK_IMPORTED_MODULE_16__["PolyFillType"].EvenOdd
+      });
+
+      console.log(polyResult);
       // store input file in variable
       cargoTable = inputFileElement.files[0];
 
@@ -417,7 +447,6 @@ window.onload = () => {
         maxWidthDefault = 100,
         maxEdgeWidth = 200;
 
-      
       let minDefaultCityRadius = 5,
         maxDefaultCityRadius = 20,
         maxCityRadius = 40;
@@ -493,7 +522,13 @@ window.onload = () => {
       Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderNodes"])(map, nodes, loadingClassArray);
 
       // create color table
-      Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["createColorTable"])(colorTableBody, cargoColorArray, map, infoWindow, legend);
+      Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["createColorTable"])(
+        colorTableBody,
+        cargoColorArray,
+        map,
+        infoWindow,
+        legend
+      );
 
       // create width slider
       Object(_modules_interface__WEBPACK_IMPORTED_MODULE_8__["createSlider"])(widthSlider, minWidthDefault, maxWidthDefault, maxEdgeWidth);
@@ -521,15 +556,25 @@ window.onload = () => {
 
       // legend treatment
       const legendLists = Object(_modules_legend__WEBPACK_IMPORTED_MODULE_15__["getLegendLists"])(legend);
-      let cargoVolumeClassArray = Object(_modules_legend__WEBPACK_IMPORTED_MODULE_15__["createCargoVolumeClassArray"])(widthArray, edgeJenks);
-      let cityVolumeClassArray = Object(_modules_legend__WEBPACK_IMPORTED_MODULE_15__["createCityVolumeClassArray"])(cityRadiusArray, nodeJenks);
-      Object(_modules_legend__WEBPACK_IMPORTED_MODULE_15__["fillLegend"])(legendLists, cargoColorArray, cargoVolumeClassArray, cityVolumeClassArray);
+      let cargoVolumeClassArray = Object(_modules_legend__WEBPACK_IMPORTED_MODULE_15__["createCargoVolumeClassArray"])(
+        widthArray,
+        edgeJenks
+      );
+      let cityVolumeClassArray = Object(_modules_legend__WEBPACK_IMPORTED_MODULE_15__["createCityVolumeClassArray"])(
+        cityRadiusArray,
+        nodeJenks
+      );
+      Object(_modules_legend__WEBPACK_IMPORTED_MODULE_15__["fillLegend"])(
+        legendLists,
+        cargoColorArray,
+        cargoVolumeClassArray,
+        cityVolumeClassArray
+      );
 
       let legendCargoVolumeLines = Object(_modules_legend__WEBPACK_IMPORTED_MODULE_15__["getCargoVolumeLines"])(legendLists);
       let legendCityVolumeCircles = Object(_modules_legend__WEBPACK_IMPORTED_MODULE_15__["getCityVolumeCircles"])(legendLists);
-      
-      legend.style.display = "block";
 
+      legend.style.display = "block";
 
       /* 
       // initialize variables to store id of hovered feature
@@ -800,7 +845,6 @@ window.onload = () => {
       }
 
       */
-      
 
       // center and zoom map to data
       map.fitBounds(
