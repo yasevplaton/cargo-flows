@@ -39,7 +39,7 @@
         <div class="row greeting-row">
           <div class="col-lg-12">
             <h5 class="title title__main">
-                Hello! Welcome to the master of building cargo flow maps!
+              Hello! Welcome to the master of building cargo flow maps!
             </h5>
             <br />
           </div>
@@ -60,6 +60,34 @@
                     id="inputGoodsTable"
                   />
                 </div>
+                <label class="upload-data__label">
+                  <!-- <span class="interface-text upload-data__text">
+                    Is the data exclusive (does not include transit traffic)?
+                  </span> -->
+                  <span class="interface-text upload-data__text">
+                    Данные эксклюзивны (не включают транзитный трафик)?
+                  </span>
+                  <div class="upload-data__radio-btn-group">
+                    <div class="pretty p-default p-round">
+                      <input
+                        type="radio"
+                        name="is-exclusive"
+                        value="yes"
+                        checked
+                      />
+                      <div class="state">
+                        <label>Да</label>
+                      </div>
+                    </div>
+
+                    <div class="pretty p-default p-round">
+                      <input type="radio" name="is-exclusive" value="no" />
+                      <div class="state">
+                        <label>Нет</label>
+                      </div>
+                    </div>
+                  </div>
+                </label>
                 <button type="submit" class="btn btn-dark" id="btn-submit">
                   Submit
                 </button>
@@ -79,7 +107,7 @@
                 aria-expanded="false"
                 aria-controls="cargo-colors__content"
               >
-              Cargo color settings
+                Cargo color settings
                 <i class="fas fa-caret-down"></i>
               </h6>
               <div
@@ -87,7 +115,7 @@
                 class="cargo-colors__content collapse"
               >
                 <p class="interface-text cargo-colors__text">
-                    Select suitable colors for cargos
+                  Select suitable colors for cargos
                 </p>
                 <table class="table borderless cargo-colors__table">
                   <thead class="cargo-colors__table-heading">
@@ -130,7 +158,8 @@
                 class="linear-scale__content collapse"
               >
                 <p class="interface-text linear-scale__text">
-                    Specify minimum and maximum line width in a ribbon using the slider or set values manually
+                  Specify minimum and maximum line width in a ribbon using the
+                  slider or set values manually
                 </p>
                 <div
                   id="widthSlider"
@@ -178,31 +207,18 @@
                 aria-expanded="false"
                 aria-controls="nodes-settings__content"
               >
-              Transport nodes display settings
+                Transport nodes display settings
                 <i class="fas fa-caret-down"></i>
               </h6>
               <div
                 id="nodes-settings__content"
                 class="nodes-settings__content collapse"
               >
-                <div class="pretty p-default p-curve checkbox">
-                  <input type="checkbox" id="cities-checkbox" checked />
-                  <div class="state p-gray">
-                    <label class="checkbox__label checkbox__label--cities"
-                      >Show settlements</label
-                    >
-                  </div>
-                </div>
-                <div class="pretty p-default p-curve checkbox">
-                  <input type="checkbox" id="junctions-checkbox" />
-                  <div class="state p-gray">
-                    <label class="checkbox__label checkbox__label--junctions"
-                      >Show transit nodes</label
-                    >
-                  </div>
-                </div>
+                
                 <div class="nodes-settings__fill-color">
-                  <div class="interface-text nodes-settings__text nodes-settings__text--fill-color">
+                  <div
+                    class="interface-text nodes-settings__text nodes-settings__text--fill-color"
+                  >
                     Select circle fill color
                   </div>
                   <span
@@ -211,7 +227,9 @@
                   ></span>
                 </div>
                 <div class="nodes-settings__stroke-color">
-                  <div class="interface-text nodes-settings__text nodes-settings__text--stroke-color">
+                  <div
+                    class="interface-text nodes-settings__text nodes-settings__text--stroke-color"
+                  >
                     Select circle stroke color
                   </div>
                   <span
@@ -220,7 +238,8 @@
                   ></span>
                 </div>
                 <p class="interface-text nodes-settings__text--slider">
-                    Specify minimum and maximum radius for circles of settlements using the slider or set values manually
+                  Specify minimum and maximum radius for circles of settlements
+                  using the slider or set values manually
                 </p>
                 <div
                   id="cityRadiusSlider"
@@ -276,9 +295,27 @@
                 class="other-settings__content collapse"
               >
                 <div class="pretty p-default p-curve checkbox">
+                  <input type="checkbox" id="cities-checkbox" checked />
+                  <div class="state p-gray">
+                    <label class="checkbox__label checkbox__label--cities"
+                      >Settlements</label
+                    >
+                  </div>
+                </div>
+                <div class="pretty p-default p-curve checkbox">
+                  <input type="checkbox" id="junctions-checkbox" />
+                  <div class="state p-gray">
+                    <label class="checkbox__label checkbox__label--junctions"
+                      >Transit nodes</label
+                    >
+                  </div>
+                </div>       
+                <div class="pretty p-default p-curve checkbox">
                   <input type="checkbox" id="edges-checkbox" checked />
                   <div class="state p-gray">
-                    <label class="checkbox__label checkbox__label--ribbons">Ribbons</label>
+                    <label class="checkbox__label checkbox__label--ribbons"
+                      >Ribbons</label
+                    >
                   </div>
                 </div>
                 <div class="pretty p-default p-curve checkbox">
@@ -296,7 +333,9 @@
                     checked
                   />
                   <div class="state p-gray">
-                    <label class="checkbox__label checkbox__label--shadow">Shadow</label>
+                    <label class="checkbox__label checkbox__label--shadow"
+                      >Shadow</label
+                    >
                   </div>
                 </div>
               </div>
@@ -353,10 +392,16 @@
     </div>
     <div class="language-interface language-interface--main-window hidden">
       <div class="language-interface__btns">
-        <button type="button" class="btn btn-secondary btn-lang-en btn--language-main-window">
+        <button
+          type="button"
+          class="btn btn-secondary btn-lang-en btn--language-main-window"
+        >
           En
         </button>
-        <button type="button" class="btn btn-secondary btn-lang-ru btn--language-main-window">
+        <button
+          type="button"
+          class="btn btn-secondary btn-lang-ru btn--language-main-window"
+        >
           Ru
         </button>
       </div>

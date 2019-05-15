@@ -18,17 +18,17 @@
     },
     "nodesSettingsRow": {
       "title": "Настройки отображения транспортных узлов <i class='fas fa-caret-down'></i>",
-      "citiesCheckboxLabel": "Отображать населенные пункты",
-      "junctionsCheckboxLabel": "Отображать транзитные пункты",
       "citiesFillLabel": "Выберите цвет заливки значка",
       "citiesStrokeLabel": "Выберите цвет обводки значка",
       "nodesSettingsSliderText": "Укажите минимальный и максимальный радиус для значков населенных пунктов с помощью слайдера или введите значения вручную"
     },
     "layersRow": {
       "title": "Слои <i class='fas fa-caret-down'></i>",
-      "ribbonsCheckboxLabel": "Ленты",
+      "citiesCheckboxLabel": "Населенные пункты",
+      "junctionsCheckboxLabel": "Транзитные пункты",
+      "ribbonsCheckboxLabel": "Ленты грузопотоков",
       "cargoNodesCheckboxLabel": "'Соединительные' кружки",
-      "shadowCheckboxLabel": "Тень"
+      "shadowCheckboxLabel": "Тень лент"
     }
   },
   "loadingMapPanel": "Подождите, карта загружается",

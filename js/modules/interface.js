@@ -40,12 +40,7 @@ export function getTextElems(
 
   const nodesSettingsRow = mainInterface.querySelector(".nodes-settings");
   const nodesSettingsRowTitle = nodesSettingsRow.querySelector(".step-title");
-  const citiesCheckboxLabel = nodesSettingsRow.querySelector(
-    ".checkbox__label--cities"
-  );
-  const junctionsCheckboxLabel = nodesSettingsRow.querySelector(
-    ".checkbox__label--junctions"
-  );
+
   const citiesFillLabel = nodesSettingsRow.querySelector(
     ".nodes-settings__text--fill-color"
   );
@@ -58,6 +53,13 @@ export function getTextElems(
 
   const layersRow = mainInterface.querySelector(".other-settings");
   const layersRowTitle = layersRow.querySelector(".step-title");
+  const citiesCheckboxLabel = layersRow.querySelector(
+    ".checkbox__label--cities"
+  );
+  const junctionsCheckboxLabel = layersRow.querySelector(
+    ".checkbox__label--junctions"
+  );
+
   const ribbonsCheckboxLabel = layersRow.querySelector(
     ".checkbox__label--ribbons"
   );
@@ -124,14 +126,14 @@ export function getTextElems(
       },
       nodesSettingsRow: {
         title: nodesSettingsRowTitle,
-        citiesCheckboxLabel: citiesCheckboxLabel,
-        junctionsCheckboxLabel: junctionsCheckboxLabel,
         citiesFillLabel: citiesFillLabel,
         citiesStrokeLabel: citiesStrokeLabel,
         nodesSettingsSliderText: nodesSettingsSliderText
       },
       layersRow: {
         title: layersRowTitle,
+        citiesCheckboxLabel: citiesCheckboxLabel,
+        junctionsCheckboxLabel: junctionsCheckboxLabel,
         ribbonsCheckboxLabel: ribbonsCheckboxLabel,
         cargoNodesCheckboxLabel: cargoNodesCheckboxLabel,
         shadowCheckboxLabel: shadowCheckboxLabel
@@ -213,14 +215,7 @@ function changeInterfaceLanguage(elems, data) {
   const nodesSettingsRow = elems.mainInterface.nodesSettingsRow;
   const dataNodesSettingsRow = data.mainInterface.nodesSettingsRow;
   changeInnerHtml(nodesSettingsRow.title, dataNodesSettingsRow.title);
-  changeInnerHtml(
-    nodesSettingsRow.citiesCheckboxLabel,
-    dataNodesSettingsRow.citiesCheckboxLabel
-  );
-  changeInnerHtml(
-    nodesSettingsRow.junctionsCheckboxLabel,
-    dataNodesSettingsRow.junctionsCheckboxLabel
-  );
+  
   changeInnerHtml(
     nodesSettingsRow.citiesFillLabel,
     dataNodesSettingsRow.citiesFillLabel
@@ -237,6 +232,14 @@ function changeInterfaceLanguage(elems, data) {
   const layersRow = elems.mainInterface.layersRow;
   const dataLayersRow = data.mainInterface.layersRow;
   changeInnerHtml(layersRow.title, dataLayersRow.title);
+  changeInnerHtml(
+    layersRow.citiesCheckboxLabel,
+    dataLayersRow.citiesCheckboxLabel
+  );
+  changeInnerHtml(
+    layersRow.junctionsCheckboxLabel,
+    dataLayersRow.junctionsCheckboxLabel
+  );
   changeInnerHtml(
     layersRow.ribbonsCheckboxLabel,
     dataLayersRow.ribbonsCheckboxLabel
