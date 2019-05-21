@@ -600,7 +600,7 @@ export function renderNodes(map, nodes, loadingClassArray) {
           10,
           ["get", "cityRadius"]
         ],
-        "circle-stroke-color": "#000",
+        "circle-stroke-color": "#e9ff00",
         "circle-stroke-width": [
           "case",
           ["boolean", ["feature-state", "hover"], false],
@@ -703,5 +703,4 @@ export function changeCitiesFillColor(map, color) {
 
 export function changeCitiesStrokeColor(map, color) {
   map.setPaintProperty("cities", "circle-stroke-color", color);
-  map.setPaintProperty("cities-hover", "circle-stroke-color", color);
 }

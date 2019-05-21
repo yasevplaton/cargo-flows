@@ -49,7 +49,7 @@
             <h6 class="step-title step-title--dark">Data uploading</h6>
             <div class="upload-data__content">
               <p class="upload-data__text">
-                Upload a .csv file (comma separated) with cargo flows data
+                Upload CSV-file with cargo flows data
               </p>
               <form class="upload-data__form">
                 <div class="form-group upload-data__form-group">
@@ -61,36 +61,38 @@
                   />
                 </div>
                 <label class="upload-data__label">
-                  <!-- <span class="interface-text upload-data__text">
-                    Is the data exclusive (does not include transit traffic)?
-                  </span> -->
                   <span class="interface-text upload-data__text">
-                    Данные эксклюзивны (не включают транзитный трафик)?
+                    Does data include transit traffic?
                   </span>
-                  <div class="upload-data__radio-btn-group">
-                    <div class="pretty p-default p-round">
-                      <input
-                        type="radio"
-                        name="is-exclusive"
-                        value="yes"
-                        checked
-                      />
-                      <div class="state">
-                        <label>Да</label>
-                      </div>
-                    </div>
 
-                    <div class="pretty p-default p-round">
-                      <input type="radio" name="is-exclusive" value="no" />
-                      <div class="state">
-                        <label>Нет</label>
+
+                    <div class="upload-data__radio-btn-group">
+                      <div class="pretty p-default p-round">
+                          <input type="radio" name="is-inclusive" value="no" checked />
+                          <div class="state">
+                            <label class="radio-label radio-label__inclusive-no">No</label>
+                          </div>
+                        </div>
+                      <div class="pretty p-default p-round">
+                        <input
+                          type="radio"
+                          name="is-inclusive"
+                          value="yes"
+                        />
+                        <div class="state">
+                          <label class="radio-label radio-label__inclusive-yes">Yes</label>
+                        </div>
                       </div>
-                    </div>
                   </div>
                 </label>
-                <button type="submit" class="btn btn-dark" id="btn-submit">
-                  Submit
-                </button>
+                <div class="upload-data__form-btns">
+                  <button type="submit" class="btn btn-primary" id="btn-submit">
+                    Submit
+                  </button>
+                  <button type="button" class="btn btn-dark" id="btn-template-download">
+                    Download CSV-template
+                  </button>
+                </div>
               </form>
             </div>
           </div>

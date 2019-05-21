@@ -5,8 +5,14 @@
     },
     "uploadDataRow": {
       "title": "Data uploading ",
-      "text": "Upload a .csv file (comma separated) with cargo flows data",
-      "btnSubmit": "Submit"
+      "uploadText": "Upload CSV-file with cargo flows data",
+      "uploadDataForm": {
+        "dataTypeText": "Does data include transit traffic?",
+        "isInclusiveYes": "Yes",
+        "isInclusiveNo": "No",
+        "btnSubmit": "Submit",
+        "btnDownload": "Download CSV-template"
+      }
     },
     "cargoColorsRow": {
       "title": "Cargo color settings <i class='fas fa-caret-down'></i>",

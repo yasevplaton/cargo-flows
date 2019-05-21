@@ -5,8 +5,14 @@
     },
     "uploadDataRow": {
       "title": "Загрузка данных",
-      "text": "Загрузите файл .csv (разделитель - запятая) с данными о грузопотоках",
-      "btnSubmit": "Отправить"
+      "uploadText": "Загрузите CSV-файл с данными о грузопотоках",
+      "uploadDataForm": {
+        "dataTypeText": "Данные включают транзитный трафик?",
+        "isInclusiveYes": "Да",
+        "isInclusiveNo": "Нет",
+        "btnSubmit": "Отправить",
+        "btnDownload": "Скачать CSV-образец"
+      }
     },
     "cargoColorsRow": {
       "title": "Настройки цветов для грузов <i class='fas fa-caret-down'></i>",
@@ -27,7 +33,7 @@
       "citiesCheckboxLabel": "Населенные пункты",
       "junctionsCheckboxLabel": "Транзитные пункты",
       "ribbonsCheckboxLabel": "Ленты грузопотоков",
-      "cargoNodesCheckboxLabel": "'Соединительные' кружки",
+      "cargoNodesCheckboxLabel": "Соединительные кружки",
       "shadowCheckboxLabel": "Тень лент"
     }
   },

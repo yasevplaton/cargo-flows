@@ -24,7 +24,13 @@ export function getTextElems(
   const uploadRow = mainInterface.querySelector(".upload-data");
   const uploadRowTitle = uploadRow.querySelector(".step-title");
   const uploadRowText = uploadRow.querySelector(".upload-data__text");
-  const buttonSubmit = uploadRow.querySelector("#btn-submit");
+
+  const uploadForm = uploadRow.querySelector(".upload-data__form");
+  const dataTypeText = uploadForm.querySelector(".upload-data__text");
+  const isInclusiveYes = uploadForm.querySelector(".radio-label__inclusive-yes");
+  const isInclusiveNo = uploadForm.querySelector(".radio-label__inclusive-no");
+  const buttonSubmit = uploadForm.querySelector("#btn-submit");
+  const buttonDownload = uploadForm.querySelector("#btn-template-download");
 
   const cargoColorsRow = mainInterface.querySelector(".cargo-colors");
   const cargoColorsRowTitle = cargoColorsRow.querySelector(".step-title");
@@ -113,8 +119,14 @@ export function getTextElems(
       },
       uploadDataRow: {
         title: uploadRowTitle,
-        text: uploadRowText,
-        btnSubmit: buttonSubmit
+        uploadText: uploadRowText,
+        uploadDataForm: {
+          dataTypeText: dataTypeText,
+          isInclusiveYes: isInclusiveYes,
+          isInclusiveNo: isInclusiveNo,
+          btnSubmit: buttonSubmit,
+          btnDownload: buttonDownload
+        }
       },
       cargoColorsRow: {
         title: cargoColorsRowTitle,
@@ -198,9 +210,17 @@ function changeInterfaceLanguage(elems, data) {
 
   const uploadDataRow = elems.mainInterface.uploadDataRow;
   const dataUploadDataRow = data.mainInterface.uploadDataRow;
+  const uploadDataForm = uploadDataRow.uploadDataForm;
+  const dataUploadDataForm = dataUploadDataRow.uploadDataForm;
+
   changeInnerHtml(uploadDataRow.title, dataUploadDataRow.title);
-  changeInnerHtml(uploadDataRow.text, dataUploadDataRow.text);
-  changeInnerHtml(uploadDataRow.btnSubmit, dataUploadDataRow.btnSubmit);
+  changeInnerHtml(uploadDataRow.uploadText, dataUploadDataRow.uploadText);
+  
+  changeInnerHtml(uploadDataForm.dataTypeText, dataUploadDataForm.dataTypeText);
+  changeInnerHtml(uploadDataForm.isInclusiveYes, dataUploadDataForm.isInclusiveYes);
+  changeInnerHtml(uploadDataForm.isInclusiveNo, dataUploadDataForm.isInclusiveNo);
+  changeInnerHtml(uploadDataForm.btnSubmit, dataUploadDataForm.btnSubmit);
+  changeInnerHtml(uploadDataForm.btnDownload, dataUploadDataForm.btnDownload);
 
   const cargoColorsRow = elems.mainInterface.cargoColorsRow;
   const dataCargoColorsRow = data.mainInterface.cargoColorsRow;
