@@ -65,31 +65,39 @@
                     Does data include transit traffic?
                   </span>
 
-
-                    <div class="upload-data__radio-btn-group">
-                      <div class="pretty p-default p-round">
-                          <input type="radio" name="is-inclusive" value="no" checked />
-                          <div class="state">
-                            <label class="radio-label radio-label__inclusive-no">No</label>
-                          </div>
-                        </div>
-                      <div class="pretty p-default p-round">
-                        <input
-                          type="radio"
-                          name="is-inclusive"
-                          value="yes"
-                        />
-                        <div class="state">
-                          <label class="radio-label radio-label__inclusive-yes">Yes</label>
-                        </div>
+                  <div class="upload-data__radio-btn-group">
+                    <div class="pretty p-default p-round">
+                      <input
+                        type="radio"
+                        name="is-inclusive"
+                        value="no"
+                        checked
+                      />
+                      <div class="state">
+                        <label class="radio-label radio-label__inclusive-no"
+                          >No</label
+                        >
                       </div>
+                    </div>
+                    <div class="pretty p-default p-round">
+                      <input type="radio" name="is-inclusive" value="yes" />
+                      <div class="state">
+                        <label class="radio-label radio-label__inclusive-yes"
+                          >Yes</label
+                        >
+                      </div>
+                    </div>
                   </div>
                 </label>
                 <div class="upload-data__form-btns">
                   <button type="submit" class="btn btn-primary" id="btn-submit">
                     Submit
                   </button>
-                  <button type="button" class="btn btn-dark" id="btn-template-download">
+                  <button
+                    type="button"
+                    class="btn btn-dark"
+                    id="btn-template-download"
+                  >
                     Download CSV-template
                   </button>
                 </div>
@@ -216,7 +224,6 @@
                 id="nodes-settings__content"
                 class="nodes-settings__content collapse"
               >
-                
                 <div class="nodes-settings__fill-color">
                   <div
                     class="interface-text nodes-settings__text nodes-settings__text--fill-color"
@@ -311,7 +318,7 @@
                       >Transit nodes</label
                     >
                   </div>
-                </div>       
+                </div>
                 <div class="pretty p-default p-curve checkbox">
                   <input type="checkbox" id="edges-checkbox" checked />
                   <div class="state p-gray">
@@ -338,6 +345,31 @@
                     <label class="checkbox__label checkbox__label--shadow"
                       >Shadow</label
                     >
+                  </div>
+                </div>
+                <div class="other-settings__text">Basemap type</div>
+                <div class="other-settings__radio-btn-group">
+                  <div class="pretty p-default p-round">
+                    <input
+                      type="radio"
+                      name="basemap-type"
+                      value="dark"
+                      checked
+                      id="btn-dark-basemap"
+                    />
+                    <div class="state">
+                      <label class="radio-label radio-label__dark"
+                        >Dark</label
+                      >
+                    </div>
+                  </div>
+                  <div class="pretty p-default p-round">
+                    <input type="radio" name="basemap-type" value="light" id="btn-light-basemap" />
+                    <div class="state">
+                      <label class="radio-label radio-label__light"
+                        >Light</label
+                      >
+                    </div>
                   </div>
                 </div>
               </div>

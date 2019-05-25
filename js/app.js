@@ -119,6 +119,9 @@ window.onload = () => {
       "#cargo-nodes-checkbox"
     );
 
+    const darkBasemapBtn = mainInterface.querySelector("#btn-dark-basemap");
+    const lightBasemapBtn = mainInterface.querySelector("#btn-light-basemap");
+
     const infoWindow = document.querySelector(".info-window");
     const languageInterface = document.querySelector(
       ".language-interface--main-window"
@@ -658,6 +661,10 @@ window.onload = () => {
         );
 
         map.setZoom(currZoom);
+
+        customLayers = map.getStyle().layers.slice(151, 168);
+        customSources = map.getStyle().sources;
+        delete customSources.composite;
       }
 
       // function to update cityRadius
@@ -677,6 +684,10 @@ window.onload = () => {
         });
 
         renderNodes(map, nodes, loadingClassArray);
+
+        customLayers = map.getStyle().layers.slice(151, 168);
+        customSources = map.getStyle().sources;
+        delete customSources.composite;
       }
 
       // center and zoom map to data
@@ -694,6 +705,31 @@ window.onload = () => {
         updateLegendLineWidthByZoom(currZoom, legendCargoVolumeLines);
         updateLegendCityRadiusByZoom(currZoom, legendCityVolumeCircles);
       });
+
+      var customLayers = map.getStyle().layers.slice(151, 168);
+      var customSources = map.getStyle().sources;
+      delete customSources.composite;
+
+      map.on('style.load', () => {
+        for (let prop in customSources) {
+          map.addSource(prop, customSources[prop]);
+        }
+
+        customLayers.forEach(layer => map.addLayer(layer));
+      });
+
+      darkBasemapBtn.addEventListener('click', () => {
+        console.log(map.getStyle());
+        darkBasemapBtn.checked = true;
+        map.setStyle("mapbox://styles/mapbox/dark-v9");
+      });
+  
+      lightBasemapBtn.addEventListener('click', () => {
+        console.log(map.getStyle());
+        lightBasemapBtn.checked = true;
+        map.setStyle("mapbox://styles/mapbox/streets-v11");
+      });
+
     }
   });
 
