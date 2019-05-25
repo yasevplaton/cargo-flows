@@ -34,7 +34,10 @@
       "junctionsCheckboxLabel": "Транзитные пункты",
       "ribbonsCheckboxLabel": "Ленты грузопотоков",
       "cargoNodesCheckboxLabel": "Соединительные кружки",
-      "shadowCheckboxLabel": "Тень лент"
+      "shadowCheckboxLabel": "Тень лент",
+      "basemapText": "Базовая карта",
+      "darkBasemap": "Темная",
+      "lightBasemap": "Светлая"
     }
   },
   "loadingMapPanel": "Подождите, карта загружается",

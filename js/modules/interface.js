@@ -4,6 +4,7 @@ import {
   changeCitiesFillColor,
   changeCitiesStrokeColor
 } from "./render";
+
 import "nouislider";
 import { changeColorInfoWindowColorBox } from "./info-window";
 import { changeColorLegendColorBox } from "./legend";
@@ -75,6 +76,10 @@ export function getTextElems(
   const shadowCheckboxLabel = layersRow.querySelector(
     ".checkbox__label--shadow"
   );
+
+  const basemapText = layersRow.querySelector(".other-settings__text--basemap");
+  const darkBasemap = layersRow.querySelector(".radio-label__dark");
+  const lightBasemap = layersRow.querySelector(".radio-label__light");
 
   const greetingPanelText = greetingPanel.querySelector(
     ".greeting-panel__text"
@@ -148,7 +153,10 @@ export function getTextElems(
         junctionsCheckboxLabel: junctionsCheckboxLabel,
         ribbonsCheckboxLabel: ribbonsCheckboxLabel,
         cargoNodesCheckboxLabel: cargoNodesCheckboxLabel,
-        shadowCheckboxLabel: shadowCheckboxLabel
+        shadowCheckboxLabel: shadowCheckboxLabel,
+        basemapText: basemapText,
+        darkBasemap: darkBasemap,
+        lightBasemap: lightBasemap
       }
     },
 
@@ -271,6 +279,18 @@ function changeInterfaceLanguage(elems, data) {
   changeInnerHtml(
     layersRow.shadowCheckboxLabel,
     dataLayersRow.shadowCheckboxLabel
+  );
+  changeInnerHtml(
+    layersRow.basemapText,
+    dataLayersRow.basemapText
+  );
+  changeInnerHtml(
+    layersRow.darkBasemap,
+    dataLayersRow.darkBasemap
+  );
+  changeInnerHtml(
+    layersRow.lightBasemap,
+    dataLayersRow.lightBasemap
   );
 
   const greetingPanel = elems.greetingPanel;

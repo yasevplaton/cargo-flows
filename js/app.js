@@ -662,7 +662,7 @@ window.onload = () => {
 
         map.setZoom(currZoom);
 
-        customLayers = map.getStyle().layers.slice(151, 168);
+        customLayers = map.getStyle().layers.slice(151, 169);
         customSources = map.getStyle().sources;
         delete customSources.composite;
       }
@@ -685,7 +685,7 @@ window.onload = () => {
 
         renderNodes(map, nodes, loadingClassArray);
 
-        customLayers = map.getStyle().layers.slice(151, 168);
+        customLayers = map.getStyle().layers.slice(151, 169);
         customSources = map.getStyle().sources;
         delete customSources.composite;
       }
@@ -706,7 +706,7 @@ window.onload = () => {
         updateLegendCityRadiusByZoom(currZoom, legendCityVolumeCircles);
       });
 
-      var customLayers = map.getStyle().layers.slice(151, 168);
+      var customLayers = map.getStyle().layers.slice(151, 169);
       var customSources = map.getStyle().sources;
       delete customSources.composite;
 
@@ -718,17 +718,8 @@ window.onload = () => {
         customLayers.forEach(layer => map.addLayer(layer));
       });
 
-      darkBasemapBtn.addEventListener('click', () => {
-        console.log(map.getStyle());
-        darkBasemapBtn.checked = true;
-        map.setStyle("mapbox://styles/mapbox/dark-v9");
-      });
-  
-      lightBasemapBtn.addEventListener('click', () => {
-        console.log(map.getStyle());
-        lightBasemapBtn.checked = true;
-        map.setStyle("mapbox://styles/mapbox/streets-v11");
-      });
+      darkBasemapBtn.addEventListener('click', () => map.setStyle("mapbox://styles/mapbox/dark-v9"));
+      lightBasemapBtn.addEventListener('click', () => map.setStyle("mapbox://styles/mapbox/streets-v11"));
 
     }
   });

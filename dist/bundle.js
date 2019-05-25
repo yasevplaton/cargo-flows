@@ -774,7 +774,7 @@ window.onload = () => {
 
         map.setZoom(currZoom);
 
-        customLayers = map.getStyle().layers.slice(151, 168);
+        customLayers = map.getStyle().layers.slice(151, 169);
         customSources = map.getStyle().sources;
         delete customSources.composite;
       }
@@ -797,7 +797,7 @@ window.onload = () => {
 
         Object(_modules_render__WEBPACK_IMPORTED_MODULE_7__["renderNodes"])(map, nodes, loadingClassArray);
 
-        customLayers = map.getStyle().layers.slice(151, 168);
+        customLayers = map.getStyle().layers.slice(151, 169);
         customSources = map.getStyle().sources;
         delete customSources.composite;
       }
@@ -818,7 +818,7 @@ window.onload = () => {
         Object(_modules_legend__WEBPACK_IMPORTED_MODULE_15__["updateLegendCityRadiusByZoom"])(currZoom, legendCityVolumeCircles);
       });
 
-      var customLayers = map.getStyle().layers.slice(151, 168);
+      var customLayers = map.getStyle().layers.slice(151, 169);
       var customSources = map.getStyle().sources;
       delete customSources.composite;
 
@@ -830,17 +830,8 @@ window.onload = () => {
         customLayers.forEach(layer => map.addLayer(layer));
       });
 
-      darkBasemapBtn.addEventListener('click', () => {
-        console.log(map.getStyle());
-        darkBasemapBtn.checked = true;
-        map.setStyle("mapbox://styles/mapbox/dark-v9");
-      });
-  
-      lightBasemapBtn.addEventListener('click', () => {
-        console.log(map.getStyle());
-        lightBasemapBtn.checked = true;
-        map.setStyle("mapbox://styles/mapbox/streets-v11");
-      });
+      darkBasemapBtn.addEventListener('click', () => map.setStyle("mapbox://styles/mapbox/dark-v9"));
+      lightBasemapBtn.addEventListener('click', () => map.setStyle("mapbox://styles/mapbox/streets-v11"));
 
     }
   });
@@ -2735,6 +2726,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 const Huebee = __webpack_require__(/*! huebee */ "./node_modules/huebee/huebee.js");
 
 // function to get text elements of app
@@ -2802,6 +2794,10 @@ function getTextElems(
   const shadowCheckboxLabel = layersRow.querySelector(
     ".checkbox__label--shadow"
   );
+
+  const basemapText = layersRow.querySelector(".other-settings__text--basemap");
+  const darkBasemap = layersRow.querySelector(".radio-label__dark");
+  const lightBasemap = layersRow.querySelector(".radio-label__light");
 
   const greetingPanelText = greetingPanel.querySelector(
     ".greeting-panel__text"
@@ -2875,7 +2871,10 @@ function getTextElems(
         junctionsCheckboxLabel: junctionsCheckboxLabel,
         ribbonsCheckboxLabel: ribbonsCheckboxLabel,
         cargoNodesCheckboxLabel: cargoNodesCheckboxLabel,
-        shadowCheckboxLabel: shadowCheckboxLabel
+        shadowCheckboxLabel: shadowCheckboxLabel,
+        basemapText: basemapText,
+        darkBasemap: darkBasemap,
+        lightBasemap: lightBasemap
       }
     },
 
@@ -2998,6 +2997,18 @@ function changeInterfaceLanguage(elems, data) {
   changeInnerHtml(
     layersRow.shadowCheckboxLabel,
     dataLayersRow.shadowCheckboxLabel
+  );
+  changeInnerHtml(
+    layersRow.basemapText,
+    dataLayersRow.basemapText
+  );
+  changeInnerHtml(
+    layersRow.darkBasemap,
+    dataLayersRow.darkBasemap
+  );
+  changeInnerHtml(
+    layersRow.lightBasemap,
+    dataLayersRow.lightBasemap
   );
 
   const greetingPanel = elems.greetingPanel;

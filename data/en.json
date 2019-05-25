@@ -34,7 +34,10 @@
       "junctionsCheckboxLabel": "Transit nodes",
       "ribbonsCheckboxLabel": "Ribbons",
       "cargoNodesCheckboxLabel": "Junction cirlces",
-      "shadowCheckboxLabel": "Shadow"
+      "shadowCheckboxLabel": "Shadow",
+      "basemapText": "Basemap type",
+      "darkBasemap": "Dark",
+      "lightBasemap": "Light"
     }
   },
   "loadingMapPanel": "map is loading",
