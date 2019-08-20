@@ -173,10 +173,10 @@ window.onload = () => {
 
     // store server url
     // localhost url for testing
-    // const url = 'http://127.0.0.1:5000/upload_data';
+    const url = 'http://autolab.geogr.msu.ru/cargo-flows-backend';
 
     // pythonanywhere url for production
-    const url = "https://yasevplaton.pythonanywhere.com/upload_data";
+    // const url = "https://yasevplaton.pythonanywhere.com/upload_data";
 
     // initialize variable to store input file
     let cargoTable, edgesPromise, nodesPromise;
@@ -214,7 +214,7 @@ window.onload = () => {
           .catch(error => {
             handleDataPanel.classList.add("hidden");
             alert(
-              "Увы, произошла какая-то ошибка :( Если вы разработчик, можете глянуть в консоли и зарепортить багу на гитхабе https://github.com/yasevplaton/linear-cartodiagram. Если вы не понимаете, что такое консоль, бага или гитхаб, обратитесь в службу поддержки по адресу yasevplaton@gmail.com"
+              "Увы, произошла какая-то ошибка :( Если вы разработчик, можете глянуть в консоли и зарепортить багу на гитхабе https://github.com/yasevplaton/cargo-flows. Если вы не понимаете, что такое консоль, бага или гитхаб, обратитесь в службу поддержки по адресу yasevplaton@gmail.com"
             );
             console.error("Error with loading of data:", error);
           });
@@ -304,7 +304,7 @@ window.onload = () => {
         maxWidthDefault = 100,
         maxEdgeWidth = 200;
 
-      
+
       let minDefaultCityRadius = 5,
         maxDefaultCityRadius = 20,
         maxCityRadius = 40;
@@ -414,7 +414,7 @@ window.onload = () => {
 
       let legendCargoVolumeLines = getCargoVolumeLines(legendLists);
       let legendCityVolumeCircles = getCityVolumeCircles(legendLists);
-      
+
       legend.style.display = "block";
       // initialize variables to store id of hovered feature
       let hoveredLineId = null;
