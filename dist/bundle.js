@@ -285,7 +285,7 @@ window.onload = () => {
 
     // store server url
     // localhost url for testing
-    const url = 'http://autolab.geogr.msu.ru/cargo-flows-backend';
+    const url = 'https://autolab.geogr.msu.ru/cargo-flows-backend';
 
     // pythonanywhere url for production
     // const url = "https://yasevplaton.pythonanywhere.com/upload_data";
