@@ -29,7 +29,7 @@
     "sass-webpack-plugin": "^1.0.3",
     "style-loader": "^0.23.1",
     "webpack": "^4.29.4",
-    "webpack-cli": "^3.2.1"
+    "webpack-cli": "^3.3.12"
   },
   "dependencies": {
     "bootstrap": "^4.2.1",
